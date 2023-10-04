@@ -4,7 +4,7 @@ import ButtonPrimary from "../components/ButtonPrimary";
 
 const Login = () => {
   return (
-    <Center bg="app-bg" h="100vh">
+    <Center bg="app-bg" h="100vh" px={4}>
       <Box
         bg="main-bg"
         px={3}
