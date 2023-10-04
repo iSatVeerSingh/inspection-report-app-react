@@ -1,10 +1,10 @@
 'use client';
 
+import Login from "./pages/Login";
+
 const App = () => {
   return (
-    <div>
-      This is inspection report app
-    </div>
+    <Login />
   )
 };
 
