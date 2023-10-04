@@ -6,7 +6,9 @@ const theme = extendTheme({
     "main-bg": "#FFFFFF",
     "rich-black": "#0D0D26",
     "main-text": "#505050",
-    "blue-primary": "#0B8AD9"
+    "blue-primary": "#0B8AD9",
+    "nav-bg": "#DEE0FC",
+    "nav-link": "#2B3674"
     // "stroke": "#E0E0E0"
   },
   borders: {

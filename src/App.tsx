@@ -1,11 +1,11 @@
-'use client';
+"use client";
 
+import { RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
+import router from "./routes/router";
 
 const App = () => {
-  return (
-    <Login />
-  )
+  return <RouterProvider router={router} />;
 };
 
 export default App;
