@@ -19,11 +19,11 @@ const Sidebar = () => {
           Michelle
         </Heading>
       </Flex>
-      <VStack px={4} py={3}>
-        {menuItems.map((item) => (
+      <VStack px={2} py={3}>
+        {menuItems.map(({ path, name, icon: Icon }) => (
           <ChakraLink
             as={ReactRouterLink}
-            to={item.path}
+            to={path}
             bg="nav-bg"
             w={"full"}
             textDecoration={"none"}
@@ -33,8 +33,9 @@ const Sidebar = () => {
             borderRadius={"sm"}
             color={"nav-link"}
           >
-            <Flex px={3} py={2} fontSize={"xl"}>
-              {item.name}
+            <Flex px={2} py={2} fontSize={"xl"} alignItems={"center"} gap={2}>
+              <Icon boxSize={7} />
+              {name}
             </Flex>
           </ChakraLink>
         ))}

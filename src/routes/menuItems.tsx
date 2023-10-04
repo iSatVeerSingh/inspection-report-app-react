@@ -1,32 +1,41 @@
+import {
+  ItemsIcon,
+  JobIcon,
+  NotesIcon,
+  ReportIcon,
+  SettingsIcon,
+  UsersIcon,
+} from "../icons/icons";
+
 export default [
   {
     path: "/",
     name: "Jobs",
-    icon: ""
+    icon: JobIcon,
   },
   {
     path: "/reports",
     name: "Reports",
-    icon: ""
+    icon: ReportIcon,
   },
   {
     path: "/library-items",
     name: "Library Items",
-    icon: ""
+    icon: ItemsIcon,
   },
   {
     path: "/inspection-notes",
     name: "Inspection Notes",
-    icon: ""
+    icon: NotesIcon,
   },
   {
     path: "/users",
     name: "Users",
-    icon: ""
+    icon: UsersIcon,
   },
   {
     path: "/settings",
     name: "Settings",
-    icon: ""
-  }
-]
+    icon: SettingsIcon,
+  },
+];
