@@ -5,6 +5,7 @@ import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
 import Reports from "../pages/Reports";
 import JobDetails from "../pages/Jobs/JobDetails";
+import CreateCustomJob from "../pages/Jobs/CreateCustomJob";
 
 const router = createBrowserRouter([
   {
@@ -22,6 +23,10 @@ const router = createBrowserRouter([
       {
         path: Routes.JOBS_DETAILS,
         element: <JobDetails />,
+      },
+      {
+        path: Routes.CUSTOM_JOB,
+        element: <CreateCustomJob />,
       },
     ],
   },

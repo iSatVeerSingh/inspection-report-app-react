@@ -4,14 +4,16 @@ import allJobs from "../../../demo/jobs";
 import FilterInput from "../../components/FilterInput";
 import FilterSelect from "../../components/FilterSelect";
 import SearchFilter from "../../components/SearchFilter";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const Jobs = () => {
+  const navigate = useNavigate();
+
   return (
     <PageLayout
       title="All Jobs"
       titleBtn="Create Custom Job"
-      onBtnClick={() => {}}
+      onBtnClick={() => {navigate("/jobs/custom-job")}}
     >
       <Grid px={1} py={1} gap={2}>
         <Flex alignItems={"center"} gap={4} justifyContent={"space-between"}>
