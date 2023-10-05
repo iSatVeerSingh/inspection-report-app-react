@@ -12,6 +12,7 @@ const ButtonOutline = ({ children, ...btnProps }: ButtonOutlineProps) => {
       border="2px"
       colorScheme="messenger"
       variant="outline"
+      size={{ base: "sm", md: "md" }}
     >
       {children}
     </Button>

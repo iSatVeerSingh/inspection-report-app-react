@@ -24,14 +24,20 @@ const PageLayout = ({
         borderBottom={"stroke"}
         justifyContent={"space-between"}
       >
-        <Heading fontWeight={"semibold"} fontSize={{base: "xl", sm: "2xl", md: "3xl"}} color="rich-black">
+        <Heading
+          fontWeight={"semibold"}
+          fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+          color="rich-black"
+        >
           {title}
         </Heading>
         {titleBtn && (
           <ButtonPrimary onClick={onBtnClick}>{titleBtn}</ButtonPrimary>
         )}
       </Flex>
-      <Box overflowY={"scroll"} p="3">{children}</Box>
+      <Box overflowY={"scroll"} p={{ base: 2, sm: 3 }}>
+        {children}
+      </Box>
     </Grid>
   );
 };

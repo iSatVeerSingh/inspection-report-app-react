@@ -4,7 +4,6 @@ import {
   Text,
   Grid,
   IconButton,
-  Button,
   Drawer,
   useDisclosure,
   DrawerOverlay,
@@ -18,7 +17,7 @@ import FilterInput from "../../components/FilterInput";
 import FilterSelect from "../../components/FilterSelect";
 import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
-import { FilterIcon, SearchIcon } from "../../icons/icons";
+import { FilterIcon } from "../../icons/icons";
 import useIsMobile from "../../hooks/useIsMobile";
 
 const Jobs = () => {
