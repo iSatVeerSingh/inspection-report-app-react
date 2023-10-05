@@ -1,13 +1,30 @@
-import { Box, Flex, Text, Grid } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  Text,
+  Grid,
+  IconButton,
+  Button,
+  Drawer,
+  useDisclosure,
+  DrawerOverlay,
+  DrawerContent,
+  DrawerCloseButton,
+  DrawerHeader,
+} from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import allJobs from "../../../demo/jobs";
 import FilterInput from "../../components/FilterInput";
 import FilterSelect from "../../components/FilterSelect";
 import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
+import { FilterIcon, SearchIcon } from "../../icons/icons";
+import useIsMobile from "../../hooks/useIsMobile";
 
 const Jobs = () => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const isMobile = useIsMobile();
 
   return (
     <PageLayout
@@ -18,23 +35,60 @@ const Jobs = () => {
       }}
     >
       <Grid px={1} py={1} gap={2}>
-        <Flex alignItems={"center"} gap={4} justifyContent={"space-between"}>
-          <Text fontSize={"lg"} fontWeight={"medium"} color={"rich-black"}>
-            Filter By
-          </Text>
-          <FilterSelect
-            maxW={"200px"}
-            options={[{ text: "Opetion 1", value: "option1" }]}
-          />
-          <FilterSelect
-            maxW={"200px"}
-            options={[{ text: "Opetion 1", value: "option1" }]}
-          />
-          <FilterInput maxW={"200px"} type="date" />
-        </Flex>
-        <Box>
+        {isMobile ? (
+          <Drawer onClose={onClose} isOpen={isOpen} placement="right">
+            <DrawerOverlay />
+            <DrawerContent>
+              <DrawerCloseButton />
+              <DrawerHeader>Filter By</DrawerHeader>
+              <Flex gap={4} direction={"column"} p="4">
+                <FilterSelect
+                  maxW={"200px"}
+                  options={[{ text: "Opetion 1", value: "option1" }]}
+                />
+                <FilterSelect
+                  maxW={"200px"}
+                  options={[{ text: "Opetion 1", value: "option1" }]}
+                />
+                <FilterInput maxW={"200px"} type="date" />
+              </Flex>
+            </DrawerContent>
+          </Drawer>
+        ) : (
+          <Flex alignItems={"center"} gap={4} justifyContent={"space-between"}>
+            <FilterIcon display={{ base: "block", lg: "none" }} boxSize={5} />
+            <Text
+              fontSize={"lg"}
+              fontWeight={"medium"}
+              color={"rich-black"}
+              display={{ base: "none", lg: "block" }}
+            >
+              Filter By
+            </Text>
+            <FilterSelect
+              maxW={"200px"}
+              options={[{ text: "Opetion 1", value: "option1" }]}
+            />
+            <FilterSelect
+              maxW={"200px"}
+              options={[{ text: "Opetion 1", value: "option1" }]}
+            />
+            <FilterInput maxW={"200px"} type="date" />
+          </Flex>
+        )}
+        <Flex gap={2} alignItems={"center"}>
+          {isMobile && (
+            <IconButton
+              aria-label="Open Filter"
+              variant={"outline"}
+              h={8}
+              borderColor={"blue-primary"}
+              icon={<FilterIcon boxSize={6} />}
+              onClick={onOpen}
+            />
+          )}
           <SearchFilter placeholder="Search by job nuber, category, customer name" />
-        </Box>
+        </Flex>
         {allJobs.map((job) => (
           <Link key={job.id} to={`/jobs/${job.jobNumber}`}>
             <Box bg={"main-bg"} p={3} borderRadius={5} border={"stroke"}>

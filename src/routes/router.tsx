@@ -6,7 +6,6 @@ import * as Routes from "./paths";
 import Reports from "../pages/Reports";
 import JobDetails from "../pages/Jobs/JobDetails";
 import CreateCustomJob from "../pages/Jobs/CreateCustomJob";
-import Menu from "../pages/Menu";
 
 const router = createBrowserRouter([
   {
@@ -35,10 +34,6 @@ const router = createBrowserRouter([
     path: "/login",
     element: <Login />,
   },
-  {
-    path: "/menu",
-    element: <Menu />
-  }
 ]);
 
 export default router;
