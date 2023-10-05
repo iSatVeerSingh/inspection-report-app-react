@@ -1,9 +1,9 @@
 import { Box, Flex, Text, Grid } from "@chakra-ui/react";
-import PageLayout from "../Layout/PageLayout";
-import allJobs from "../../demo/jobs";
-import FilterInput from "../components/FilterInput";
-import FilterSelect from "../components/FilterSelect";
-import SearchFilter from "../components/SearchFilter";
+import PageLayout from "../../Layout/PageLayout";
+import allJobs from "../../../demo/jobs";
+import FilterInput from "../../components/FilterInput";
+import FilterSelect from "../../components/FilterSelect";
+import SearchFilter from "../../components/SearchFilter";
 
 const Jobs = () => {
   return (

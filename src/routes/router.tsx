@@ -1,7 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login";
 import RootLayout from "../Layout/RootLayout";
-import Jobs from "../pages/Jobs";
+import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
 import Reports from "../pages/Reports";
 
@@ -12,18 +12,18 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <Jobs />
+        element: <Jobs />,
       },
       {
         path: Routes.REPORTS,
-        element: <Reports />
-      }
-    ]
+        element: <Reports />,
+      },
+    ],
   },
   {
     path: "/login",
-    element: <Login />
-  }
-])
+    element: <Login />,
+  },
+]);
 
 export default router;
