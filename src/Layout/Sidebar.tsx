@@ -9,7 +9,7 @@ const Sidebar = () => {
       <Flex
         alignItems="center"
         gap={2}
-        h={12}
+        h={14}
         borderBottom={"stroke"}
         px={4}
         py={3}

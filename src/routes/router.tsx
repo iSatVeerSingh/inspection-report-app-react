@@ -1,6 +1,7 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login";
 import RootLayout from "../Layout/RootLayout";
+import Jobs from "../pages/Jobs";
 
 const router = createBrowserRouter([
   {
@@ -9,7 +10,7 @@ const router = createBrowserRouter([
     children: [
       {
         index: true,
-        element: <h1>This is index page</h1>
+        element: <Jobs />
       }
     ]
   },
