@@ -1,6 +1,8 @@
 import { Box, Flex, Text, Grid } from "@chakra-ui/react";
 import PageLayout from "../Layout/PageLayout";
 import allJobs from "../../demo/jobs";
+import FilterInput from "../components/FilterInput";
+import FilterSelect from "../components/FilterSelect";
 
 const Jobs = () => {
   return (
@@ -10,6 +12,20 @@ const Jobs = () => {
       onBtnClick={() => {}}
     >
       <Grid px={4} py={3} gap={2}>
+        <Flex alignItems={"center"} gap={4} justifyContent={"space-between"}>
+          <Text fontSize={"lg"} fontWeight={"medium"} color={"rich-black"}>
+            Filter By
+          </Text>
+          <FilterSelect
+            maxW={"200px"}
+            options={[{ text: "Opetion 1", value: "option1" }]}
+          />
+          <FilterSelect
+            maxW={"200px"}
+            options={[{ text: "Opetion 1", value: "option1" }]}
+          />
+          <FilterInput maxW={"200px"} type="date" />
+        </Flex>
         {allJobs.map((job) => (
           <Box
             bg={"main-bg"}
