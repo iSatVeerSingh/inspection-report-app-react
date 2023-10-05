@@ -5,12 +5,8 @@ import Sidebar from "../Layout/Sidebar";
 const RootLayout = () => {
   return (
     <Grid h="100vh" templateColumns="250px auto" bg="app-bg">
-      <GridItem bg="main-bg" borderRight="stroke">
-        <Sidebar />
-      </GridItem>
-      <GridItem>
-        <Outlet />
-      </GridItem>
+      <Sidebar />
+      <Outlet />
     </Grid>
   );
 };

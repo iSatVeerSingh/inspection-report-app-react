@@ -1,4 +1,4 @@
-import { Box, Flex, Heading } from "@chakra-ui/react";
+import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import React, { MouseEventHandler } from "react";
 
@@ -16,9 +16,8 @@ const PageLayout = ({
   children,
 }: PageLayoutProps) => {
   return (
-    <>
+    <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
       <Flex
-        h={14}
         alignItems={"center"}
         px={4}
         bg="main-bg"
@@ -32,8 +31,8 @@ const PageLayout = ({
           <ButtonPrimary onClick={onBtnClick}>{titleBtn}</ButtonPrimary>
         )}
       </Flex>
-      <Box>{children}</Box>
-    </>
+      <Box overflowY={"scroll"}>{children}</Box>
+    </Grid>
   );
 };
 

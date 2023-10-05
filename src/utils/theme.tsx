@@ -8,7 +8,8 @@ const theme = extendTheme({
     "main-text": "#505050",
     "blue-primary": "#0B8AD9",
     "nav-bg": "#DEE0FC",
-    "nav-link": "#2B3674"
+    "nav-link": "#2B3674",
+    "dark-gray": "#2E3A59",
     // "stroke": "#E0E0E0"
   },
   borders: {
