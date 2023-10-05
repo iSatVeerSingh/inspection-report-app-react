@@ -11,9 +11,9 @@ const MiniDetail = ({
 }) => {
   return (
     <Flex
-      flexDirection={vertical ? "column" : "row"}
-      alignItems={vertical ? "start" : "center"}
-      gap={vertical ? 1 : 3}
+      flexDirection={{ base: "column", sm: vertical ? "column" : "row" }}
+      alignItems={{ base: "start", sm: vertical ? "start" : "center" }}
+      gap={{ base: 1, sm: vertical ? 1 : 3 }}
     >
       <Text
         minW={"200px"}

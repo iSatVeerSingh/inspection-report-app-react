@@ -9,7 +9,7 @@ const JobDetails = () => {
       <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
         <Heading
           as="h2"
-          fontSize={"2xl"}
+          fontSize={{base: "xl", md: "2xl"}}
           fontWeight={"semibold"}
           color={"rich-black"}
         >
