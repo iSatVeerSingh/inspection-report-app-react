@@ -2,7 +2,6 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  Input,
   InputProps,
   Textarea,
 } from "@chakra-ui/react";

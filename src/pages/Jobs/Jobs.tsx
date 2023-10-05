@@ -13,7 +13,9 @@ const Jobs = () => {
     <PageLayout
       title="All Jobs"
       titleBtn="Create Custom Job"
-      onBtnClick={() => {navigate("/jobs/custom-job")}}
+      onBtnClick={() => {
+        navigate("/jobs/custom-job");
+      }}
     >
       <Grid px={1} py={1} gap={2}>
         <Flex alignItems={"center"} gap={4} justifyContent={"space-between"}>
@@ -36,9 +38,13 @@ const Jobs = () => {
         {allJobs.map((job) => (
           <Link key={job.id} to={`/jobs/${job.jobNumber}`}>
             <Box bg={"main-bg"} p={3} borderRadius={5} border={"stroke"}>
-              <Flex alignItems={"center"} justifyContent={"space-between"}>
+              <Flex
+                alignItems={{ base: "start", sm: "center" }}
+                justifyContent={"space-between"}
+                direction={{ base: "column", sm: "row" }}
+              >
                 <Text
-                  fontSize={"2xl"}
+                  fontSize={"xl"}
                   fontWeight={"medium"}
                   color={"rich-black"}
                 >
@@ -49,10 +55,11 @@ const Jobs = () => {
                 </Text>
               </Flex>
               <Flex
-                alignItems={"center"}
+                alignItems={{ base: "start", lg: "center" }}
+                direction={{ base: "column", lg: "row" }}
                 fontSize={"lg"}
                 color={"dark-gray"}
-                gap={3}
+                gap={{ base: 1, lg: 3 }}
               >
                 <Text minW={"250px"}>{job.customer}</Text>
                 <Text>{job.siteAddress}</Text>

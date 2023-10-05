@@ -1,9 +1,5 @@
 import { Avatar, Flex, Grid, Heading, VStack } from "@chakra-ui/react";
-import {
-  Link as ReactRouterLink,
-  useLocation,
-  useMatch,
-} from "react-router-dom";
+import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 import { Link as ChakraLink } from "@chakra-ui/react";
 import menuItems from "../routes/menuItems";
 

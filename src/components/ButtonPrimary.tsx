@@ -7,7 +7,13 @@ type ButtonPrimaryProps = ButtonProps & {
 
 const ButtonPrimary = ({ children, ...btnProps }: ButtonPrimaryProps) => {
   return (
-    <Button {...btnProps} bg="blue-primary" color="white" colorScheme="messenger">
+    <Button
+      {...btnProps}
+      bg="blue-primary"
+      color="white"
+      colorScheme="messenger"
+      size={{ base: "sm", md: "md" }}
+    >
       {children}
     </Button>
   );

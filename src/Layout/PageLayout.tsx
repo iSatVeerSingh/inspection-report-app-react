@@ -24,7 +24,7 @@ const PageLayout = ({
         borderBottom={"stroke"}
         justifyContent={"space-between"}
       >
-        <Heading fontWeight={"semibold"} color="rich-black">
+        <Heading fontWeight={"semibold"} fontSize={{base: "xl", sm: "2xl", md: "3xl"}} color="rich-black">
           {title}
         </Heading>
         {titleBtn && (
