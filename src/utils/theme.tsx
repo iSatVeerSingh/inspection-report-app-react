@@ -10,6 +10,7 @@ const theme = extendTheme({
     "nav-bg": "#DEE0FC",
     "nav-link": "#2B3674",
     "dark-gray": "#2E3A59",
+    "text-bg": "#F7F7F7",
     // "stroke": "#E0E0E0"
   },
   borders: {

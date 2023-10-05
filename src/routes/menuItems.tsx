@@ -9,7 +9,7 @@ import {
 
 export default [
   {
-    path: "/",
+    path: "/jobs",
     name: "Jobs",
     icon: JobIcon,
   },

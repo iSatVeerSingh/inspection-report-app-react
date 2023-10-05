@@ -31,7 +31,7 @@ const PageLayout = ({
           <ButtonPrimary onClick={onBtnClick}>{titleBtn}</ButtonPrimary>
         )}
       </Flex>
-      <Box overflowY={"scroll"}>{children}</Box>
+      <Box overflowY={"scroll"} p="3">{children}</Box>
     </Grid>
   );
 };
