@@ -1,4 +1,15 @@
-import { Box, Heading, Text, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Text,
+  Flex,
+  Modal,
+  useDisclosure,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalCloseButton,
+} from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import FormInput from "../../components/FormInput";
 import FormSelect from "../../components/FormSelect";
@@ -8,6 +19,8 @@ import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 
 const AddInspectionItems = () => {
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   return (
     <PageLayout title="Add Inspection Notes">
       <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
@@ -53,9 +66,66 @@ const AddInspectionItems = () => {
         </Flex>
         <Flex mt={10} justifyContent={"space-between"}>
           <ButtonPrimary>See Added Items</ButtonPrimary>
-          <ButtonOutline>Create Custom Item</ButtonOutline>
+          <ButtonOutline onClick={onOpen}>Create Custom Item</ButtonOutline>
         </Flex>
       </Box>
+      <Modal
+        closeOnOverlayClick={false}
+        isOpen={isOpen}
+        onClose={onClose}
+        size={{ base: "md", md: "2xl" }}
+      >
+        <ModalOverlay backdropFilter="blur(10px) hue-rotate(90deg)" />
+        <ModalContent>
+          <ModalHeader>Create Custom Item</ModalHeader>
+          <ModalCloseButton />
+          <Flex
+            as="form"
+            direction={"column"}
+            px={{ base: 4, sm: "10" }}
+            py={4}
+            gap={3}
+          >
+            <FormInput
+              type="text"
+              name="itemName"
+              label="Name"
+              placeholder="Enter item name"
+            />
+            <FormTextArea
+              label="Summary"
+              name="itemSummary"
+              placeholder="Type item summary"
+            />
+            <FileInput
+              name="itemImages"
+              label="Item Images"
+              subLabel="Max 8 Images"
+            />
+            <FormTextArea
+              label="Opening Paragraph"
+              name="openingParagraph"
+              placeholder="Type paragraph here"
+            />
+            <FileInput label="Embedded Image" name="embeddedImage" />
+            <FormTextArea
+              label="Closing paragraph"
+              name="closingParagraph"
+              placeholder="Type paragraph here"
+            />
+            <Flex
+              gap={3}
+              justifyContent={"space-between"}
+              direction={{ base: "column", sm: "row" }}
+            >
+              <ButtonPrimary type="submit" width={{ sm: "200px" }}>
+                Create Item
+              </ButtonPrimary>
+              <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
+            </Flex>
+          </Flex>
+        </ModalContent>
+      </Modal>
     </PageLayout>
   );
 };
