@@ -7,18 +7,25 @@ import {
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useMatch, useNavigate } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import { useEffect, useRef } from "react";
 
 const RootLayout = () => {
   const navigate = useNavigate();
+  const match = useMatch("/");
 
   const isLogin = true;
 
   useEffect(() => {
     if (!isLogin) {
       navigate("/login");
+      return;
+    }
+
+    if (Boolean(match)) {
+      navigate("/jobs");
+      return;
     }
   }, [isLogin]);
 

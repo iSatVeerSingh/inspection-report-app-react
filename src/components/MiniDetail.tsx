@@ -4,15 +4,23 @@ const MiniDetail = ({
   property,
   value,
   vertical,
+  noChange,
 }: {
   property: string;
   value: string;
   vertical?: boolean;
+  noChange?: boolean;
 }) => {
   return (
     <Flex
-      flexDirection={{ base: "column", sm: vertical ? "column" : "row" }}
-      alignItems={{ base: "start", sm: vertical ? "start" : "center" }}
+      flexDirection={{
+        base: noChange ? "row" : "column",
+        sm: vertical ? "column" : "row",
+      }}
+      alignItems={{
+        base: noChange ? "center" : "start",
+        sm: vertical ? "start" : "center",
+      }}
       gap={{ base: 1, sm: vertical ? 1 : 3 }}
     >
       <Text

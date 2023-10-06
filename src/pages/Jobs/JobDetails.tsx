@@ -2,14 +2,17 @@ import { Box, Grid, Heading } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
+import { useNavigate } from "react-router-dom";
 
 const JobDetails = () => {
+  const navigate = useNavigate();
+
   return (
     <PageLayout title="Job Details">
       <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
         <Heading
           as="h2"
-          fontSize={{base: "xl", md: "2xl"}}
+          fontSize={{ base: "xl", md: "2xl" }}
           fontWeight={"semibold"}
           color={"rich-black"}
         >
@@ -30,7 +33,9 @@ const JobDetails = () => {
 However, we will also need to collect all of the other contact types, such as the name for the report, builders, or supervisor which are all stored in the customer contact area."
           />
         </Grid>
-        <ButtonPrimary>Start Inspection</ButtonPrimary>
+        <ButtonPrimary onClick={() => navigate("./summary")}>
+          Start Inspection
+        </ButtonPrimary>
       </Box>
     </PageLayout>
   );
