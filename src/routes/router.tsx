@@ -11,6 +11,7 @@ import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
 import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
+import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
 
 const router = createBrowserRouter([
   {
@@ -52,6 +53,10 @@ const router = createBrowserRouter([
       {
         path: Routes.ITEM_PREVIEW,
         element: <ItemPreview />,
+      },
+      {
+        path: Routes.PREVIOUS_REPORT_ITEMS,
+        element: <AddItemPreviousReport />,
       },
     ],
   },
