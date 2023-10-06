@@ -8,6 +8,7 @@ import JobDetails from "../pages/Jobs/JobDetails";
 import CreateCustomJob from "../pages/Jobs/CreateCustomJob";
 import JobSummary from "../pages/Jobs/JobSummary";
 import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
+import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 
 const router = createBrowserRouter([
   {
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
       {
         path: Routes.ADD_INSPECTION_NOTES,
         element: <AddInspectionNotes />,
+      },
+      {
+        path: Routes.ADD_INSPECTION_ITEMS,
+        element: <AddInspectionItems />,
       },
     ],
   },

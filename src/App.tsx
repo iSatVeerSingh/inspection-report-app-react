@@ -1,4 +1,5 @@
 "use client";
+import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
 import Login from "./pages/Login";
