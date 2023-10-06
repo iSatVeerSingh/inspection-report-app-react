@@ -10,6 +10,7 @@ import JobSummary from "../pages/Jobs/JobSummary";
 import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
 import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
+import ItemPreview from "../pages/Jobs/ItemPreview";
 
 const router = createBrowserRouter([
   {
@@ -47,6 +48,10 @@ const router = createBrowserRouter([
       {
         path: Routes.ALL_ADDED_ITEMS,
         element: <AllAddedItems />,
+      },
+      {
+        path: Routes.ITEM_PREVIEW,
+        element: <ItemPreview />,
       },
     ],
   },
