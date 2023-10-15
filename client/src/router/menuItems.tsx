@@ -5,7 +5,7 @@ import {
   ReportIcon,
   SettingsIcon,
   UsersIcon,
-} from "../icons/icons";
+} from "../icons";
 
 export default [
   {

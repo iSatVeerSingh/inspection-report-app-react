@@ -1,11 +1,17 @@
 import { Avatar, Flex, Grid, Heading, VStack } from "@chakra-ui/react";
 import { Link as ReactRouterLink, useLocation } from "react-router-dom";
 import { Link as ChakraLink } from "@chakra-ui/react";
-import menuItems from "../routes/menuItems";
+import menuItems from "../router/menuItems";
+import useMobile from "../hooks/useMobile";
 
-const Sidebar = () => {
+type SidebarProps = {
+  closeMenu?: any;
+}
+
+const Sidebar = ({closeMenu}: SidebarProps) => {
   const location = useLocation();
   const pagePath = location.pathname.split("/")[1];
+  const isMobile = useMobile();
 
   return (
     <Grid templateRows={"60px auto"} bg="main-bg" borderRight={"stroke"}>
@@ -18,6 +24,7 @@ const Sidebar = () => {
       <VStack px={2} py={3}>
         {menuItems.map(({ path, name, icon: Icon }) => (
           <ChakraLink
+            onClick={closeMenu}
             key={path}
             as={ReactRouterLink}
             to={path}

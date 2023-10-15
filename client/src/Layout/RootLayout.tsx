@@ -4,35 +4,28 @@ import {
   DrawerContent,
   DrawerOverlay,
   Grid,
+  IconButton,
   useBreakpointValue,
   useDisclosure,
 } from "@chakra-ui/react";
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
 import Sidebar from "../Layout/Sidebar";
 import { useEffect, useRef } from "react";
+import { MenuIcon } from "../icons";
+import useMobile from "../hooks/useMobile";
 
 const RootLayout = () => {
   const navigate = useNavigate();
   const match = useMatch("/");
 
-  const isLogin = true;
-
   useEffect(() => {
-    if (!isLogin) {
-      navigate("/login");
-      return;
-    }
-
     if (Boolean(match)) {
       navigate("/jobs");
       return;
     }
-  }, [isLogin]);
+  }, []);
 
-  const isMobile = useBreakpointValue({
-    base: true,
-    md: false,
-  });
+  const isMobile = useMobile();
 
   const { isOpen, onOpen, onClose } = useDisclosure();
   const btnRef = useRef(null);
@@ -52,16 +45,14 @@ const RootLayout = () => {
         >
           <DrawerOverlay />
           <DrawerContent>
-            <Sidebar />
+            <Sidebar closeMenu={onClose} />
           </DrawerContent>
         </Drawer>
       ) : (
         <Sidebar />
       )}
       {isMobile && (
-        <Button ref={btnRef} onClick={onOpen}>
-          Open
-        </Button>
+        <IconButton ref={btnRef} onClick={onOpen} icon={<MenuIcon />} aria-label="Open Menu" position={"absolute"} top={"10px"} left={"10px"} zIndex={"10"} />
       )}
       <Outlet />
     </Grid>

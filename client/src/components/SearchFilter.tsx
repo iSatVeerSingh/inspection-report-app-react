@@ -4,7 +4,7 @@ import {
   InputLeftElement,
   InputProps,
 } from "@chakra-ui/react";
-import { SearchIcon } from "../icons/icons";
+import { SearchIcon } from "../icons";
 
 const SearchFilter = (props: InputProps) => {
   return (

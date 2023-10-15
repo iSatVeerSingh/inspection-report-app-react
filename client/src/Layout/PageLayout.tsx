@@ -1,6 +1,7 @@
 import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import React, { MouseEventHandler } from "react";
+import useMobile from "../hooks/useMobile";
 
 type PageLayoutProps = {
   title: string;
@@ -15,6 +16,9 @@ const PageLayout = ({
   onBtnClick,
   children,
 }: PageLayoutProps) => {
+  const isMobile = useMobile();
+
+
   return (
     <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
       <Flex
@@ -23,6 +27,7 @@ const PageLayout = ({
         bg="main-bg"
         borderBottom={"stroke"}
         justifyContent={"space-between"}
+        pl={isMobile ? "60px" : "auto"}
       >
         <Heading
           fontWeight={"semibold"}

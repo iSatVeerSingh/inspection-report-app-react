@@ -1,4 +1,4 @@
-import { createBrowserRouter } from "react-router-dom";
+import { createBrowserRouter, redirect, useMatch } from "react-router-dom";
 import Login from "../pages/Login";
 import RootLayout from "../Layout/RootLayout";
 import Jobs from "../pages/Jobs/Jobs";
@@ -12,10 +12,18 @@ import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
+import { authProvider } from "../services/auth";
 
 const router = createBrowserRouter([
   {
+    id: "root",
     path: Routes.ROOT,
+    loader() {
+      if(!authProvider.user) {
+        return redirect("/login");
+      }
+      return {user: authProvider.user}
+    },
     element: <RootLayout />,
     children: [
       {

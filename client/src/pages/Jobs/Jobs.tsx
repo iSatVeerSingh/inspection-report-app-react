@@ -17,8 +17,8 @@ import FilterInput from "../../components/FilterInput";
 import FilterSelect from "../../components/FilterSelect";
 import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
-import { FilterIcon } from "../../icons/icons";
-import useIsMobile from "../../hooks/useIsMobile";
+import { FilterIcon, LocationIcon, UserIcon } from "../../icons";
+import useIsMobile from "../../hooks/useMobile";
 
 const Jobs = () => {
   const navigate = useNavigate();
@@ -114,8 +114,12 @@ const Jobs = () => {
                 color={"dark-gray"}
                 gap={{ base: 1, lg: 3 }}
               >
-                <Text minW={"250px"}>{job.customer}</Text>
-                <Text>{job.siteAddress}</Text>
+                <Text minW={"250px"} display={"flex"} alignItems={"center"}>
+                  <UserIcon boxSize={5} /> {job.customer}
+                </Text>
+                <Text display={"flex"} alignItems={"center"}>
+                  <LocationIcon boxSize={6} /> {job.siteAddress}
+                </Text>
               </Flex>
               <Flex
                 alignItems={"center"}

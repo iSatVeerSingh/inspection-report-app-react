@@ -98,3 +98,45 @@ export const FilterIcon = (props: IconProps) => {
     </Icon>
   );
 };
+
+export const MenuIcon = (props: IconProps) => {
+  return (
+    <Icon
+    fill="none"
+    stroke="currentcolor"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    strokeWidth="2"
+    viewBox="0 0 24 24"
+    {...props}
+  >
+    <path d="M3 12h18M3 6h18M3 18h18"></path>
+  </Icon>
+  )
+}
+
+export const UserIcon = (props: IconProps) => {
+  return (
+    <Icon viewBox="0 0 32 32" {...props} fill="currentcolor" >
+      <path
+        d="M23.74 16.18a1 1 0 10-1.41 1.42A9 9 0 0125 24c0 1.22-3.51 3-9 3s-9-1.78-9-3a9 9 0 012.63-6.37 1 1 0 000-1.41 1 1 0 00-1.41 0A10.92 10.92 0 005 24c0 3.25 5.67 5 11 5s11-1.75 11-5a10.94 10.94 0 00-3.26-7.82z"
+      ></path>
+      <path
+        d="M16 17a7 7 0 10-7-7 7 7 0 007 7zm0-12a5 5 0 11-5 5 5 5 0 015-5z"
+      ></path>
+  </Icon>
+  )
+}
+
+export const LocationIcon = (props: IconProps) => {
+  return (
+    <Icon viewBox="0 0 64 64" fill="currentcolor" {...props} >
+    <path
+      d="M32 55.7l-.9-1.1c-.6-.8-15.9-18.7-15.9-29.4 0-9.3 7.6-16.8 16.8-16.8S48.8 16 48.8 25.2c0 10.7-15.3 28.7-15.9 29.4l-.9 1.1zm0-45c-8 0-14.4 6.5-14.4 14.4 0 8.4 11.1 22.7 14.4 26.8 3.3-4.1 14.4-18.3 14.4-26.8 0-7.9-6.4-14.4-14.4-14.4z"
+    ></path>
+    <path
+      d="M32 31.6c-3.5 0-6.4-2.9-6.4-6.4s2.9-6.4 6.4-6.4 6.4 2.9 6.4 6.4-2.9 6.4-6.4 6.4zm0-10.4c-2.2 0-4 1.8-4 4s1.8 4 4 4 4-1.8 4-4-1.8-4-4-4z"
+    ></path>
+  </Icon>
+  )
+}

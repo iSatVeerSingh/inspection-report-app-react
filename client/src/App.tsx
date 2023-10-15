@@ -2,8 +2,7 @@
 import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
-import Login from "./pages/Login";
-import router from "./routes/router";
+import router from "./router";
 
 const App = () => {
   return <RouterProvider router={router} />;
