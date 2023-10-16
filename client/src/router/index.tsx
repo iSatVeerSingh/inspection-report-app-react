@@ -1,6 +1,6 @@
-import { createBrowserRouter, redirect, useMatch } from "react-router-dom";
+import { createBrowserRouter, redirect } from "react-router-dom";
 import Login from "../pages/Login";
-import RootLayout from "../Layout/RootLayout";
+// import RootLayout from "../Layout/RootLayout";
 import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
 import Reports from "../pages/Reports";
@@ -13,6 +13,8 @@ import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
 import { getLoginStatus } from "../services/auth";
+import React from "react";
+const RootLayout = React.lazy(() => import("../Layout/RootLayout"));
 
 const router = createBrowserRouter([
   {
@@ -20,12 +22,16 @@ const router = createBrowserRouter([
     path: Routes.ROOT,
     loader() {
       const isLogin = getLoginStatus();
-      if(!isLogin) {
+      if (!isLogin) {
         return redirect("/login");
       }
-      return null
+      return null;
     },
-    element: <RootLayout />,
+    element: (
+      <React.Suspense>
+        <RootLayout />
+      </React.Suspense>
+    ),
     children: [
       {
         path: Routes.JOBS,
