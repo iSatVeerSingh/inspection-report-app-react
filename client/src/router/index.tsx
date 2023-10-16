@@ -16,6 +16,14 @@ import { getLoginStatus } from "../services/auth";
 import React from "react";
 const RootLayout = React.lazy(() => import("../Layout/RootLayout"));
 
+const LazyPage = (Component: React.LazyExoticComponent<() => JSX.Element>) => {
+  return (
+    <React.Suspense>
+      <Component />
+    </React.Suspense>
+  );
+};
+
 const router = createBrowserRouter([
   {
     id: "root",
@@ -27,11 +35,7 @@ const router = createBrowserRouter([
       }
       return null;
     },
-    element: (
-      <React.Suspense>
-        <RootLayout />
-      </React.Suspense>
-    ),
+    element: LazyPage(RootLayout),
     children: [
       {
         path: Routes.JOBS,
