@@ -12,17 +12,18 @@ import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
-import { authProvider } from "../services/auth";
+import { getLoginStatus } from "../services/auth";
 
 const router = createBrowserRouter([
   {
     id: "root",
     path: Routes.ROOT,
     loader() {
-      if(!authProvider.user) {
+      const isLogin = getLoginStatus();
+      if(!isLogin) {
         return redirect("/login");
       }
-      return {user: authProvider.user}
+      return null
     },
     element: <RootLayout />,
     children: [

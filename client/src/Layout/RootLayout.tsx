@@ -15,15 +15,15 @@ import { MenuIcon } from "../icons";
 import useMobile from "../hooks/useMobile";
 
 const RootLayout = () => {
-  const navigate = useNavigate();
-  const match = useMatch("/");
+  // const navigate = useNavigate();
+  // const match = useMatch("/");
 
-  useEffect(() => {
-    if (Boolean(match)) {
-      navigate("/jobs");
-      return;
-    }
-  }, []);
+  // useEffect(() => {
+  //   if (Boolean(match)) {
+  //     navigate("/jobs");
+  //     return;
+  //   }
+  // }, []);
 
   const isMobile = useMobile();
 
