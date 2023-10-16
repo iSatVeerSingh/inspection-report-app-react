@@ -11,7 +11,7 @@ import Sidebar from "../Layout/Sidebar";
 import { useEffect, useRef } from "react";
 import { MenuIcon } from "../icons";
 import useMobile from "../hooks/useMobile";
-import "../workers/workerInit";
+// import "../workers/workerInit";
 
 const RootLayout = () => {
   console.log("hello")
