@@ -3,6 +3,7 @@ import { FormEventHandler } from "react";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
+import { loginUser } from "../services/auth";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -14,12 +15,13 @@ const Login = () => {
     user.email = formData.get("email")?.toString().trim() || "";
     user.password = formData.get("password")?.toString().trim() || "";
 
-    try {
-      localStorage.setItem("user", JSON.stringify(user))
-      navigate("/jobs");
-    } catch (err) {
-      console.log(err)
+    const login = loginUser(user);
+    if(!login) {
+      return
     }
+
+    navigate("/jobs")
+    
 
   };
 
