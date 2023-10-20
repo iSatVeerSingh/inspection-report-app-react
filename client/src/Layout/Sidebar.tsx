@@ -14,7 +14,7 @@ const Sidebar = ({closeMenu}: SidebarProps) => {
   return (
     <Grid templateRows={"60px auto"} bg="main-bg" borderRight={"stroke"}>
       <Flex alignItems="center" gap={2} borderBottom={"stroke"} px={4} py={3}>
-        <Avatar size="sm" src="/vite.svg" border="stroke" />
+        <Avatar size="sm" src="/logo.png" border="stroke" />
         <Heading as="h2" fontSize="2xl" fontWeight="medium">
           Michelle
         </Heading>

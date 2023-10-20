@@ -1,6 +1,6 @@
 import Dexie, { Table } from 'dexie';
 
-export class InspectionDB extends Dexie {
+export class InspectionReport extends Dexie {
   // 'friends' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
   libraryItems!: Table<any>; 
@@ -13,4 +13,4 @@ export class InspectionDB extends Dexie {
   }
 }
 
-export const db = new InspectionDB();
+export const Db = new InspectionReport();

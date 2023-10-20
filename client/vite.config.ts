@@ -45,4 +45,12 @@ const pwaConfig: Partial<VitePWAOptions> = {
 // https://vitejs.dev/config/
 export default defineConfig({
   plugins: [react(), VitePWA(pwaConfig)],
+  worker: {
+    format: "es",
+    rollupOptions: {
+      output: {
+        file: "webworker.js",
+      }
+    }
+  }
 });

@@ -5,24 +5,12 @@ import {
 } from "workbox-precaching";
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
-import { db } from "./services/clientdb/db";
 
 declare let self: ServiceWorkerGlobalScope;
 
 const getItemsData = async () => {
   try {
-
-    const response = await fetch("./all-library-items.json");
-    if (response.ok) {
-      const allLibraryItems = await response.json();
-      for (let i = 0; i < allLibraryItems.length; i++) {
-        const item = allLibraryItems[i];
-        item.id = Date.now().toString(36);
-
-        const res = await db.libraryItems.add(item);
-        console.log(res);
-      }
-    }
+    console.log("hello")
   } catch (err) {
     console.log(err);
     return null;
