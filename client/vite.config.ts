@@ -5,6 +5,7 @@ import { VitePWA, VitePWAOptions } from "vite-plugin-pwa";
 const pwaConfig: Partial<VitePWAOptions> = {
   mode: "development",
   base: "/",
+  includeAssets: ["/*.png"],
   manifest: {
     name: "Inspection Report App",
     short_name: "Inspection App",
