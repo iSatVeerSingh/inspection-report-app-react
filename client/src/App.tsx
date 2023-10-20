@@ -3,11 +3,12 @@ import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
+import "./workerInit";
 
 const App = () => {
   if (typeof navigator.storage !== undefined) {
     navigator.storage.persisted().then((isPer) => {
-      console.log({isPer})
+      console.log({ isPer });
       if (!isPer) {
         navigator.storage.persist().then((isAllow) => console.log(isAllow));
       } else {
