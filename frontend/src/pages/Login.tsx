@@ -10,9 +10,9 @@ import { isValidateLogin } from "../utils/userValidation";
 const Login = () => {
   const navigate = useNavigate();
 
-  const [formErrors, setFormErrors] = useState(null);
+  const [formErrors, setFormErrors] = useState<Partial<UserLogin> | null>(null);
 
-  const handleLogin: FormEventHandler<HTMLFormElement> = (e) => {
+  const handleLogin: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
     const formData = new FormData(e.target as HTMLFormElement);
     const user: UserLogin = {
@@ -20,12 +20,23 @@ const Login = () => {
       password: formData.get("password")?.toString().trim() || "",
     };
 
-    const isInvalid = isValidateLogin(user)
-    if(!isInvalid) {
+    const isInvalid = isValidateLogin(user);
+    if (isInvalid) {
       setFormErrors(isInvalid);
+      return;
+    }
+    if (formErrors) {
+      setFormErrors(null);
     }
 
-    navigate("/jobs");
+    const loggedIn = await loginUser(user);
+    if(loggedIn) {
+      navigate("/jobs");
+      return;
+    }
+
+    console.log("something went wrong");
+
   };
 
   return (
@@ -51,8 +62,18 @@ const Login = () => {
           spacing="4"
           onSubmit={handleLogin as FormEventHandler}
         >
-          <FormInput type="email" name="email" placeholder="Email" />
-          <FormInput type="password" name="password" placeholder="Password" />
+          <FormInput
+            type="text"
+            name="email"
+            placeholder="Email"
+            inputError={formErrors?.email}
+          />
+          <FormInput
+            type="password"
+            name="password"
+            placeholder="Password"
+            inputError={formErrors?.password}
+          />
           <ButtonPrimary type="submit" w="full">
             Login Now
           </ButtonPrimary>

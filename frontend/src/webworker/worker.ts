@@ -1,17 +1,17 @@
 /// <reference lib="webworker" />
-import { Db } from "../services/clientdb/db";
+import { Db } from "../services/clientdb";
 
-if (typeof navigator.storage !== undefined) {
-  navigator.storage.persisted().then((isPer) => {
-    console.log("form web worker message");
-    console.log({ isPer });
-    if (!isPer) {
-      navigator.storage.persist().then((isAllow) => console.log(isAllow));
-    } else {
-      console.log("already allower, message from web worker");
-    }
-  });
-}
+// if (typeof navigator.storage !== undefined) {
+//   navigator.storage.persisted().then((isPer) => {
+//     console.log("form web worker message");
+//     console.log({ isPer });
+//     if (!isPer) {
+//       navigator.storage.persist().then((isAllow) => console.log(isAllow));
+//     } else {
+//       console.log("already allower, message from web worker");
+//     }
+//   });
+// }
 
 self.addEventListener("message", async (e) => {
   if (e.data.type === "init") {
