@@ -14,7 +14,7 @@ const Init = () => {
   const statusRef = useRef<HTMLDivElement | null>(null);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [error, setError] = useState(null);
+  const [error, setError] = useState(false);
 
   const handleInstall: MouseEventHandler<HTMLButtonElement> = (e) => {
     e.preventDefault();
@@ -46,6 +46,7 @@ const Init = () => {
         if (type === "error") {
           setInstalled(false);
           setInstalling(false);
+          setError(true);
         }
       }
     );
