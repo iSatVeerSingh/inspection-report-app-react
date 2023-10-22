@@ -77,6 +77,10 @@ const router = createBrowserRouter([
   {
     path: "/init",
     async loader() {
+      const isLogin = getLoginStatus();
+      if (!isLogin) {
+        return redirect("/login");
+      }
       const isExist = await isInitDone();
       if (isExist) {
         return redirect("/jobs");

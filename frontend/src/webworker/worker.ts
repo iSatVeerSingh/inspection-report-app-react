@@ -66,7 +66,7 @@ const setupDatabase = async (allLibraryItems: any[]) => {
       await Db.libraryItems.add(item);
       const progress = Math.floor((i / allLibraryItems.length) * 100);
       if (progress !== sent) {
-        self.postMessage({ type: "", progress });
+        self.postMessage({ type: "databaseSetup", progress });
         sent = progress;
       }
     }
