@@ -6,9 +6,9 @@ import theme from "./utils/theme";
 import "@fontsource/poppins";
 
 ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <ChakraBaseProvider theme={theme}>
       <App />
     </ChakraBaseProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );

@@ -1,3 +1,4 @@
+import Dexie from "dexie";
 import { UserDB } from "../clientdb";
 
 export const getLoginStatus = () => {
@@ -21,6 +22,16 @@ export const loginUser = async (user: any) => {
     });
 
     return savedUser;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const isInitDone = async () => {
+  try {
+    const isExists = await Dexie.exists("inspection-db");
+    return isExists;
   } catch (err) {
     console.log(err);
     return null;

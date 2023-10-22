@@ -12,7 +12,8 @@ import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
-import { getLoginStatus } from "../services/auth";
+import { getLoginStatus, isInitDone } from "../services/auth";
+import Init from "../pages/Init";
 
 const router = createBrowserRouter([
   {
@@ -72,6 +73,17 @@ const router = createBrowserRouter([
   {
     path: "/login",
     element: <Login />,
+  },
+  {
+    path: "/init",
+    async loader() {
+      const isExist = await isInitDone();
+      if (isExist) {
+        return redirect("/jobs");
+      }
+      return null;
+    },
+    element: <Init />,
   },
 ]);
 

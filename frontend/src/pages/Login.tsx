@@ -31,7 +31,7 @@ const Login = () => {
 
     const loggedIn = await loginUser(user);
     if(loggedIn) {
-      navigate("/jobs");
+      navigate("/init");
       return;
     }
 
