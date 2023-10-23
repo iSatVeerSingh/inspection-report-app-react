@@ -4,11 +4,15 @@ export class InspectionReport extends Dexie {
   // 'friends' is added by dexie when declaring the stores()
   // We just tell the typing system this is the case
   libraryItems!: Table<any>;
+  inspectionReports!: Table<any>;
+  jobs!: Table<any>;
 
   constructor() {
     super("inspection-db");
     this.version(1).stores({
       libraryItems: "++id, category, itemName", // Primary key and indexed props
+      inspectionReports: "++id, category, jobNumber, date, status",
+      jobs: "++jobNumber, category",
     });
   }
 }
@@ -31,15 +35,3 @@ export class IRAuser extends Dexie {
 }
 
 export const UserDB = new IRAuser();
-
-export class Jobs extends Dexie {
-  jobs!: Table<any>;
-  constructor() {
-    super("jobs");
-    this.version(1).stores({
-      jobs: "++jobNumber"
-    })
-  }
-}
-
-export const JobsDB = new Jobs();

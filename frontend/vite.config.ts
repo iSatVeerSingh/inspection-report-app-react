@@ -36,7 +36,7 @@ const pwaConfig: Partial<VitePWAOptions> = {
     type: "module",
     navigateFallback: "index.html",
   },
-  srcDir: "src",
+  srcDir: "src/worker",
   filename: "sw.ts",
   strategies: "injectManifest",
   registerType: "autoUpdate",

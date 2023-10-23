@@ -12,7 +12,7 @@ import {
   DrawerHeader,
 } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-// import allJobs from "../../../demo/jobs";
+import allJobs from "../../../demo/jobs";
 import FilterInput from "../../components/FilterInput";
 import FilterSelect from "../../components/FilterSelect";
 import SearchFilter from "../../components/SearchFilter";
@@ -20,7 +20,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { FilterIcon, LocationIcon, UserIcon } from "../../icons";
 import useIsMobile from "../../hooks/useMobile";
 import { useEffect, useState } from "react";
-import { JobsDB } from "../../services/clientdb";
 import { Job } from "../../utils/types";
 import Loading from "../../components/Loading";
 
@@ -30,16 +29,7 @@ const Jobs = () => {
   const isMobile = useIsMobile();
 
   const [allJobs, setAllJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  useEffect(() => {
-    const getAllJobs = async () => {
-      const jobs = await JobsDB.jobs.toArray();
-      setAllJobs(jobs);
-      setLoading(false);
-    };
-
-    getAllJobs();
-  }, []);
+  const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <PageLayout
