@@ -10,7 +10,8 @@ const pwaConfig: Partial<VitePWAOptions> = {
     name: "Inspection Report App",
     short_name: "Inspection App",
     description: "Inspection Report App for Correct Inspections, Australia",
-    theme_color: "#ffffff",
+    theme_color: "#000000",
+    background_color: "#000000",
     icons: [
       {
         src: "logo512.png",

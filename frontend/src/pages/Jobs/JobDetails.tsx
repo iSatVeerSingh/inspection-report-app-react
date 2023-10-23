@@ -2,41 +2,65 @@ import { Box, Grid, Heading } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Job } from "../../utils/types";
+import { JobsDB } from "../../services/clientdb";
+import Loading from "../../components/Loading";
 
 const JobDetails = () => {
   const navigate = useNavigate();
+  const params = useParams();
+
+  const [job, setJob] = useState<Job | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const getJobData = async () => {
+      const jobData = await JobsDB.jobs.get(Number(params.jobNumber));
+
+      setJob(jobData);
+      setLoading(false);
+    };
+    getJobData();
+  }, []);
 
   return (
     <PageLayout title="Job Details">
-      <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
-        <Heading
-          as="h2"
-          fontSize={{ base: "xl", md: "2xl" }}
-          fontWeight={"semibold"}
-          color={"rich-black"}
-        >
-          #23497 - Frame Inspection
-        </Heading>
-        <Grid gap={1} mt={3} mb={10}>
-          <MiniDetail property="Category" value="Frame Inspection" />
-          <MiniDetail property="Customer" value="Frame Inspection" />
-          <MiniDetail property="Assigned Inspector" value="Frame Inspection" />
-          <MiniDetail property="Date" value="Frame Inspection" />
-          <MiniDetail property="Time" value="Frame Inspection" />
-          <MiniDetail property="Site Address" value="Frame Inspection" />
-          <MiniDetail property="Status" value="Frame Inspection" />
-          <MiniDetail
-            vertical
-            property="Description"
-            value="The main contact for a customer in SM8 is the “Billing Contact”, which is where we will get the Email, phone and first name variables above.
-However, we will also need to collect all of the other contact types, such as the name for the report, builders, or supervisor which are all stored in the customer contact area."
-          />
-        </Grid>
-        <ButtonPrimary onClick={() => navigate("./summary")}>
-          Start Inspection
-        </ButtonPrimary>
-      </Box>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
+          <Heading
+            as="h2"
+            fontSize={{ base: "xl", md: "2xl" }}
+            fontWeight={"semibold"}
+            color={"rich-black"}
+          >
+            &#35;{job?.jobNumber} - {job?.category}
+          </Heading>
+          <Grid gap={1} mt={3} mb={10}>
+            <MiniDetail property="Category" value={job?.category!} />
+            <MiniDetail property="Customer" value={job?.customer!} />
+            <MiniDetail
+              property="Assigned Inspector"
+              value={job?.inspector!}
+            />
+            <MiniDetail property="Date" value={job?.date!} />
+            <MiniDetail property="Time" value={job?.time!} />
+            <MiniDetail property="Site Address" value={job?.siteAddress!} />
+            <MiniDetail property="Status" value={job?.status!} />
+            <MiniDetail
+              vertical
+              property="Description"
+              value={job?.description!}
+            />
+          </Grid>
+          <ButtonPrimary onClick={() => navigate("./summary")}>
+            Start Inspection
+          </ButtonPrimary>
+        </Box>
+      )}
     </PageLayout>
   );
 };

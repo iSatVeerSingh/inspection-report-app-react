@@ -125,7 +125,8 @@ const setUpJobs = async (allJobs: any[]) => {
     let sent = -1;
     for (let i = 0; i < allJobs.length; i++) {
       const job = allJobs[i];
-      job.id = Date.now().toString(36);
+      // job.id = Date.now().toString(36);
+      job.jobNumber = 23450 + i;
 
       await JobsDB.jobs.add(job);
       const progress = Math.floor((i / allJobs.length) * 100);

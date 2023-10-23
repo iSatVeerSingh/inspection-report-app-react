@@ -37,7 +37,7 @@ export class Jobs extends Dexie {
   constructor() {
     super("jobs");
     this.version(1).stores({
-      jobs: "++id"
+      jobs: "++jobNumber"
     })
   }
 }
