@@ -31,3 +31,15 @@ export class IRAuser extends Dexie {
 }
 
 export const UserDB = new IRAuser();
+
+export class Jobs extends Dexie {
+  jobs!: Table<any>;
+  constructor() {
+    super("jobs");
+    this.version(1).stores({
+      jobs: "++id"
+    })
+  }
+}
+
+export const JobsDB = new Jobs();

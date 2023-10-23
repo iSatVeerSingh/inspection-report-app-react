@@ -26,21 +26,34 @@ const Init = () => {
     MainWB.addEventListener(
       "message",
       ({ data: { type, progress, success } }) => {
-        if (type === "installingItems" && progress !== undefined && !success) {
+        if (progress !== undefined && !success) {
           progressRef.current!.style.width = `${progress}%`;
+        }
+
+        if (type === "installingItems" && progress === 0) {
+          statusRef.current!.textContent = "Fetching library items...";
           return;
         }
 
-        if (type === "databaseSetup" && !success && progress !== undefined) {
-          if (progress === 0) {
-            statusRef.current!.textContent = "Setting up database...";
-          }
-          progressRef.current!.style.width = `${progress}%`;
+        if (type === "databaseSetup" && progress === 0) {
+          statusRef.current!.textContent = "Setting up database...";
+          return;
+        }
+
+        if (type === "installingJobs" && progress === 0) {
+          statusRef.current!.textContent = "Setting up database...";
+          return;
+        }
+
+        if (type === "jobsDbSetup" && progress === 0) {
+          statusRef.current!.textContent = "Setting up initial jobs...";
+          return;
         }
 
         if (type === "installed" && success) {
           setInstalling(false);
           setInstalled(true);
+          return;
         }
 
         if (type === "error") {
