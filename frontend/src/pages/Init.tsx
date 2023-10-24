@@ -56,6 +56,7 @@ const Init = () => {
           await Db.libraryItems.add(item);
         } else {
           item.jobNumber = 23450 + i;
+          item.status = "quote"
           await Db.jobs.add(item);
         }
         const progress = (i / dataArr.length) * 100;

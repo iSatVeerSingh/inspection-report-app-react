@@ -3,8 +3,12 @@ import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
+import { useParams } from "react-router-dom";
 
 const JobSummary = () => {
+  const params = useParams();
+  console.log(params)
+
   return (
     <PageLayout title="Job Summary">
       <Box p="3" bg="main-bg" border="stroke" borderRadius={5}>

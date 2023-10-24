@@ -14,9 +14,6 @@ import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
 
 const RootLayout = () => {
-
-
-  console.log("hello");
   const navigate = useNavigate();
   const match = useMatch("/");
 

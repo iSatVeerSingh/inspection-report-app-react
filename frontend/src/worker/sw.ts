@@ -5,6 +5,8 @@ import {
 } from "workbox-precaching";
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
+import { getAllJobs, getJobByJobNumber } from "./jobs";
+import { startNewInspection } from "./inspection";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -13,38 +15,40 @@ precacheAndRoute(self.__WB_MANIFEST);
 // clean old assets
 cleanupOutdatedCaches();
 
-// Jobs Route
-// self.addEventListener("install", e=> {
-//   console.log(e)
-//   postMessage("hello");
-// })
+// Jobs routes
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs",
+  async ({ url }) => {
+    if (url.searchParams.size === 0) {
+      const allJobs = await getAllJobs();
+      if (allJobs) {
+        return new Response(JSON.stringify(allJobs));
+      }
 
-// self.addEventListener("message", (e)=> {
-//   console.log(e.data)
-//   self.clients.matchAll({
-//     includeUncontrolled: true,
-//     type: "window",
-//   }).then(clients => console.log(clients))
-// })
+      return new Response(JSON.stringify({ message: "No Jobs Found" }));
+    }
+    const jobNumber = url.searchParams.get("jobNumber");
+    if (jobNumber && jobNumber !== "") {
+      const job = await getJobByJobNumber(Number(jobNumber));
+      if (job) {
+        return new Response(JSON.stringify(job));
+      }
+      return new Response(
+        JSON.stringify({ message: "Job not found for that job number" })
+      );
+    }
+    return new Response("some thing went wrong");
+  }
+);
 
 registerRoute(
-  ({ url }) => {
-    return url.pathname === "/hello";
+  ({ url }) => url.pathname === "/client/inspection/new",
+  async ({ request }) => {
+    const job = await request.json();
+    const report = await startNewInspection(job);
+    return new Response(JSON.stringify({ message: report }));
   },
-  async () => {
-    self.clients
-      .matchAll({
-        includeUncontrolled: true,
-        type: "window",
-      })
-      .then((clients) => {
-        clients[0].postMessage({
-          type: "REPLY_COUNT",
-          count: "hello satu form worker"
-        });
-      });
-    return new Response(`hello`);
-  }
+  "POST"
 );
 
 let allowlist: undefined | RegExp[];
