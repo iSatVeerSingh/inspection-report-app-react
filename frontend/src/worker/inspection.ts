@@ -15,6 +15,7 @@ export const startNewInspection = async (jobData: Job) => {
       const job = await Db.jobs.get(jobData.jobNumber);
       if (job) {
         job.status = "inprogress";
+        job.inspectionId = reportId;
         const success = await Db.jobs.put(job, job.jobNumber);
         if (success) {
           return reportId;
@@ -22,6 +23,19 @@ export const startNewInspection = async (jobData: Job) => {
       }
     }
     return null;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const getInspectionById = async (id: string) => {
+  try {
+    const inspection = await Db.inspectionReports.get(id);
+    if (!inspection) {
+      return null;
+    }
+    return inspection;
   } catch (err) {
     console.log(err);
     return null;

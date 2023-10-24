@@ -6,7 +6,7 @@ import {
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { getAllJobs, getJobByJobNumber } from "./jobs";
-import { startNewInspection } from "./inspection";
+import { getInspectionById, startNewInspection } from "./inspection";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -49,6 +49,21 @@ registerRoute(
     return new Response(JSON.stringify({ message: report }));
   },
   "POST"
+);
+
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection",
+  async ({ url }) => {
+    const id = url.searchParams.get("id");
+    if (id) {
+      const inspection = await getInspectionById(id);
+      if (inspection) {
+        return new Response(JSON.stringify(inspection));
+      }
+    }
+    return new Response(JSON.stringify({ message: "Report not found" }));
+  },
+  "GET"
 );
 
 let allowlist: undefined | RegExp[];

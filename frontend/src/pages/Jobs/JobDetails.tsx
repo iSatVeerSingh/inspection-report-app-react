@@ -13,7 +13,7 @@ const JobDetails = () => {
   const navigate = useNavigate();
   const params = useParams();
 
-  const [job, setJob] = useState<Job | null>(null);
+  const [job, setJob] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
 
   useEffect(() => {
@@ -40,10 +40,14 @@ const JobDetails = () => {
     });
     if (response.ok) {
       const data = await response.json();
-      if(data) {
-        navigate("./summary")
+      if (data) {
+        navigate("./summary");
       }
     }
+  };
+
+  const continueInspection = () => {
+    navigate(`./${job.inspectionId}`);
   };
 
   return (
@@ -75,7 +79,11 @@ const JobDetails = () => {
             />
           </Grid>
           <ButtonPrimary
-            onClick={job?.status !== "inprogress" ? startInspection : undefined}
+            onClick={
+              job?.status !== "inprogress"
+                ? startInspection
+                : continueInspection
+            }
           >
             Start Inspection
           </ButtonPrimary>
