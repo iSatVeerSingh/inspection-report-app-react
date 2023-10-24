@@ -19,17 +19,17 @@ import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
 import { FilterIcon, LocationIcon, UserIcon } from "../../icons";
 import useIsMobile from "../../hooks/useMobile";
-import { useEffect, useState } from "react";
-import { Job } from "../../utils/types";
-import Loading from "../../components/Loading";
+// import { useEffect, useState } from "react";
+// import { Job } from "../../utils/types";
+// import Loading from "../../components/Loading";
 
 const Jobs = () => {
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const isMobile = useIsMobile();
 
-  const [allJobs, setAllJobs] = useState<Job[]>([]);
-  const [loading, setLoading] = useState<boolean>(false);
+  // const [allJobs, setAllJobs] = useState<Job[]>([]);
+  // const [loading, setLoading] = useState<boolean>(false);
 
   return (
     <PageLayout
@@ -39,9 +39,9 @@ const Jobs = () => {
         navigate("/jobs/custom-job");
       }}
     >
-      {loading ? (
+      {/* {loading ? (
         <Loading />
-      ) : (
+      ) : ( */}
         allJobs.length !== 0 && (
           <Grid px={1} py={1} gap={2}>
             {isMobile ? (
@@ -167,7 +167,7 @@ const Jobs = () => {
             ))}
           </Grid>
         )
-      )}
+      {/* )} */}
     </PageLayout>
   );
 };

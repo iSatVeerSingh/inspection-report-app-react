@@ -2,18 +2,19 @@ import { Box, Grid, Heading } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import { useNavigate, useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Job } from "../../utils/types";
-import { Db } from "../../services/clientdb";
-import Loading from "../../components/Loading";
+// import { useNavigate, useParams } from "react-router-dom";
+// import { useState, useEffect } from "react";
+// import { Job } from "../../utils/types";
+// import { Db } from "../../services/clientdb";
+// import Loading from "../../components/Loading";
 
 const JobDetails = () => {
-  const navigate = useNavigate();
-  const params = useParams();
+  const job: any = {}
+  // const navigate = useNavigate();
+  // const params = useParams();
 
-  const [job, setJob] = useState<Job | null>(null);
-  const [loading, setLoading] = useState<boolean>(true);
+  // const [job, setJob] = useState<Job | null>(null);
+  // const [loading, setLoading] = useState<boolean>(true);
 
   // useEffect(() => {
   //   const getJobData = async () => {
@@ -25,19 +26,19 @@ const JobDetails = () => {
   //   getJobData();
   // }, []);
 
-  const startInspection = async () => {
-    const report = { ...job };
-    report.id = Date.now().toString(36);
-    report.status = "inProgress";
-    const reportId = await Db.inspectionReports.add(report);
-    console.log(reportId);
-  };
+  // const startInspection = async () => {
+  //   const report = { ...job };
+  //   report.id = Date.now().toString(36);
+  //   report.status = "inProgress";
+  //   const reportId = await Db.inspectionReports.add(report);
+  //   console.log(reportId);
+  // };
 
   return (
     <PageLayout title="Job Details">
-      {loading ? (
+      {/* {loading ? (
         <Loading />
-      ) : (
+      ) : ( */}
         <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
           <Heading
             as="h2"
@@ -61,11 +62,11 @@ const JobDetails = () => {
               value={job?.description!}
             />
           </Grid>
-          <ButtonPrimary onClick={startInspection}>
+          <ButtonPrimary>
             Start Inspection
           </ButtonPrimary>
         </Box>
-      )}
+      {/* )} */}
     </PageLayout>
   );
 };

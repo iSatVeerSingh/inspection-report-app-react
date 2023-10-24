@@ -14,7 +14,38 @@ precacheAndRoute(self.__WB_MANIFEST);
 cleanupOutdatedCaches();
 
 // Jobs Route
+// self.addEventListener("install", e=> {
+//   console.log(e)
+//   postMessage("hello");
+// })
 
+// self.addEventListener("message", (e)=> {
+//   console.log(e.data)
+//   self.clients.matchAll({
+//     includeUncontrolled: true,
+//     type: "window",
+//   }).then(clients => console.log(clients))
+// })
+
+registerRoute(
+  ({ url }) => {
+    return url.pathname === "/hello";
+  },
+  async () => {
+    self.clients
+      .matchAll({
+        includeUncontrolled: true,
+        type: "window",
+      })
+      .then((clients) => {
+        clients[0].postMessage({
+          type: "REPLY_COUNT",
+          count: "hello satu form worker"
+        });
+      });
+    return new Response(`hello`);
+  }
+);
 
 let allowlist: undefined | RegExp[];
 if (import.meta.env.DEV) allowlist = [/^\/$/];
