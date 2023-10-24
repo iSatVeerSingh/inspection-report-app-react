@@ -41,3 +41,31 @@ export const getInspectionById = async (id: string) => {
     return null;
   }
 };
+
+export const addInspectionNotes = async (notes: any[], id: string) => {
+  try {
+    const insId = await Db.inspectionReports.update(id, {
+      inspectionNotes: notes,
+    });
+    if (!insId) {
+      return null;
+    }
+    return insId;
+
+    // const inspection = await getInspectionById(id);
+    // if (!inspection) {
+    //   return null;
+    // }
+
+    // inspection.inspectionNotes = notes;
+
+    // const insId = await Db.inspectionReports.put(inspection, id);
+    // if (!insId) {
+    //   return null;
+    // }
+    // return true;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};

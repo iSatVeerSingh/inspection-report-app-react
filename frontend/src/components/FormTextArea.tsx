@@ -5,6 +5,7 @@ import {
   InputProps,
   Textarea,
 } from "@chakra-ui/react";
+import React, { Ref } from "react";
 
 type FormInputProps = InputProps & {
   label?: string;
@@ -12,13 +13,10 @@ type FormInputProps = InputProps & {
   required?: boolean;
 };
 
-const FormTextArea = ({
-  label,
-  name,
-  placeholder,
-  inputError,
-  required,
-}: FormInputProps) => {
+const FormTextArea = (
+  { label, name, placeholder, inputError, required }: FormInputProps,
+  ref: Ref<HTMLTextAreaElement>
+) => {
   return (
     <FormControl isInvalid={inputError !== undefined} isRequired={required}>
       {label && (
@@ -31,10 +29,11 @@ const FormTextArea = ({
         placeholder={placeholder}
         required={required}
         borderColor="blue-primary"
+        ref={ref}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </FormControl>
   );
 };
 
-export default FormTextArea;
+export default React.forwardRef(FormTextArea);

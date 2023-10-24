@@ -3,12 +3,13 @@ import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 
 const JobSummary = () => {
   const params = useParams();
+  const navigate = useNavigate();
 
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
@@ -64,7 +65,7 @@ const JobSummary = () => {
                 mt={2}
                 direction={{ base: "column", sm: "row" }}
               >
-                <ButtonPrimary width={{ base: "full", sm: "150px" }}>
+                <ButtonPrimary width={{ base: "full", sm: "150px" }} onClick={()=> navigate("./add-notes")}>
                   Add Notes
                 </ButtonPrimary>
                 <ButtonOutline>View / Edit / Delete Notes</ButtonOutline>
