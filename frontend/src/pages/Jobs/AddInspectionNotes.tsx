@@ -71,6 +71,7 @@ const AddInspectionNotes = () => {
     if (response.ok) {
       const insId = await response.json();
       console.log(insId);
+      navigate(-1);
     }
   };
 

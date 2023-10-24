@@ -65,7 +65,10 @@ const JobSummary = () => {
                 mt={2}
                 direction={{ base: "column", sm: "row" }}
               >
-                <ButtonPrimary width={{ base: "full", sm: "150px" }} onClick={()=> navigate("./add-notes")}>
+                <ButtonPrimary
+                  width={{ base: "full", sm: "150px" }}
+                  onClick={() => navigate("./add-notes")}
+                >
                   Add Notes
                 </ButtonPrimary>
                 <ButtonOutline>View / Edit / Delete Notes</ButtonOutline>
@@ -97,7 +100,10 @@ const JobSummary = () => {
                 mt={2}
                 direction={{ base: "column", sm: "row" }}
               >
-                <ButtonPrimary w={{ base: "full", sm: "200px" }}>
+                <ButtonPrimary
+                  w={{ base: "full", sm: "200px" }}
+                  onClick={() => navigate("./add-items")}
+                >
                   Add New Items
                 </ButtonPrimary>
                 <ButtonOutline>View Added Items</ButtonOutline>
