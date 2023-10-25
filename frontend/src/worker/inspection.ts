@@ -82,7 +82,7 @@ export const addInspectionItem = async (itemData: FormData, id: string) => {
   return insId;
 };
 
-const getResizedBase64Images = async (itemImages: File[]) => {
+export const getResizedBase64Images = async (itemImages: File[]) => {
   const imagePromises = [];
 
   for (let i = 0; i < itemImages.length; i++) {

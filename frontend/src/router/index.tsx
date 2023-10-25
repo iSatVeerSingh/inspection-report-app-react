@@ -14,6 +14,7 @@ import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
 import { getLoginStatus, isInitDone } from "../services/auth";
 import Init from "../pages/Init";
+import InspectionJobLayout from "../Layout/InspectionJobLayout";
 
 const router = createBrowserRouter([
   {
@@ -33,40 +34,46 @@ const router = createBrowserRouter([
         element: <Jobs />,
       },
       {
-        path: Routes.REPORTS,
-        element: <Reports />,
-      },
-      {
         path: Routes.JOBS_DETAILS,
-        element: <JobDetails />,
+        element: <InspectionJobLayout />,
+        children: [
+          {
+            index: true,
+            element: <JobDetails />,
+          },
+          {
+            path: Routes.JOB_SUMMARY,
+            element: <JobSummary />,
+          },
+          {
+            path: Routes.ADD_INSPECTION_NOTES,
+            element: <AddInspectionNotes />,
+          },
+          {
+            path: Routes.ADD_INSPECTION_ITEMS,
+            element: <AddInspectionItems />,
+          },
+          {
+            path: Routes.ALL_ADDED_ITEMS,
+            element: <AllAddedItems />,
+          },
+          {
+            path: Routes.ITEM_PREVIEW,
+            element: <ItemPreview />,
+          },
+          {
+            path: Routes.PREVIOUS_REPORT_ITEMS,
+            element: <AddItemPreviousReport />,
+          },
+        ],
       },
       {
         path: Routes.CUSTOM_JOB,
         element: <CreateCustomJob />,
       },
       {
-        path: Routes.JOB_SUMMARY,
-        element: <JobSummary />,
-      },
-      {
-        path: Routes.ADD_INSPECTION_NOTES,
-        element: <AddInspectionNotes />,
-      },
-      {
-        path: Routes.ADD_INSPECTION_ITEMS,
-        element: <AddInspectionItems />,
-      },
-      {
-        path: Routes.ALL_ADDED_ITEMS,
-        element: <AllAddedItems />,
-      },
-      {
-        path: Routes.ITEM_PREVIEW,
-        element: <ItemPreview />,
-      },
-      {
-        path: Routes.PREVIOUS_REPORT_ITEMS,
-        element: <AddItemPreviousReport />,
+        path: Routes.REPORTS,
+        element: <Reports />,
       },
     ],
   },
