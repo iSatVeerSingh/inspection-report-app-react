@@ -51,21 +51,81 @@ export const addInspectionNotes = async (notes: any[], id: string) => {
       return null;
     }
     return insId;
-
-    // const inspection = await getInspectionById(id);
-    // if (!inspection) {
-    //   return null;
-    // }
-
-    // inspection.inspectionNotes = notes;
-
-    // const insId = await Db.inspectionReports.put(inspection, id);
-    // if (!insId) {
-    //   return null;
-    // }
-    // return true;
   } catch (err) {
     console.log(err);
     return null;
   }
+};
+
+export const addInspectionItem = async (itemData: FormData, id: string) => {
+  const itemCategory = itemData.get("category");
+  const itemName = itemData.get("itemName");
+  const itemNote = itemData.get("itemNote");
+  const itemImages = itemData.getAll("itemImages") as unknown as File[];
+
+  const resizedImages = await getResizedBase64Images(itemImages);
+
+  const newInspectionItem = {
+    category: itemCategory,
+    itemName,
+    itemNote,
+    itemImages: resizedImages,
+  };
+
+  const insId = await Db.inspectionReports
+    .where("id")
+    .equals(id)
+    .modify((report) => {
+      report.inspectionItems.push(newInspectionItem);
+    });
+
+  return insId;
+};
+
+const getResizedBase64Images = async (itemImages: File[]) => {
+  const imagePromises = [];
+
+  for (let i = 0; i < itemImages.length; i++) {
+    const imgFile = itemImages[i];
+    const imgBitmap = await createImageBitmap(imgFile);
+
+    if (imgBitmap.width > 300 || imgBitmap.height > 300) {
+      const promiseImg = getResizedImage(imgBitmap);
+      imagePromises.push(promiseImg);
+    } else {
+      const promiseImg = getBase64(imgFile);
+      imagePromises.push(promiseImg);
+    }
+  }
+
+  return Promise.all(imagePromises);
+};
+
+const getResizedImage = async (imgBitmap: ImageBitmap) => {
+  const { width, height } = imgBitmap;
+  const maxwidth = 300;
+  const scaleSize = maxwidth / width;
+  const maxheight = height * scaleSize;
+
+  const canvas = new OffscreenCanvas(maxwidth, maxheight);
+  const ctx = canvas.getContext("2d")!;
+  ctx.drawImage(imgBitmap, 0, 0, canvas.width, canvas.height);
+
+  const imgBlob = await ctx.canvas.convertToBlob({
+    quality: 0.9,
+    type: "image/jpeg",
+  });
+
+  const base64img = await getBase64(imgBlob);
+  return base64img;
+};
+
+const getBase64 = async (imgBlob: Blob) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(imgBlob);
+    reader.addEventListener("load", (e) => {
+      resolve(e.target?.result);
+    });
+  });
 };

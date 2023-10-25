@@ -17,9 +17,34 @@ import FileInput from "../../components/FileInput";
 import FormTextArea from "../../components/FormTextArea";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
+import { FormEventHandler, FormEvent } from "react";
+import { useParams } from "react-router-dom";
 
 const AddInspectionItems = () => {
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const params = useParams();
+  console.log(params);
+
+  const handleAddItem: FormEventHandler<HTMLFormElement> = async (
+    e: FormEvent
+  ) => {
+    e.preventDefault();
+    console.log(e.target);
+
+    const itemData = new FormData(e.target as HTMLFormElement);
+
+    const response = await fetch(
+      `/client/inspection/items?id=${params.inspectionId}`,
+      {
+        method: "PUT",
+        body: itemData,
+      }
+    );
+    if(response.ok) {
+      const data = await response.json();
+      console.log(data);
+    }
+  };
 
   return (
     <PageLayout title="Add Inspection Notes">
@@ -30,40 +55,36 @@ const AddInspectionItems = () => {
         <Text fontSize={"lg"} color={"dark-gray"}>
           P.O. Box 22, Greensborough
         </Text>
-        <Flex
-          as="form"
-          mt={4}
-          direction={"column"}
-          gap={3}
-          alignItems={"start"}
-        >
-          <FormSelect
-            options={[{ text: "Category", value: "" }]}
-            label="Category"
-            placeholder="Select item category"
-            name="category"
-          />
-          <FormInput
-            type="text"
-            name="itemName"
-            label="Item Name"
-            placeholder="Search Item name here"
-          />
-          <FileInput
-            name="itemImages"
-            label="Item Images"
-            subLabel="Max 8 images allowed"
-            multiple
-          />
-          <FormTextArea
-            label="Item Notes"
-            placeholder="Type item note here"
-            name="itemNotes"
-          />
-          <ButtonPrimary width={"200px"} type="submit">
-            Add Item
-          </ButtonPrimary>
-        </Flex>
+        <form onSubmit={handleAddItem}>
+          <Flex mt={4} direction={"column"} gap={3} alignItems={"start"}>
+            <FormSelect
+              options={[{ text: "Category", value: "" }]}
+              label="Category"
+              placeholder="Select item category"
+              name="category"
+            />
+            <FormInput
+              type="text"
+              name="itemName"
+              label="Item Name"
+              placeholder="Search Item name here"
+            />
+            <FileInput
+              name="itemImages"
+              label="Item Images"
+              subLabel="Max 8 images allowed"
+              multiple
+            />
+            <FormTextArea
+              label="Item Note"
+              placeholder="Type item note here"
+              name="itemNote"
+            />
+            <ButtonPrimary width={"200px"} type="submit">
+              Add Item
+            </ButtonPrimary>
+          </Flex>
+        </form>
         <Flex mt={10} justifyContent={"space-between"}>
           <ButtonPrimary>See Added Items</ButtonPrimary>
           <ButtonOutline onClick={onOpen}>Create Custom Item</ButtonOutline>

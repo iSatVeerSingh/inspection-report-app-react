@@ -5,6 +5,7 @@ import {
   InputProps,
   Select,
 } from "@chakra-ui/react";
+import { Ref, forwardRef } from "react";
 
 type FormInputProps = InputProps & {
   label?: string;
@@ -16,14 +17,10 @@ type FormInputProps = InputProps & {
   }[];
 };
 
-const FormSelect = ({
-  label,
-  name,
-  placeholder,
-  inputError,
-  required,
-  options,
-}: FormInputProps) => {
+const FormSelect = (
+  { label, name, placeholder, inputError, required, options }: FormInputProps,
+  ref: Ref<HTMLSelectElement>
+) => {
   return (
     <FormControl isInvalid={inputError !== undefined} isRequired={required}>
       {label && (
@@ -36,6 +33,7 @@ const FormSelect = ({
         required={required}
         name={name}
         placeholder={placeholder}
+        ref={ref}
       >
         {options.map((opt) => (
           <option key={opt.value} value={opt.value}>
@@ -48,4 +46,4 @@ const FormSelect = ({
   );
 };
 
-export default FormSelect;
+export default forwardRef(FormSelect);

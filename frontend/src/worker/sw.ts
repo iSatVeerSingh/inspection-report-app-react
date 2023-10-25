@@ -7,6 +7,7 @@ import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import { getAllJobs, getJobByJobNumber } from "./jobs";
 import {
+  addInspectionItem,
   addInspectionNotes,
   getInspectionById,
   startNewInspection,
@@ -84,6 +85,22 @@ registerRoute(
     return new Response(
       JSON.stringify({ message: "Couldn't add inspection note for " + id })
     );
+  },
+  "PUT"
+);
+
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection/items",
+  async ({ url, request }) => {
+    const id = url.searchParams.get("id");
+    if (id) {
+      const body = await request.formData();
+      const insId = await addInspectionItem(body, id);
+      if (insId) {
+        return new Response(JSON.stringify({ message: insId }));
+      }
+    }
+    return new Response("Couldn't add inspection note for " + id);
   },
   "PUT"
 );

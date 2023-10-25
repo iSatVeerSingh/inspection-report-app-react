@@ -6,6 +6,7 @@ import {
   InputProps,
   Text,
 } from "@chakra-ui/react";
+import React from "react";
 
 type FileInputProps = InputProps & {
   label?: string;
@@ -15,15 +16,18 @@ type FileInputProps = InputProps & {
   subLabel?: string;
 };
 
-const FileInput = ({
-  label,
-  name,
-  placeholder,
-  inputError,
-  required,
-  multiple,
-  subLabel,
-}: FileInputProps) => {
+const FileInput = (
+  {
+    label,
+    name,
+    placeholder,
+    inputError,
+    required,
+    multiple,
+    subLabel,
+  }: FileInputProps,
+  ref: React.Ref<HTMLInputElement>
+) => {
   return (
     <FormControl isInvalid={inputError !== undefined} isRequired={required}>
       {label && (
@@ -45,10 +49,11 @@ const FileInput = ({
         px={0}
         multiple={multiple}
         cursor={"pointer"}
+        ref={ref}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </FormControl>
   );
 };
 
-export default FileInput;
+export default React.forwardRef(FileInput);
