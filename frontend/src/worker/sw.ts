@@ -11,7 +11,7 @@ import {
   getInspectionById,
   startNewInspection,
 } from "./inspection";
-import { getJobsController } from "./controller";
+import { createJobController, getJobsController } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -22,7 +22,16 @@ cleanupOutdatedCaches();
 
 // Jobs routes
 
-registerRoute(({ url }) => url.pathname === "/client/jobs", getJobsController, "GET");
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs",
+  getJobsController,
+  "GET"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs/new",
+  createJobController,
+  "POST"
+);
 
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection/new",

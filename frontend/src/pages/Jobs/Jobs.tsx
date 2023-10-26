@@ -20,7 +20,6 @@ import { Link, useNavigate } from "react-router-dom";
 import { LocationIcon, UserIcon } from "../../icons";
 // import useIsMobile from "../../hooks/useMobile";
 import { useEffect, useState } from "react";
-import { Job } from "../../utils/types";
 import Loading from "../../components/Loading";
 import { getRequest } from "../../services/client";
 
@@ -29,24 +28,26 @@ const Jobs = () => {
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const isMobile = useIsMobile();
 
-  const [allJobs, setAllJobs] = useState<Job[]>([]);
+  const [allJobs, setAllJobs] = useState<any[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const getAllJobs = async () => {
       const response = await getRequest("/client/jobs");
-      if (response.success) {
-        console.log("hello");
-        setAllJobs(response.data);
+      if (!response.success) {
+        setNotFound(true);
         setLoading(false);
+        return;
       }
-
-      setNotFound(true);
+      console.log(response);
+      setAllJobs(response.data);
       setLoading(false);
     };
     getAllJobs();
   }, []);
+
+  console.log(allJobs);
 
   return (
     <PageLayout
@@ -159,7 +160,7 @@ const Jobs = () => {
                     gap={{ base: 1, lg: 3 }}
                   >
                     <Text minW={"250px"} display={"flex"} alignItems={"center"}>
-                      <UserIcon boxSize={5} /> {job.customer}
+                      <UserIcon boxSize={5} /> {job.customerName}
                     </Text>
                     <Text display={"flex"} alignItems={"center"}>
                       <LocationIcon boxSize={6} /> {job.siteAddress}

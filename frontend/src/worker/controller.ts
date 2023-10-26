@@ -1,5 +1,5 @@
 import { RouteHandler } from "workbox-core";
-import { getAllJobs, getJobByJobNumber } from "./jobs";
+import { createNewJob, getAllJobs, getJobByJobNumber } from "./jobs";
 
 export const getJobsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
@@ -20,6 +20,22 @@ export const getJobsController: RouteHandler = async ({ url }) => {
   }
 
   return getBadRequestResponse();
+};
+
+export const createJobController: RouteHandler = async ({ request }) => {
+  const body = await request.json();
+  if (!body) {
+    return getBadRequestResponse();
+  }
+
+  const jobNumber: any = await createNewJob(body);
+  if (jobNumber.error === "DuplicateKey") {
+    return getBadRequestResponse("Job Already Exists.");
+  }
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+  return getSuccessResponse(jobNumber);
 };
 
 const getSuccessResponse = (data: any) => {
@@ -44,10 +60,10 @@ const getNotFoundResponse = () => {
   });
 };
 
-const getBadRequestResponse = () => {
+const getBadRequestResponse = (message?: string) => {
   const resData = {
     success: false,
-    data: "Invalid request",
+    data: message || "Invalid request",
   };
 
   return new Response(JSON.stringify(resData), {

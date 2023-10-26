@@ -19,3 +19,20 @@ export const getJobByJobNumber = async (jobNumber: number) => {
     return null;
   }
 };
+
+export const createNewJob = async (jobData: any) => {
+  try {
+    const jobNumber = await Db.jobs.add(jobData);
+    return jobNumber;
+  } catch (err: any) {
+    if (
+      err.name === "ConstraintError" &&
+      err.message.includes("Key already exists in the object store")
+    ) {
+      return {
+        error: "DuplicateKey",
+      };
+    }
+    return null;
+  }
+};
