@@ -3,48 +3,47 @@ import {
   Flex,
   Text,
   Grid,
-  IconButton,
-  Drawer,
-  useDisclosure,
-  DrawerOverlay,
-  DrawerContent,
-  DrawerCloseButton,
-  DrawerHeader,
+  Heading,
+  // IconButton,
+  // Drawer,
+  // useDisclosure,
+  // DrawerOverlay,
+  // DrawerContent,
+  // DrawerCloseButton,
+  // DrawerHeader,
 } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import FilterInput from "../../components/FilterInput";
-import FilterSelect from "../../components/FilterSelect";
-import SearchFilter from "../../components/SearchFilter";
+// import FilterInput from "../../components/FilterInput";
+// import FilterSelect from "../../components/FilterSelect";
+// import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
-import { FilterIcon, LocationIcon, UserIcon } from "../../icons";
-import useIsMobile from "../../hooks/useMobile";
+import { LocationIcon, UserIcon } from "../../icons";
+// import useIsMobile from "../../hooks/useMobile";
 import { useEffect, useState } from "react";
 import { Job } from "../../utils/types";
 import Loading from "../../components/Loading";
+import { getRequest } from "../../services/client";
 
 const Jobs = () => {
   const navigate = useNavigate();
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const isMobile = useIsMobile();
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const isMobile = useIsMobile();
 
   const [allJobs, setAllJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [notFound, setNotFound] = useState(false);
 
   useEffect(() => {
     const getAllJobs = async () => {
-      try {
-        const response = await fetch("/client/jobs");
-        if (response.ok) {
-          const jobs = await response.json();
-          setAllJobs(jobs);
-          setLoading(false);
-          return;
-        }
-        return null;
-      } catch (err) {
-        console.log(err);
-        return null;
+      const response = await getRequest("/client/jobs");
+      if (response.success) {
+        console.log("hello");
+        setAllJobs(response.data);
+        setLoading(false);
       }
+
+      setNotFound(true);
+      setLoading(false);
     };
     getAllJobs();
   }, []);
@@ -61,7 +60,7 @@ const Jobs = () => {
         <Loading />
       ) : (
         <Grid px={1} py={1} gap={2}>
-          {isMobile ? (
+          {/* {isMobile ? (
             <Drawer onClose={onClose} isOpen={isOpen} placement="right">
               <DrawerOverlay />
               <DrawerContent>
@@ -105,8 +104,8 @@ const Jobs = () => {
               />
               <FilterInput maxW={"200px"} type="date" />
             </Flex>
-          )}
-          <Flex gap={2} alignItems={"center"}>
+          )} */}
+          {/* <Flex gap={2} alignItems={"center"}>
             {isMobile && (
               <IconButton
                 aria-label="Open Filter"
@@ -118,67 +117,82 @@ const Jobs = () => {
               />
             )}
             <SearchFilter placeholder="Search by job nuber, category, customer name" />
-          </Flex>
-          {allJobs.map((job) => (
-            <Link key={job.jobNumber} to={`/jobs/${job.jobNumber}`}>
-              <Box bg={"main-bg"} p={3} borderRadius={5} border={"stroke"}>
-                <Flex
-                  alignItems={{ base: "start", sm: "center" }}
-                  justifyContent={"space-between"}
-                  direction={{ base: "column", sm: "row" }}
-                >
-                  <Text
-                    fontSize={"xl"}
-                    fontWeight={"medium"}
-                    color={"rich-black"}
+          </Flex> */}
+
+          {notFound || allJobs.length === 0 ? (
+            <Box textAlign={"center"} color={"gray.600"}>
+              <Heading>Important</Heading>
+              <Text fontSize={"lg"}>
+                This app is under development. The backend or server
+                functionality has not been implemented yet.
+              </Text>
+              <Text>
+                For now please use "Create Custom Jobs" option to create jobs
+                manually.
+              </Text>
+            </Box>
+          ) : (
+            allJobs.map((job) => (
+              <Link key={job.jobNumber} to={`/jobs/${job.jobNumber}`}>
+                <Box bg={"main-bg"} p={3} borderRadius={5} border={"stroke"}>
+                  <Flex
+                    alignItems={{ base: "start", sm: "center" }}
+                    justifyContent={"space-between"}
+                    direction={{ base: "column", sm: "row" }}
                   >
-                    #{job.jobNumber} - {job.category}
-                  </Text>
-                  <Text as={"span"} color={"dark-gray"} fontSize={"lg"}>
-                    {job.date}
-                  </Text>
-                </Flex>
-                <Flex
-                  alignItems={{ base: "start", lg: "center" }}
-                  direction={{ base: "column", lg: "row" }}
-                  fontSize={"lg"}
-                  color={"dark-gray"}
-                  gap={{ base: 1, lg: 3 }}
-                >
-                  <Text minW={"250px"} display={"flex"} alignItems={"center"}>
-                    <UserIcon boxSize={5} /> {job.customer}
-                  </Text>
-                  <Text display={"flex"} alignItems={"center"}>
-                    <LocationIcon boxSize={6} /> {job.siteAddress}
-                  </Text>
-                </Flex>
-                <Flex
-                  alignItems={"center"}
-                  justifyContent={"space-between"}
-                  mt={2}
-                >
-                  <Text
-                    bg={"nav-bg"}
-                    px={4}
-                    borderRadius={4}
-                    color={"rich-black"}
+                    <Text
+                      fontSize={"xl"}
+                      fontWeight={"medium"}
+                      color={"rich-black"}
+                    >
+                      #{job.jobNumber} - {job.category}
+                    </Text>
+                    <Text as={"span"} color={"dark-gray"} fontSize={"lg"}>
+                      {job.date}
+                    </Text>
+                  </Flex>
+                  <Flex
+                    alignItems={{ base: "start", lg: "center" }}
+                    direction={{ base: "column", lg: "row" }}
+                    fontSize={"lg"}
+                    color={"dark-gray"}
+                    gap={{ base: 1, lg: 3 }}
                   >
-                    {job.category}
-                  </Text>
-                  <Text
-                    bg={"nav-bg"}
-                    px={3}
-                    borderRadius={3}
-                    color={
-                      job.status === "Completed" ? "green.500" : "orange.500"
-                    }
+                    <Text minW={"250px"} display={"flex"} alignItems={"center"}>
+                      <UserIcon boxSize={5} /> {job.customer}
+                    </Text>
+                    <Text display={"flex"} alignItems={"center"}>
+                      <LocationIcon boxSize={6} /> {job.siteAddress}
+                    </Text>
+                  </Flex>
+                  <Flex
+                    alignItems={"center"}
+                    justifyContent={"space-between"}
+                    mt={2}
                   >
-                    {job.status}
-                  </Text>
-                </Flex>
-              </Box>
-            </Link>
-          ))}
+                    <Text
+                      bg={"nav-bg"}
+                      px={4}
+                      borderRadius={4}
+                      color={"rich-black"}
+                    >
+                      {job.category}
+                    </Text>
+                    <Text
+                      bg={"nav-bg"}
+                      px={3}
+                      borderRadius={3}
+                      color={
+                        job.status === "Completed" ? "green.500" : "orange.500"
+                      }
+                    >
+                      {job.status}
+                    </Text>
+                  </Flex>
+                </Box>
+              </Link>
+            ))
+          )}
         </Grid>
       )}
     </PageLayout>

@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Center, Heading, Text } from "@chakra-ui/react";
+import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,9 +10,8 @@ import { Db } from "../services/clientdb";
 
 const Init = () => {
   const navigate = useNavigate();
-
-  const progressRef = useRef<HTMLDivElement | null>(null);
   const statusRef = useRef<HTMLDivElement | null>(null);
+  const [progressval, setProgressval] = useState(0);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [error, setError] = useState(false);
@@ -20,88 +19,40 @@ const Init = () => {
   const handleInstall: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
     setInstalling(true);
-    // MainWB.postMessage({ type: "init" });
-  };
-
-  const getInitData = async (type: string) => {
-    try {
-      const response = await inspectionApi.get(
-        type === "libraryItems" ? "/all-library-items.json" : "/jobs.json",
-        {
-          onDownloadProgress: (e) => {
-            const progress = Math.floor(e.progress! * 100);
-            if (progress % 2 === 0) {
-              progressRef.current!.style.width = `${progress}%`;
-            }
-          },
-        }
-      );
-
-      if (response.status === 200 && Array.isArray(response.data)) {
-        return response.data;
-      }
-      return null;
-    } catch (err) {
-      return null;
-    }
-  };
-
-  const setupDatabase = async (dataArr: any[], type: string) => {
-    try {
-      for (let i = 0; i < dataArr.length; i++) {
-        const item = dataArr[i];
-
-        if (type === "libraryItems") {
-          item.id = Date.now().toString(36);
-          await Db.libraryItems.add(item);
-        } else {
-          item.jobNumber = 23450 + i;
-          item.status = "quote"
-          await Db.jobs.add(item);
-        }
-        const progress = (i / dataArr.length) * 100;
-        progressRef.current!.style.width = `${progress}%`;
-      }
-      return true;
-    } catch (err) {
-      console.log(err);
-      return false;
-    }
   };
 
   useEffect(() => {
     const installApp = async () => {
       statusRef.current!.textContent = "Fetching library items...";
-      const libraryItems = await getInitData("libraryItems");
-      if (!libraryItems) {
-        setError(true);
-        setInstalling(false);
-        return;
-      }
-      statusRef.current!.textContent = "Setting up database...";
-      let success = await setupDatabase(libraryItems, "libraryItems");
-      if (!success) {
-        setError(true);
-        setInstalling(false);
-        return;
-      }
-      statusRef.current!.textContent = "Fetching inspection jobs...";
-      const allJobs = await getInitData("jobs");
-      if (!allJobs) {
-        setError(true);
-        setInstalling(false);
-        return;
-      }
-      statusRef.current!.textContent = "Setting up initial jobs...";
-      success = await setupDatabase(allJobs, "jobs");
-      if (!success) {
-        setError(true);
-        setInstalling(false);
-        return;
-      }
+      try {
+        const response = await inspectionApi.get("/all-library-items.json", {
+          onDownloadProgress: (e) => {
+            const progress = Math.floor(e.progress! * 100);
+            if (progressval !== progress) {
+              setProgressval(progress);
+            }
+          },
+        });
 
-      setInstalled(true);
-      setInstalling(false);
+        if (response.status === 200 && Array.isArray(response.data)) {
+          statusRef.current!.textContent = "Setting up local database...";
+          for (let i = 0; i < response.data.length; i++) {
+            const item = response.data[i];
+            item.id = Date.now().toString(36);
+            await Db.libraryItems.add(item);
+            const progress = Math.floor((i / response.data.length) * 100);
+            if (progressval !== progress) {
+              setProgressval(progress);
+            }
+          }
+        }
+        setInstalled(true);
+        setInstalling(false);
+      } catch (err) {
+        console.log(err);
+        setInstalling(false);
+        setError(true);
+      }
     };
 
     if (installing) {
@@ -145,23 +96,7 @@ const Init = () => {
             <Text fontSize={"xl"} ref={statusRef}>
               Installing App...
             </Text>
-            <Box
-              width={"300px"}
-              h={4}
-              bg={"blue.400"}
-              borderRadius={"full"}
-              overflow={"hidden"}
-              mx={"auto"}
-            >
-              <Box
-                ref={progressRef}
-                w={0}
-                transitionProperty={"all"}
-                transitionDuration={"30ms"}
-                h={"full"}
-                bg={"blue.700"}
-              ></Box>
-            </Box>
+            <Progress hasStripe value={progressval} />
           </Box>
         )}
         {installed && !installing && (

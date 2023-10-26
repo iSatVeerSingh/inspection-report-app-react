@@ -1,5 +1,4 @@
 import { createBrowserRouter, redirect } from "react-router-dom";
-import Login from "../pages/Login";
 import RootLayout from "../Layout/RootLayout";
 import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
@@ -12,7 +11,7 @@ import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
-import { getLoginStatus, isInitDone } from "../services/auth";
+import { getInitStatus } from "../services/auth";
 import Init from "../pages/Init";
 import InspectionJobLayout from "../Layout/InspectionJobLayout";
 
@@ -20,10 +19,10 @@ const router = createBrowserRouter([
   {
     id: "root",
     path: Routes.ROOT,
-    loader() {
-      const isLogin = getLoginStatus();
-      if (!isLogin) {
-        return redirect("/login");
+    async loader() {
+      const isInit = await getInitStatus();
+      if (!isInit) {
+        return redirect("/init");
       }
       return null;
     },
@@ -78,18 +77,10 @@ const router = createBrowserRouter([
     ],
   },
   {
-    path: "/login",
-    element: <Login />,
-  },
-  {
     path: "/init",
     async loader() {
-      const isLogin = getLoginStatus();
-      if (!isLogin) {
-        return redirect("/login");
-      }
-      const isExist = await isInitDone();
-      if (isExist) {
+      const isInit = await getInitStatus();
+      if (isInit) {
         return redirect("/jobs");
       }
       return null;
