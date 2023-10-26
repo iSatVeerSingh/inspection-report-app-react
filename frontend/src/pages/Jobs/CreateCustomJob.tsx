@@ -141,7 +141,7 @@ const CreateCustomJob = () => {
             />
             <FormInput
               type="text"
-              name="customerName"
+              name="customer"
               label="Name on the report"
               placeholder="Enter customer name which you want on report"
               required
@@ -195,7 +195,7 @@ const CreateCustomJob = () => {
             />
             <GridItem colSpan={{ base: "auto", xl: 2 }}>
               <FormTextArea
-                name="jobDescription"
+                name="description"
                 label="Job Description"
                 placeholder="Start typing here"
                 required

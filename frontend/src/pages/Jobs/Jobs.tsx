@@ -40,14 +40,11 @@ const Jobs = () => {
         setLoading(false);
         return;
       }
-      console.log(response);
       setAllJobs(response.data);
       setLoading(false);
     };
     getAllJobs();
   }, []);
-
-  console.log(allJobs);
 
   return (
     <PageLayout
