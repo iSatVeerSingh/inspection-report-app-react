@@ -53,6 +53,7 @@ const Jobs = () => {
       onBtnClick={() => {
         navigate("/jobs/custom-job");
       }}
+      isRoot
     >
       {loading ? (
         <Loading />

@@ -1,7 +1,9 @@
-import { Box, Flex, Grid, Heading } from "@chakra-ui/react";
+import { Box, Flex, Grid, Heading, IconButton } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import React, { MouseEventHandler } from "react";
 import useMobile from "../hooks/useMobile";
+import { ChevronLeft } from "../icons";
+import { useNavigate } from "react-router-dom";
 
 type PageLayoutProps = {
   title: string;
@@ -9,6 +11,7 @@ type PageLayoutProps = {
   onBtnClick?: MouseEventHandler;
   btnLoading?: boolean;
   children: React.ReactNode;
+  isRoot?: boolean;
 };
 
 const PageLayout = ({
@@ -17,8 +20,10 @@ const PageLayout = ({
   onBtnClick,
   children,
   btnLoading,
+  isRoot,
 }: PageLayoutProps) => {
   const isMobile = useMobile();
+  const navigate = useNavigate();
 
   return (
     <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
@@ -32,9 +37,17 @@ const PageLayout = ({
       >
         <Heading
           fontWeight={"semibold"}
-          fontSize={{ base: "xl", sm: "2xl", md: "3xl" }}
+          fontSize={{ base: "xl", sm: "2xl" }}
           color="rich-black"
         >
+          {!isRoot && (
+            <IconButton
+              aria-label="Back"
+              icon={<ChevronLeft />}
+              onClick={() => navigate(-1)}
+              mr={2}
+            />
+          )}
           {title}
         </Heading>
         {titleBtn && (

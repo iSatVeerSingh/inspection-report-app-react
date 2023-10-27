@@ -1,16 +1,16 @@
 import {
-  Drawer,
-  DrawerContent,
-  DrawerOverlay,
+  // Drawer,
+  // DrawerContent,
+  // DrawerOverlay,
   Grid,
-  IconButton,
-  useDisclosure,
+  // IconButton,
+  // useDisclosure,
 } from "@chakra-ui/react";
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
-import Sidebar from "../Layout/Sidebar";
-import { useEffect, useRef } from "react";
-import { MenuIcon } from "../icons";
-import useMobile from "../hooks/useMobile";
+// import Sidebar from "../Layout/Sidebar";
+import { useEffect } from "react";
+// import { MenuIcon } from "../icons";
+// import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
 
 const RootLayout = () => {
@@ -24,18 +24,14 @@ const RootLayout = () => {
     }
   }, []);
 
-  const isMobile = useMobile();
+  // const isMobile = useMobile();
 
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const btnRef = useRef(null);
+  // const { isOpen, onOpen, onClose } = useDisclosure();
+  // const btnRef = useRef(null);
 
   return (
-    <Grid
-      h="100vh"
-      templateColumns={isMobile ? "auto" : "250px auto"}
-      bg="app-bg"
-    >
-      {isMobile ? (
+    <Grid h="100vh" templateColumns={"auto"} bg="app-bg">
+      {/* {isMobile ? (
         <Drawer
           isOpen={isOpen}
           placement="left"
@@ -61,7 +57,7 @@ const RootLayout = () => {
           left={"10px"}
           zIndex={"10"}
         />
-      )}
+      )} */}
       <Outlet />
     </Grid>
   );
