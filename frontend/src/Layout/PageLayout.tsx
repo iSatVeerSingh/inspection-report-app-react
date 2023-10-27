@@ -7,6 +7,7 @@ type PageLayoutProps = {
   title: string;
   titleBtn?: string;
   onBtnClick?: MouseEventHandler;
+  btnLoading?: boolean;
   children: React.ReactNode;
 };
 
@@ -15,9 +16,9 @@ const PageLayout = ({
   titleBtn,
   onBtnClick,
   children,
+  btnLoading,
 }: PageLayoutProps) => {
   const isMobile = useMobile();
-
 
   return (
     <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
@@ -37,7 +38,9 @@ const PageLayout = ({
           {title}
         </Heading>
         {titleBtn && (
-          <ButtonPrimary onClick={onBtnClick}>{titleBtn}</ButtonPrimary>
+          <ButtonPrimary isLoading={btnLoading} onClick={onBtnClick}>
+            {titleBtn}
+          </ButtonPrimary>
         )}
       </Flex>
       <Box overflowY={"scroll"} p={{ base: 2, sm: 3 }}>

@@ -5,6 +5,7 @@ export const CUSTOM_JOB = JOBS + "/custom-job";
 export const JOB_SUMMARY = JOBS_DETAILS + "/:inspectionId";
 export const ADD_INSPECTION_NOTES = JOB_SUMMARY + "/add-notes";
 export const ADD_INSPECTION_ITEMS = JOB_SUMMARY + "/add-items";
+export const ALL_ADDED_NOTES = JOB_SUMMARY + "/all-notes";
 export const ALL_ADDED_ITEMS = JOBS_DETAILS + "/all-added-items";
 export const ITEM_PREVIEW = JOBS_DETAILS + "/items/:itemId";
 export const PREVIOUS_REPORT_ITEMS = JOBS_DETAILS + "/previous-report-items";

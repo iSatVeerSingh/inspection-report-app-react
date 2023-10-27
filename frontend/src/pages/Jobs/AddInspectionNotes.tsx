@@ -1,11 +1,9 @@
 import { Box, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
-import FormInput from "../../components/FormInput";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import ButtonOutline from "../../components/ButtonOutline";
 import FormTextArea from "../../components/FormTextArea";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import Loading from "../../components/Loading";
 import { useInspectionData } from "../../services/client/context";
