@@ -16,8 +16,8 @@ export const getRequest = async (url: string) => {
 export const postRequest = async (url: string, init: RequestInit) => {
   try {
     const response = await fetch(url, {
-      method: "POST",
       ...init,
+      method: "POST",
     });
 
     return await response.json();

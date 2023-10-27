@@ -1,4 +1,4 @@
-import { Box, Grid, Heading, Text } from "@chakra-ui/react";
+import { Box, Grid, Heading, Text, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
@@ -7,16 +7,18 @@ import { useState, useEffect } from "react";
 import { Job } from "../../utils/types";
 // import { Db } from "../../services/clientdb";
 import Loading from "../../components/Loading";
-import { getRequest } from "../../services/client";
+import { getRequest, postRequest } from "../../services/client";
 
 const JobDetails = () => {
   // const job: any = {}
   const navigate = useNavigate();
   const params = useParams();
+  const toast = useToast();
 
   const [job, setJob] = useState<any | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState(false);
+  const [starting, setStarting] = useState(false);
 
   useEffect(() => {
     const getJobData = async () => {
@@ -35,17 +37,24 @@ const JobDetails = () => {
   }, []);
 
   const startInspection = async () => {
-    console.log("start inspection now");
-    const response = await fetch("/client/inspection/new", {
-      method: "POST",
+    setStarting(true);
+    const response = await postRequest("/client/inspection/new", {
       body: JSON.stringify(job),
-    });
-    if (response.ok) {
-      const data = await response.json();
-      if (data) {
-        navigate("./summary");
-      }
+    })
+
+    if(!response.success) {
+      toast({
+        title: response.data,
+        description: "Could not start inspection",
+        duration: 5000,
+        status: "error",
+      })
+      return;
     }
+
+    setStarting(false);
+    navigate(`./${response.data}`);
+
   };
 
   const continueInspection = () => {
@@ -88,7 +97,7 @@ const JobDetails = () => {
                 />
               </Grid>
               {job?.status !== "inprogress" ? (
-                <ButtonPrimary onClick={startInspection}>
+                <ButtonPrimary loadingText="Starting..." isLoading={starting} onClick={startInspection}>
                   Start Inspection
                 </ButtonPrimary>
               ) : (

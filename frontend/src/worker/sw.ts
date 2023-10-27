@@ -11,7 +11,12 @@ import {
   getInspectionById,
   startNewInspection,
 } from "./inspection";
-import { createJobController, getJobsController } from "./controller";
+import {
+  createInspectionController,
+  createJobController,
+  getInspectionsController,
+  getJobsController,
+} from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
 
@@ -35,28 +40,10 @@ registerRoute(
 
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection/new",
-  async ({ request }) => {
-    const job = await request.json();
-    const report = await startNewInspection(job);
-    return new Response(JSON.stringify({ message: report }));
-  },
+  createInspectionController,
   "POST"
 );
-
-registerRoute(
-  ({ url }) => url.pathname === "/client/inspection",
-  async ({ url }) => {
-    const id = url.searchParams.get("id");
-    if (id) {
-      const inspection = await getInspectionById(id);
-      if (inspection) {
-        return new Response(JSON.stringify(inspection));
-      }
-    }
-    return new Response(JSON.stringify({ message: "Report not found" }));
-  },
-  "GET"
-);
+registerRoute(({ url }) => url.pathname === "/client/inspections", getInspectionsController, "GET");
 
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection/notes",

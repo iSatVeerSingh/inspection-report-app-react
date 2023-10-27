@@ -1,36 +1,24 @@
-import { Box, Heading, Flex, cookieStorageManager } from "@chakra-ui/react";
+import { Box, Heading, Flex } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
-import { useNavigate, useParams } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
+import { useInspectionData } from "../../services/client/context";
 
 const JobSummary = () => {
-  const params = useParams();
   const navigate = useNavigate();
 
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  const inspectionData = useInspectionData();
   useEffect(() => {
-    const getInspection = async () => {
-      try {
-        const response = await fetch(
-          `/client/inspection?id=${params.inspectionId}`
-        );
-        if (response.ok) {
-          const report = await response.json();
-          setInspection(report);
-          setLoading(false);
-        }
-      } catch (err) {
-        console.log(err);
-      }
-    };
-    getInspection();
-  }, []);
+    setInspection(inspectionData);
+    setLoading(false);
+  }, [inspectionData]);
 
   return (
     <PageLayout title="Job Summary">

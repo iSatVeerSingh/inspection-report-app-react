@@ -14,6 +14,7 @@ import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
 import { getInitStatus } from "../services/auth";
 import Init from "../pages/Init";
 import InspectionJobLayout from "../Layout/InspectionJobLayout";
+import { getRequest } from "../services/client";
 
 const router = createBrowserRouter([
   {
@@ -34,35 +35,28 @@ const router = createBrowserRouter([
       },
       {
         path: Routes.JOBS_DETAILS,
+        element: <JobDetails />,
+      },
+      {
+        path: Routes.JOB_SUMMARY,
         element: <InspectionJobLayout />,
+        async loader({ params }) {
+          console.log("this is called")
+          const response = await getRequest(
+            `/client/inspections?inspectionId=${params.inspectionId}`
+          );
+
+          return response;
+        },
+
         children: [
           {
             index: true,
-            element: <JobDetails />,
-          },
-          {
-            path: Routes.JOB_SUMMARY,
             element: <JobSummary />,
           },
           {
             path: Routes.ADD_INSPECTION_NOTES,
             element: <AddInspectionNotes />,
-          },
-          {
-            path: Routes.ADD_INSPECTION_ITEMS,
-            element: <AddInspectionItems />,
-          },
-          {
-            path: Routes.ALL_ADDED_ITEMS,
-            element: <AllAddedItems />,
-          },
-          {
-            path: Routes.ITEM_PREVIEW,
-            element: <ItemPreview />,
-          },
-          {
-            path: Routes.PREVIOUS_REPORT_ITEMS,
-            element: <AddItemPreviousReport />,
           },
         ],
       },

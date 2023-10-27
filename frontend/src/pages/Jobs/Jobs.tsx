@@ -157,7 +157,7 @@ const Jobs = () => {
                     gap={{ base: 1, lg: 3 }}
                   >
                     <Text minW={"250px"} display={"flex"} alignItems={"center"}>
-                      <UserIcon boxSize={5} /> {job.customerName}
+                      <UserIcon boxSize={5} /> {job.customer}
                     </Text>
                     <Text display={"flex"} alignItems={"center"}>
                       <LocationIcon boxSize={6} /> {job.siteAddress}

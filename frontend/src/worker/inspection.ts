@@ -3,26 +3,52 @@ import { Job } from "../utils/types";
 
 export const startNewInspection = async (jobData: Job) => {
   try {
-    const newReport: any = { ...jobData };
-    newReport.id = Date.now().toString(36);
-    newReport.status = "inprogress";
-    newReport.inspectionStart = new Date();
-    newReport.inspectionNotes = [];
-    newReport.inspectionItems = [];
+    const trs = await Db.transaction(
+      "rw",
+      Db.inspectionReports,
+      Db.jobs,
+      async () => {
+        const newReport = {
+          ...jobData,
+          id: Date.now().toString(36),
+          inspectionStart: new Date(),
+          status: "inprogress",
+          inspectionNotes: [],
+          inspectionItems: [],
+        };
 
-    const reportId = await Db.inspectionReports.add(newReport);
-    if (reportId) {
-      const job = await Db.jobs.get(jobData.jobNumber);
-      if (job) {
-        job.status = "inprogress";
-        job.inspectionId = reportId;
-        const success = await Db.jobs.put(job, job.jobNumber);
-        if (success) {
-          return reportId;
+        const reportId = await Db.inspectionReports.add(newReport);
+        if (reportId !== null) {
+          const success = await Db.jobs.update(jobData.jobNumber, {
+            status: "inprogress",
+            inspectionId: reportId,
+          });
+          if (success !== null) {
+            return reportId;
+          }
         }
+        return null;
       }
+    );
+
+    return trs;
+  } catch (err: any) {
+    if (
+      err.name === "ConstraintError" &&
+      err.message.includes("Key already exists in the object store")
+    ) {
+      return {
+        error: "DuplicateKey",
+      };
     }
     return null;
+  }
+};
+
+export const getAllInspections = async () => {
+  try {
+    const inspections = await Db.inspectionReports.toArray();
+    return inspections;
   } catch (err) {
     console.log(err);
     return null;
