@@ -1,17 +1,29 @@
 "use client";
 
 import { Outlet, useLoaderData } from "react-router-dom";
-import { InspectionContext } from "../services/client/context";
+import {
+  InspectionContext,
+  inspectionReducer,
+} from "../services/client/context";
+import { useReducer } from "react";
 
 const InspectionJobLayout = () => {
-  console.log("layou rendered")
-
   const jobResponse: any = useLoaderData();
 
-  const inspectionData = jobResponse.success ? jobResponse.data : null;
+  const [inspectionData, dispatch] = useReducer(
+    inspectionReducer,
+    jobResponse.data
+  );
+
+  const addNotes = (notes: any) => {
+    dispatch({
+      type: "ADD_NOTE",
+      payload: notes,
+    });
+  };
 
   return (
-    <InspectionContext.Provider value={inspectionData}>
+    <InspectionContext.Provider value={{ inspectionData, addNotes }}>
       <Outlet />
     </InspectionContext.Provider>
   );

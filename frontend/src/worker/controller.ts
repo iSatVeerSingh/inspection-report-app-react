@@ -1,6 +1,7 @@
 import { RouteHandler } from "workbox-core";
 import { createNewJob, getAllJobs, getJobByJobNumber } from "./jobs";
 import {
+  addInspectionNotes,
   getAllInspections,
   getInspectionById,
   startNewInspection,
@@ -76,6 +77,27 @@ export const getInspectionsController: RouteHandler = async ({ url }) => {
     return getNotFoundResponse();
   }
   return getSuccessResponse(inspection);
+};
+
+export const addInspectionNotesController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const id = url.searchParams.get("inspectionId");
+  if (!id || id === "") {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+  if (!body) {
+    return getBadRequestResponse();
+  }
+
+  const inspectionId = await addInspectionNotes(body.inspectionNotes, id);
+  if (!inspectionId) {
+    return getBadRequestResponse();
+  }
+  return getSuccessResponse(inspectionId);
 };
 
 const getSuccessResponse = (data: any) => {

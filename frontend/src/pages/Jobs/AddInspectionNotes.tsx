@@ -10,22 +10,25 @@ import { useEffect, useRef, useState } from "react";
 import Loading from "../../components/Loading";
 import { useInspectionData } from "../../services/client/context";
 import DatalistInput from "../../components/DatalistInput";
+import { putRequest } from "../../services/client";
 
 const AddInspectionNotes = () => {
   const navigate = useNavigate();
-  const params = useParams();
   const customNoteRef = useRef<HTMLTextAreaElement | null>(null);
   const inspectionNotesRef = useRef<string[]>([]);
   const commonNoteRef = useRef<HTMLInputElement | null>(null);
 
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
+  const [isAdded, setIsAdded] = useState(false);
+  const [saving, setSaving] = useState(false);
 
-  const inspectionData = useInspectionData();
+  const { inspectionData, addNotes }: any = useInspectionData();
   const toast = useToast();
 
   useEffect(() => {
     setInspection(inspectionData);
+    inspectionNotesRef.current = inspectionData.inspectionNotes;
     setLoading(false);
   }, [inspectionData]);
 
@@ -45,23 +48,60 @@ const AddInspectionNotes = () => {
     }
 
     inspectionNotesRef.current.push(note);
+    setIsAdded(true);
+    toast({
+      duration: 3000,
+      title: "Note added",
+      status: "success",
+    });
+    commonNoteRef.current!.value = "";
   };
 
   const handleAddCustomNote = () => {
     const note = customNoteRef.current?.value?.trim();
-    if (!note) {
-      return;
-    }
-    if (note === "") {
+    if (!note || note === "") {
       return;
     }
 
     inspectionNotesRef.current.push(note);
+    setIsAdded(true);
+    toast({
+      duration: 3000,
+      title: "Note added",
+      status: "success",
+    });
     customNoteRef.current!.value = "";
-    console.log(inspectionNotesRef);
   };
 
-  const handleAddInspectionNotes = async () => {};
+  const handleAddInspectionNotes = async () => {
+    if (!isAdded) {
+      navigate(-1);
+    }
+    setSaving(true);
+
+    const response = await putRequest(
+      `/client/inspections/notes?inspectionId=${inspection.id}`,
+      {
+        body: JSON.stringify({
+          inspectionNotes: inspectionNotesRef.current,
+        }),
+      }
+    );
+
+    if (!response.success) {
+      toast({
+        title: "Could not add inspection notes",
+        duration: 5000,
+        status: "error",
+      });
+      setSaving(false);
+      return;
+    }
+
+    addNotes(inspectionNotesRef.current);
+    setSaving(false);
+    navigate(-1);
+  };
   const inspectionNotes = [
     "The concreter was on site preparing for the slab pour.",
     "The plumber was on site.",
@@ -175,6 +215,8 @@ const AddInspectionNotes = () => {
             <ButtonPrimary
               width={{ base: "full", sm: "250px" }}
               onClick={handleAddInspectionNotes}
+              isLoading={saving}
+              loadingText="Saving"
             >
               Save and Close
             </ButtonPrimary>

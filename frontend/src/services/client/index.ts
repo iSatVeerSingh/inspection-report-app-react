@@ -28,3 +28,19 @@ export const postRequest = async (url: string, init: RequestInit) => {
     };
   }
 };
+
+export const putRequest = async (url: string, init: RequestInit) => {
+  try {
+    const response = await fetch(url, {
+      ...init,
+      method: "PUT",
+    });
+
+    return await response.json();
+  } catch (err) {
+    return {
+      success: false,
+      data: "Request unsuccessful",
+    };
+  }
+};

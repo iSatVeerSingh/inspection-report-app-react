@@ -14,7 +14,7 @@ const JobSummary = () => {
   const [inspection, setInspection] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
-  const inspectionData = useInspectionData();
+  const { inspectionData }: any = useInspectionData();
   useEffect(() => {
     setInspection(inspectionData);
     setLoading(false);

@@ -12,6 +12,7 @@ import {
   startNewInspection,
 } from "./inspection";
 import {
+  addInspectionNotesController,
   createInspectionController,
   createJobController,
   getInspectionsController,
@@ -44,24 +45,7 @@ registerRoute(
   "POST"
 );
 registerRoute(({ url }) => url.pathname === "/client/inspections", getInspectionsController, "GET");
-
-registerRoute(
-  ({ url }) => url.pathname === "/client/inspection/notes",
-  async ({ url, request }) => {
-    const id = url.searchParams.get("id");
-    if (id) {
-      const body = await request.json();
-      const insId = await addInspectionNotes(body.inspectionNotes, id);
-      if (insId) {
-        return new Response(JSON.stringify({ message: insId }));
-      }
-    }
-    return new Response(
-      JSON.stringify({ message: "Couldn't add inspection note for " + id })
-    );
-  },
-  "PUT"
-);
+registerRoute(({url}) => url.pathname === "/client/inspections/notes", addInspectionNotesController, "PUT");
 
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection/items",
