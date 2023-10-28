@@ -85,14 +85,18 @@ export const addInspectionNotes = async (notes: any[], id: string) => {
 
 export const addInspectionItem = async (itemData: FormData, id: string) => {
   // const itemCategory = itemData.get("category");
-  // const itemName = itemData.get("itemName");
+  const itemName = itemData.get("itemName");
+  const custom = itemData.get("custom");
   const type = itemData.get("type");
   const itemNote = itemData.get("itemNote");
-  let itemImages = itemData.getAll("itemImages") as unknown as
+  const itemImages = itemData.getAll("itemImages") as unknown as
     | string[]
     | File[];
 
-  const libraryId = itemData.get("libraryId") as string;
+  const embeddedImage = itemData.get("embeddedImage");
+  const itemSummary = itemData.get("itemSummary");
+  const openingParagraph = itemData.get("openingParagraph");
+  const closingParagraph = itemData.get("closingParagraph");
 
   let resizedImages: any;
   if (type === "resized") {
@@ -100,6 +104,36 @@ export const addInspectionItem = async (itemData: FormData, id: string) => {
   } else {
     resizedImages = await getResizedBase64Images(itemImages as File[]);
   }
+
+  if (custom === "custom") {
+    try {
+      const item = {
+        id: Date.now().toString(36),
+        itemName,
+        itemImages: resizedImages,
+        itemSummary,
+        openingParagraph,
+        embeddedImage,
+        closingParagraph,
+      };
+
+      const inspectionid = await Db.inspectionReports
+        .where("id")
+        .equals(id)
+        .modify((inspection) => {
+          inspection.inspectionItems.push(item);
+        });
+
+      if (inspectionid) {
+        return item;
+      }
+      return item;
+    } catch (err) {
+      return null;
+    }
+  }
+
+  const libraryId = itemData.get("libraryId") as string;
 
   try {
     const trs = Db.transaction(
