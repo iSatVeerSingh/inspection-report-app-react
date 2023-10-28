@@ -12,11 +12,13 @@ import {
   startNewInspection,
 } from "./inspection";
 import {
+  addInspectionItemsController,
   addInspectionNotesController,
   createInspectionController,
   createJobController,
   getInspectionsController,
   getJobsController,
+  getLibIndexController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -33,6 +35,7 @@ registerRoute(
   getJobsController,
   "GET"
 );
+
 registerRoute(
   ({ url }) => url.pathname === "/client/jobs/new",
   createJobController,
@@ -44,8 +47,23 @@ registerRoute(
   createInspectionController,
   "POST"
 );
-registerRoute(({ url }) => url.pathname === "/client/inspections", getInspectionsController, "GET");
-registerRoute(({url}) => url.pathname === "/client/inspections/notes", addInspectionNotesController, "PUT");
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspections",
+  getInspectionsController,
+  "GET"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-index",
+  getLibIndexController,
+  "GET"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspections/notes",
+  addInspectionNotesController,
+  "PUT"
+);
+
+registerRoute(({url}) =>url.pathname === "/client/inspections/items", addInspectionItemsController, "POST");
 
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection/items",

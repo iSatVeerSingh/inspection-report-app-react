@@ -13,7 +13,9 @@ import ItemPreview from "../pages/Jobs/ItemPreview";
 import AddItemPreviousReport from "../pages/Jobs/AddItemPreviousReport";
 import { getInitStatus } from "../services/auth";
 import Init from "../pages/Init";
-import InspectionJobLayout from "../Layout/InspectionJobLayout";
+import InspectionJobLayout, {
+  inspectionLoader,
+} from "../Layout/InspectionJobLayout";
 import { getRequest } from "../services/client";
 import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 
@@ -41,15 +43,7 @@ const router = createBrowserRouter([
       {
         path: Routes.JOB_SUMMARY,
         element: <InspectionJobLayout />,
-        async loader({ params }) {
-          console.log("this is called");
-          const response = await getRequest(
-            `/client/inspections?inspectionId=${params.inspectionId}`
-          );
-
-          return response;
-        },
-
+        loader: inspectionLoader,
         children: [
           {
             index: true,
@@ -62,6 +56,10 @@ const router = createBrowserRouter([
           {
             path: Routes.ALL_ADDED_NOTES,
             element: <AllAddedNotes />,
+          },
+          {
+            path: Routes.ADD_INSPECTION_ITEMS,
+            element: <AddInspectionItems />,
           },
         ],
       },

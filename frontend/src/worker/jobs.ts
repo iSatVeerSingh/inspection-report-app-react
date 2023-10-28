@@ -22,7 +22,10 @@ export const getJobByJobNumber = async (jobNumber: number) => {
 
 export const createNewJob = async (jobData: any) => {
   try {
-    const jobNumber = await Db.jobs.add(jobData);
+    const jobNumber = await Db.jobs.add({
+      ...jobData,
+      created: new Date(),
+    });
     return jobNumber;
   } catch (err: any) {
     if (
@@ -33,6 +36,16 @@ export const createNewJob = async (jobData: any) => {
         error: "DuplicateKey",
       };
     }
+    return null;
+  }
+};
+
+export const getLibIndex = async () => {
+  try {
+    const allLibs = await Db.libraryIndex.toArray();
+    return allLibs;
+  } catch (err) {
+    console.log(err);
     return null;
   }
 };

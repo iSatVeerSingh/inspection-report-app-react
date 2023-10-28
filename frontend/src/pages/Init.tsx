@@ -40,6 +40,12 @@ const Init = () => {
             const item = response.data[i];
             item.id = Date.now().toString(36);
             await Db.libraryItems.add(item);
+            await Db.libraryIndex.add({
+              id: Date.now().toString(12),
+              item: item.id,
+              category: item.category,
+              name: item.itemName,
+            });
             const progress = Math.floor((i / response.data.length) * 100);
             if (progressval !== progress) {
               setProgressval(progress);

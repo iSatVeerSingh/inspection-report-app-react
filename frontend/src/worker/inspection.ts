@@ -84,28 +84,61 @@ export const addInspectionNotes = async (notes: any[], id: string) => {
 };
 
 export const addInspectionItem = async (itemData: FormData, id: string) => {
-  const itemCategory = itemData.get("category");
-  const itemName = itemData.get("itemName");
+  // const itemCategory = itemData.get("category");
+  // const itemName = itemData.get("itemName");
+  const type = itemData.get("type");
   const itemNote = itemData.get("itemNote");
-  const itemImages = itemData.getAll("itemImages") as unknown as File[];
+  let itemImages = itemData.getAll("itemImages") as unknown as
+    | string[]
+    | File[];
 
-  const resizedImages = await getResizedBase64Images(itemImages);
+  const libraryId = itemData.get("libraryId") as string;
 
-  const newInspectionItem = {
-    category: itemCategory,
-    itemName,
-    itemNote,
-    itemImages: resizedImages,
-  };
+  let resizedImages: any;
+  if (type === "resized") {
+    resizedImages = itemImages;
+  } else {
+    resizedImages = await getResizedBase64Images(itemImages as File[]);
+  }
 
-  const insId = await Db.inspectionReports
-    .where("id")
-    .equals(id)
-    .modify((report) => {
-      report.inspectionItems.push(newInspectionItem);
-    });
+  try {
+    const trs = Db.transaction(
+      "rw",
+      Db.libraryItems,
+      Db.inspectionReports,
+      async () => {
+        const libraryItem = await Db.libraryItems.get(libraryId);
+        if (!libraryId) {
+          return null;
+        }
 
-  return insId;
+        libraryItem.id = Date.now().toString(36);
+        libraryItem.itemImages = resizedImages;
+        libraryItem.itemNote = itemNote;
+
+        const inspectionid = await Db.inspectionReports
+          .where("id")
+          .equals(id)
+          .modify((inspection) => {
+            inspection.inspectionItems.push(libraryItem);
+          });
+        if (inspectionid) {
+          return libraryItem;
+        }
+      }
+    );
+    return trs;
+  } catch (err: any) {
+    if (
+      err.name === "ConstraintError" &&
+      err.message.includes("Key already exists in the object store")
+    ) {
+      return {
+        error: "DuplicateKey",
+      };
+    }
+    return null;
+  }
 };
 
 export const getResizedBase64Images = async (itemImages: File[]) => {
@@ -135,6 +168,8 @@ const getResizedImage = async (imgBitmap: ImageBitmap) => {
 
   const canvas = new OffscreenCanvas(maxwidth, maxheight);
   const ctx = canvas.getContext("2d")!;
+  ctx.imageSmoothingEnabled = true;
+  ctx.imageSmoothingQuality = "high";
   ctx.drawImage(imgBitmap, 0, 0, canvas.width, canvas.height);
 
   const imgBlob = await ctx.canvas.convertToBlob({

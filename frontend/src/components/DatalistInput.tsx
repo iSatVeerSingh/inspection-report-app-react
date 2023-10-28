@@ -9,7 +9,7 @@ import {
   List,
   ListItem,
 } from "@chakra-ui/react";
-import React, { ChangeEventHandler, useState } from "react";
+import React, { ChangeEventHandler, useState, useRef } from "react";
 
 type DatalistInputProps = InputProps & {
   label?: string;
@@ -18,10 +18,18 @@ type DatalistInputProps = InputProps & {
 };
 
 const DatalistInput = (
-  { name, isRequired, label, inputError, dataList }: DatalistInputProps,
+  {
+    name,
+    isRequired,
+    label,
+    inputError,
+    dataList,
+    placeholder,
+  }: DatalistInputProps,
   ref: any
 ) => {
-  const [listItems, setListItems] = useState<string[]>([]);
+  const inputRef = ref || useRef(null);
+  const [listItems, setListItems] = useState<any[]>([]);
 
   const filterList: ChangeEventHandler = (e) => {
     e.preventDefault();
@@ -39,9 +47,10 @@ const DatalistInput = (
   };
 
   const selectValue = (value: string) => {
-    ref!.current.value = value;
+    inputRef!.current.value = value;
     setListItems([]);
   };
+
   return (
     <FormControl
       isInvalid={inputError !== undefined}
@@ -57,8 +66,9 @@ const DatalistInput = (
         name={name}
         isRequired={isRequired}
         borderColor="blue-primary"
-        ref={ref}
+        ref={inputRef}
         onChange={filterList}
+        placeholder={placeholder}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
       {listItems.length !== 0 && (

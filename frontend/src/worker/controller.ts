@@ -1,6 +1,12 @@
 import { RouteHandler } from "workbox-core";
-import { createNewJob, getAllJobs, getJobByJobNumber } from "./jobs";
 import {
+  createNewJob,
+  getAllJobs,
+  getJobByJobNumber,
+  getLibIndex,
+} from "./jobs";
+import {
+  addInspectionItem,
   addInspectionNotes,
   getAllInspections,
   getInspectionById,
@@ -79,6 +85,14 @@ export const getInspectionsController: RouteHandler = async ({ url }) => {
   return getSuccessResponse(inspection);
 };
 
+export const getLibIndexController = async () => {
+  const libs = await getLibIndex();
+  if (!libs || libs.length === 0) {
+    return getBadRequestResponse();
+  }
+  return getSuccessResponse(libs);
+};
+
 export const addInspectionNotesController: RouteHandler = async ({
   url,
   request,
@@ -109,6 +123,27 @@ const getSuccessResponse = (data: any) => {
   return new Response(JSON.stringify(resData), {
     status: 200,
   });
+};
+
+export const addInspectionItemsController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const inspectionId = url.searchParams.get("inspectionId");
+  if (!inspectionId || inspectionId === "") {
+    return getBadRequestResponse();
+  }
+
+  const itemData = await request.formData();
+  if (!itemData) {
+    return getBadRequestResponse();
+  }
+
+  const inspection = await addInspectionItem(itemData, inspectionId);
+  if (!inspection) {
+    return getBadRequestResponse();
+  }
+  return getSuccessResponse(inspection);
 };
 
 const getNotFoundResponse = () => {

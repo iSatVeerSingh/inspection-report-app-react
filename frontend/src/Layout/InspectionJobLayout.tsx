@@ -1,19 +1,34 @@
 "use client";
 
-import { Outlet, useLoaderData } from "react-router-dom";
+import { Outlet, redirect, useLoaderData } from "react-router-dom";
 import {
   InspectionContext,
   inspectionReducer,
 } from "../services/client/context";
 import { useReducer } from "react";
+import { getRequest } from "../services/client";
+
+export const inspectionLoader = async ({ params }: any) => {
+  const inspection = await getRequest(
+    `/client/inspections?inspectionId=${params.inspectionId}`
+  );
+  if (!inspection.success) {
+    return redirect("/jobs");
+  }
+
+  const libIndex = await getRequest("/client/library-index");
+  console.log("Loader called");
+
+  return {
+    inspection: inspection.success ? inspection.data : {},
+    libIndex: libIndex.success ? libIndex.data : [],
+  };
+};
 
 const InspectionJobLayout = () => {
-  const jobResponse: any = useLoaderData();
+  const { inspection: inspectionData, libIndex }: any = useLoaderData();
 
-  const [inspectionData, dispatch] = useReducer(
-    inspectionReducer,
-    jobResponse.data
-  );
+  const [inspection, dispatch] = useReducer(inspectionReducer, inspectionData);
 
   const addNotes = (notes: any) => {
     dispatch({
@@ -22,8 +37,17 @@ const InspectionJobLayout = () => {
     });
   };
 
+  const addItem = (item: any) => {
+    dispatch({
+      type: "ADD_ITEM",
+      payload: item,
+    });
+  };
+
   return (
-    <InspectionContext.Provider value={{ inspectionData, addNotes }}>
+    <InspectionContext.Provider
+      value={{ inspection, libIndex, addNotes, addItem }}
+    >
       <Outlet />
     </InspectionContext.Provider>
   );

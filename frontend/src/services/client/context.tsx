@@ -9,6 +9,12 @@ export const inspectionReducer = (state: any, action: any) => {
         ...state,
         inspectionNotes: action.payload,
       };
+    };
+    case "ADD_ITEM": {
+      return {
+        ...state,
+        inspectionItems: [...state.inspectionItems, action.payload]
+      }
     }
     default: {
       throw Error("Unknown action: " + action.type);

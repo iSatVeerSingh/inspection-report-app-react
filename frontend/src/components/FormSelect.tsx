@@ -2,23 +2,25 @@ import {
   FormControl,
   FormErrorMessage,
   FormLabel,
-  InputProps,
   Select,
+  SelectProps,
 } from "@chakra-ui/react";
 import { Ref, forwardRef } from "react";
 
-type FormInputProps = InputProps & {
+type FormInputProps = SelectProps & {
   label?: string;
   inputError?: string;
   required?: boolean;
-  options: {
-    text: string;
-    value: string;
-  }[];
+  options:
+    | {
+        text: string;
+        value: string;
+      }[]
+    | string[];
 };
 
 const FormSelect = (
-  { label, name, placeholder, inputError, required, options }: FormInputProps,
+  { label, name, placeholder, inputError, required, options, onChange }: FormInputProps,
   ref: Ref<HTMLSelectElement>
 ) => {
   return (
@@ -34,12 +36,19 @@ const FormSelect = (
         name={name}
         placeholder={placeholder}
         ref={ref}
+        onChange={onChange}
       >
-        {options.map((opt) => (
-          <option key={opt.value} value={opt.value}>
-            {opt.text}
-          </option>
-        ))}
+        {options.map((opt) =>
+          typeof opt === "string" ? (
+            <option value={opt} key={opt}>
+              {opt}
+            </option>
+          ) : (
+            <option value={opt.value} key={opt.value}>
+              {opt.text}
+            </option>
+          )
+        )}
       </Select>
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </FormControl>

@@ -6,6 +6,7 @@ export class InspectionReport extends Dexie {
   libraryItems!: Table<any>;
   inspectionReports!: Table<any>;
   jobs!: Table<any>;
+  libraryIndex!: Table<any>
 
   constructor() {
     super("inspection-db");
@@ -13,6 +14,7 @@ export class InspectionReport extends Dexie {
       libraryItems: "++id, category, itemName", // Primary key and indexed props
       inspectionReports: "++id, category, jobNumber, date, status",
       jobs: "++jobNumber, category",
+      libraryIndex: "++id, item, category",
     });
   }
 }

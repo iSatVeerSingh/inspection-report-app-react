@@ -9,6 +9,7 @@ import {
   ModalContent,
   ModalHeader,
   ModalCloseButton,
+  useToast,
 } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import FormInput from "../../components/FormInput";
@@ -17,132 +18,165 @@ import FileInput from "../../components/FileInput";
 import FormTextArea from "../../components/FormTextArea";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
-import { FormEventHandler, FormEvent } from "react";
-import { useParams } from "react-router-dom";
+import {
+  FormEventHandler,
+  FormEvent,
+  useState,
+  ChangeEventHandler,
+  useRef,
+} from "react";
+import { useInspectionData } from "../../services/client/context";
+import DatalistInput from "../../components/DatalistInput";
+import { getResizedBase64Images } from "../../utils/resize";
+import { postRequest } from "../../services/client";
 
 const AddInspectionItems = () => {
+  const { inspection, libIndex, addItem }: any = useInspectionData();
+  const categories: string[] = Array.from(
+    new Set(libIndex.map((item: any) => item.category))
+  );
+
+  const datalistRef = useRef<HTMLInputElement | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
-  const params = useParams();
-  console.log(params);
+  const [itemNames, setItemNames] = useState([]);
+  const [formErrors, setFormErrors] = useState<any>(null);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
+
+  const filterItemNames: ChangeEventHandler = (e) => {
+    e.preventDefault();
+    datalistRef.current!.value = "";
+    const target = e.target as HTMLInputElement;
+    const filteredNames = libIndex
+      .filter((item: any) => item.category === target.value)
+      .map((item: any) => item.name);
+    setItemNames(filteredNames);
+  };
 
   const handleAddItem: FormEventHandler<HTMLFormElement> = async (
     e: FormEvent
   ) => {
     e.preventDefault();
-    console.log(e.target);
 
-    const itemData = new FormData(e.target as HTMLFormElement);
+    const isOffScreen = typeof OffscreenCanvas !== undefined;
+
+    const target = e.target as HTMLFormElement;
+    const itemData = new FormData(target);
+    const formErrors: any = {};
+
+    const category = itemData.get("category")?.toString().trim();
+    const itemName = itemData.get("itemName")?.toString().trim();
     const images = itemData.getAll("itemImages") as File[];
-    const imgs = await getResizedBase64Images(images);
-    console.log(imgs);
 
-    // const response = await fetch(
-    //   `/client/inspection/items?id=${params.inspectionId}`,
-    //   {
-    //     method: "PUT",
-    //     body: itemData,
-    //   }
-    // );
-    // if(response.ok) {
-    //   const data = await response.json();
-    //   console.log(data);
-    // }
-  };
-
-  const getResizedBase64Images = async (itemImages: File[]) => {
-    const imagePromises = [];
-
-    for (let i = 0; i < itemImages.length; i++) {
-      const imgFile = itemImages[i];
-      const imgBitmap = await createImageBitmap(imgFile);
-
-      const imgResize = getResizedImage(imgBitmap);
-
-      imagePromises.push(imgResize);
-
-      // if (imgBitmap.width > 300 || imgBitmap.height > 300) {
-      //   const promiseImg = getResizedImage(imgBitmap);
-      //   imagePromises.push(promiseImg);
-      // } else {
-      //   const promiseImg = getBase64(imgFile);
-      //   imagePromises.push(promiseImg);
-      // }
+    if (category === "") {
+      formErrors.category = "Please select a category";
     }
 
-    // return Promise.all(imagePromises);
-    return imagePromises;
-  };
+    if (itemName === "") {
+      formErrors.itemName = "Please select an item name";
+    }
 
-  const getResizedImage = (imgBitmap: ImageBitmap) => {
-    const { width, height } = imgBitmap;
-    const maxwidth = 300;
-    const scaleSize = maxwidth / width;
-    const maxheight = height * scaleSize;
+    if (images.length === 0) {
+      formErrors.itemImages = "Please select minimum 1 image";
+    }
+    if (images.length > 8) {
+      formErrors.itemImages = "Max 8 images allowed";
+    }
 
-    // const canvas = new OffscreenCanvas(maxwidth, maxheight);
-    const canvas = document.createElement("canvas");
-    canvas.width = maxwidth;
-    canvas.height = maxheight;
-    const ctx = canvas.getContext("2d")!;
-    ctx.drawImage(imgBitmap, 0, 0, canvas.width, canvas.height);
+    if (Object.keys(formErrors).length !== 0) {
+      setFormErrors(formErrors);
+      return;
+    }
 
-    // const imgBlob = await ctx.canvas.convertToBlob({
-    //   quality: 0.9,
-    //   type: "image/jpeg",
-    // });
+    setFormErrors(null);
+    setSaving(true);
+    const library = libIndex.find((item: any) => item.name === itemName);
+    itemData.append("libraryId", library.item as string);
 
-    const imgBlob = ctx.canvas.toDataURL("image/jpeg", 0.9);
+    if (!isOffScreen) {
+      console.log("not offscreen");
+      itemData.delete("itemImages");
+      const resizedImages = await getResizedBase64Images(images);
+      for (let img of resizedImages) {
+        itemData.append("itemImages", img as string);
+      }
+      itemData.append("type", "resized");
+    }
 
-    // const base64img = await getBase64(imgBlob);
-    return imgBlob;
-    // return base64img;
-  };
+    const response = await postRequest(
+      `/client/inspections/items?inspectionId=${inspection.id}`,
+      {
+        body: itemData,
+      }
+    );
 
-  const getBase64 = async (imgBlob: Blob) => {
-    return new Promise((resolve) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(imgBlob);
-      reader.addEventListener("load", (e) => {
-        resolve(e.target?.result);
+    if (!response.success) {
+      toast({
+        title: response.data,
+        duration: 4000,
+        status: "error",
       });
+      target.reset();
+      setSaving(false);
+      return;
+    }
+
+    toast({
+      title: "Item saved successfully",
+      description: itemName + " saved",
+      duration: 4000,
+      status: "success",
     });
+    addItem(response.data);
+    target.reset();
+    setSaving(false);
   };
 
   return (
-    <PageLayout title="Add Inspection Notes">
+    <PageLayout title="Add New Items">
       <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
         <Heading as="h2" fontSize={"2xl"} fontWeight={"medium"}>
-          #23855 - Frame Inspection
+          &#35;{inspection?.jobNumber} - {inspection?.category}
         </Heading>
         <Text fontSize={"lg"} color={"dark-gray"}>
-          P.O. Box 22, Greensborough
+          {inspection?.siteAddress}
         </Text>
         <form onSubmit={handleAddItem}>
           <Flex mt={4} direction={"column"} gap={3} alignItems={"start"}>
             <FormSelect
-              options={[{ text: "Category", value: "" }]}
+              options={categories}
               label="Category"
               placeholder="Select item category"
               name="category"
+              onChange={filterItemNames}
+              inputError={formErrors?.category}
             />
-            <FormInput
-              type="text"
+            <DatalistInput
               name="itemName"
               label="Item Name"
-              placeholder="Search Item name here"
+              placeholder="Search item name here"
+              dataList={itemNames}
+              inputError={formErrors?.itemName}
+              ref={datalistRef}
             />
             <FileInput
               name="itemImages"
               label="Item Images"
               subLabel="Max 8 images allowed"
               multiple
+              inputError={formErrors?.itemImages}
             />
             <FormTextArea
               label="Item Note"
               placeholder="Type item note here"
               name="itemNote"
             />
-            <ButtonPrimary width={"200px"} type="submit">
+            <ButtonPrimary
+              width={"200px"}
+              type="submit"
+              isLoading={saving}
+              loadingText="Saving"
+            >
               Add Item
             </ButtonPrimary>
           </Flex>

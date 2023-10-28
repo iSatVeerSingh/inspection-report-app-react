@@ -2,7 +2,6 @@
 
 import {
   Box,
-  Checkbox,
   Flex,
   Grid,
   Heading,
@@ -11,25 +10,23 @@ import {
   useToast,
 } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import FilterSelect from "../../components/FilterSelect";
-import SearchFilter from "../../components/SearchFilter";
 import { useInspectionData } from "../../services/client/context";
-import { useRef, useState } from "react";
+import { useState } from "react";
 import { DeleteIcon } from "../../icons";
 import { useNavigate } from "react-router-dom";
 import { putRequest } from "../../services/client";
 
 const AllAddedNotes = () => {
-  const navigate = useNavigate();
-  const { inspectionData: inspection, addNotes }: any = useInspectionData();
-  const toast = useToast();
-
+  const { inspection, addNotes }: any = useInspectionData();
   const [notes, setNotes] = useState<any[]>(inspection.inspectionNotes);
   const [isDelete, setIsDelete] = useState(false);
+  const navigate = useNavigate();
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
+
   const deleteNote = (note: string) => {
-    setIsDelete(true);
     setNotes((prev) => prev.filter((item) => item !== note));
+    setIsDelete(true);
   };
 
   const saveNotes = async () => {
@@ -82,30 +79,6 @@ const AllAddedNotes = () => {
             {inspection?.siteAddress}
           </Text>
         </Box>
-        {/* <Flex
-          direction={{ base: "column", md: "row" }}
-          alignItems={{ base: "start", md: "center" }}
-          gap={4}
-          justifyContent={"space-between"}
-          mt={4}
-        >
-          <Flex alignItems={"center"}>
-            <Text
-              fontSize={"lg"}
-              fontWeight={"medium"}
-              color={"rich-black"}
-              minW={"100px"}
-            >
-              Filter By
-            </Text>
-            <FilterSelect
-              flexGrow={1}
-              width={{ base: "full", md: "200px" }}
-              options={[{ text: "Opetion 1", value: "option1" }]}
-            />
-          </Flex>
-          <SearchFilter placeholder="Search by job nuber, category, customer name" />
-        </Flex> */}
         <Grid mt={4} gap={2}>
           {notes.map((note, index) => (
             <Flex gap={2} bg={"main-bg"} p="2" borderRadius={5} key={index}>
