@@ -30,6 +30,7 @@ const FormInput = (
         placeholder={placeholder}
         required={required}
         borderColor="blue-primary"
+        autoComplete="off"
         ref={ref}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}

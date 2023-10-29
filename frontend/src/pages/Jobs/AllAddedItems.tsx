@@ -97,7 +97,7 @@ const AllAddedItems = () => {
     setSaving(false);
     onClose();
     deleteItems(response.data);
-    setSelectedItems([])
+    setSelectedItems([]);
   };
 
   return (
@@ -132,8 +132,8 @@ const AllAddedItems = () => {
                   onChange={() => handleSelect(item.id)}
                 />
               </Box>
-              <Link to={item.id}>
-                <Box flexGrow={1}>
+              <Link to={`./${item.id}`} style={{ flexGrow: 1 }}>
+                <Box>
                   <Flex
                     alignItems={"center"}
                     justifyContent={"space-between"}

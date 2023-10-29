@@ -65,6 +65,10 @@ const router = createBrowserRouter([
             path: Routes.ALL_ADDED_ITEMS,
             element: <AllAddedItems />,
           },
+          {
+            path: Routes.ITEM_PREVIEW,
+            element: <ItemPreview />,
+          },
         ],
       },
       {

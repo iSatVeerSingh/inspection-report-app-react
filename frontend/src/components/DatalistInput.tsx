@@ -69,6 +69,7 @@ const DatalistInput = (
         ref={inputRef}
         onChange={filterList}
         placeholder={placeholder}
+        autoComplete="off"
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
       {listItems.length !== 0 && (

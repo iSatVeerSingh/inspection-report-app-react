@@ -95,7 +95,7 @@ const JobSummary = () => {
             Recommendation
           </Heading>
           <Box px={3} mt={2}>
-            <ButtonPrimary w={"200px"}>Add New Items</ButtonPrimary>
+            <ButtonPrimary w={"200px"}>Add Recommendation</ButtonPrimary>
           </Box>
         </Box>
         <Flex gap={4} direction={{ base: "column", sm: "row" }} mt={8}>
