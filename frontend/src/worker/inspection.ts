@@ -224,3 +224,24 @@ const getBase64 = async (imgBlob: Blob) => {
     });
   });
 };
+
+export const deleteInspectionItems = async (itemsId: string[], id: string) => {
+  try {
+    const trs = await Db.transaction("rw", Db.inspectionReports, async () => {
+      const inspectionid = await Db.inspectionReports
+        .where("id")
+        .equals(id)
+        .modify((inspection) => {
+          inspection.inspectionItems = inspection.inspectionItems.filter(
+            (item: any) => !itemsId.includes(item.id)
+          );
+        });
+      if (inspectionid) {
+        return itemsId;
+      }
+    });
+    return trs;
+  } catch (err: any) {
+    return null;
+  }
+};

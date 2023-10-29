@@ -61,6 +61,10 @@ const router = createBrowserRouter([
             path: Routes.ADD_INSPECTION_ITEMS,
             element: <AddInspectionItems />,
           },
+          {
+            path: Routes.ALL_ADDED_ITEMS,
+            element: <AllAddedItems />,
+          },
         ],
       },
       {

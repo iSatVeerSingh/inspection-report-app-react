@@ -86,7 +86,7 @@ const JobSummary = () => {
               >
                 Add New Items
               </ButtonPrimary>
-              <ButtonOutline>View Added Items</ButtonOutline>
+              <ButtonOutline onClick={()=> navigate("./all-items")}>View Added Items</ButtonOutline>
             </Flex>
           </Box>
         </Box>

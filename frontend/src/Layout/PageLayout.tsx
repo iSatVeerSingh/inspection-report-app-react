@@ -1,7 +1,7 @@
 import { Box, Flex, Grid, Heading, IconButton } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import React, { MouseEventHandler } from "react";
-import useMobile from "../hooks/useMobile";
+// import useMobile from "../hooks/useMobile";
 import { ChevronLeft } from "../icons";
 import { useNavigate } from "react-router-dom";
 
@@ -22,7 +22,7 @@ const PageLayout = ({
   btnLoading,
   isRoot,
 }: PageLayoutProps) => {
-  const isMobile = useMobile();
+  // const isMobile = useMobile();
   const navigate = useNavigate();
 
   return (
@@ -33,12 +33,13 @@ const PageLayout = ({
         bg="main-bg"
         borderBottom={"stroke"}
         justifyContent={"space-between"}
-        pl={isMobile ? "60px" : "auto"}
+        // pl={isMobile ? "60px" : "auto"}
       >
         <Heading
           fontWeight={"semibold"}
           fontSize={{ base: "xl", sm: "2xl" }}
           color="rich-black"
+          flexGrow={1}
         >
           {!isRoot && (
             <IconButton

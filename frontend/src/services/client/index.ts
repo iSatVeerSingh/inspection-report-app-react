@@ -44,3 +44,19 @@ export const putRequest = async (url: string, init: RequestInit) => {
     };
   }
 };
+
+export const deleteRequest = async (url: string, init: RequestInit) => {
+  try {
+    const response = await fetch(url, {
+      ...init,
+      method: "DELETE",
+    });
+
+    return await response.json();
+  } catch (err) {
+    return {
+      success: false,
+      data: "Request unsuccessful",
+    };
+  }
+};

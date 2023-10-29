@@ -16,6 +16,7 @@ import {
   addInspectionNotesController,
   createInspectionController,
   createJobController,
+  deleteInspectionItemsController,
   getInspectionsController,
   getJobsController,
   getLibIndexController,
@@ -63,22 +64,15 @@ registerRoute(
   "PUT"
 );
 
-registerRoute(({url}) =>url.pathname === "/client/inspections/items", addInspectionItemsController, "POST");
-
 registerRoute(
-  ({ url }) => url.pathname === "/client/inspection/items",
-  async ({ url, request }) => {
-    const id = url.searchParams.get("id");
-    if (id) {
-      const body = await request.formData();
-      const insId = await addInspectionItem(body, id);
-      if (insId) {
-        return new Response(JSON.stringify({ message: insId }));
-      }
-    }
-    return new Response("Couldn't add inspection note for " + id);
-  },
-  "PUT"
+  ({ url }) => url.pathname === "/client/inspections/items",
+  addInspectionItemsController,
+  "POST"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspections/items",
+  deleteInspectionItemsController,
+  "DELETE"
 );
 
 let allowlist: undefined | RegExp[];

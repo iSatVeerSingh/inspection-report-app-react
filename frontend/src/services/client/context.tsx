@@ -9,12 +9,20 @@ export const inspectionReducer = (state: any, action: any) => {
         ...state,
         inspectionNotes: action.payload,
       };
-    };
+    }
     case "ADD_ITEM": {
       return {
         ...state,
-        inspectionItems: [...state.inspectionItems, action.payload]
-      }
+        inspectionItems: [...state.inspectionItems, action.payload],
+      };
+    }
+    case "DELETE_ITEM": {
+      return {
+        ...state,
+        inspectionItems: state.inspectionItems.filter(
+          (item: any) => !action.payload.includes(item.id)
+        ),
+      };
     }
     default: {
       throw Error("Unknown action: " + action.type);

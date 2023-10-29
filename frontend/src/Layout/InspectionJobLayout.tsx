@@ -44,9 +44,16 @@ const InspectionJobLayout = () => {
     });
   };
 
+  const deleteItems = (items: any) => {
+    dispatch({
+      type: "DELETE_ITEM",
+      payload: items,
+    });
+  };
+
   return (
     <InspectionContext.Provider
-      value={{ inspection, libIndex, addNotes, addItem }}
+      value={{ inspection, libIndex, addNotes, addItem, deleteItems }}
     >
       <Outlet />
     </InspectionContext.Provider>

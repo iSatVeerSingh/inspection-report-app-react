@@ -8,10 +8,12 @@ import {
 import {
   addInspectionItem,
   addInspectionNotes,
+  deleteInspectionItems,
   getAllInspections,
   getInspectionById,
   startNewInspection,
 } from "./inspection";
+import { json } from "stream/consumers";
 
 export const getJobsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
@@ -143,6 +145,31 @@ export const addInspectionItemsController: RouteHandler = async ({
   if (!inspection) {
     return getBadRequestResponse();
   }
+  return getSuccessResponse(inspection);
+};
+
+export const deleteInspectionItemsController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const inspectionId = url.searchParams.get("inspectionId");
+  if (!inspectionId || inspectionId === "") {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+  if (!body) {
+    return getBadRequestResponse();
+  }
+
+  const inspection = await deleteInspectionItems(
+    body.inspectionItems as string[],
+    inspectionId
+  );
+  if (!inspection) {
+    return getBadRequestResponse();
+  }
+
   return getSuccessResponse(inspection);
 };
 
