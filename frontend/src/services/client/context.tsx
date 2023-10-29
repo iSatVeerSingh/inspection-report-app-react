@@ -24,6 +24,12 @@ export const inspectionReducer = (state: any, action: any) => {
         ),
       };
     }
+    case "RECOMMENDATION": {
+      return {
+        ...state,
+        recommendation: action.payload,
+      };
+    }
     default: {
       throw Error("Unknown action: " + action.type);
     }

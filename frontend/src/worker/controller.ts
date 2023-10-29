@@ -8,6 +8,7 @@ import {
 import {
   addInspectionItem,
   addInspectionNotes,
+  addRecommendation,
   deleteInspectionItems,
   getAllInspections,
   getInspectionById,
@@ -170,6 +171,26 @@ export const deleteInspectionItemsController: RouteHandler = async ({
     return getBadRequestResponse();
   }
 
+  return getSuccessResponse(inspection);
+};
+
+export const addRecommendationController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const inspectionId = url.searchParams.get("inspectionId");
+  if (!inspectionId || inspectionId === "") {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+  if (!body) {
+    return getBadRequestResponse();
+  }
+  const inspection = await addRecommendation(body.recommendation, inspectionId);
+  if (!inspection) {
+    return getBadRequestResponse();
+  }
   return getSuccessResponse(inspection);
 };
 

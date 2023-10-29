@@ -1,15 +1,99 @@
-import { Box, Heading, Flex } from "@chakra-ui/react";
+import {
+  Box,
+  Heading,
+  Flex,
+  Modal,
+  ModalOverlay,
+  ModalContent,
+  ModalHeader,
+  ModalBody,
+  ModalFooter,
+  Button,
+  useDisclosure,
+  useToast,
+  Text,
+} from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate } from "react-router-dom";
 import { useInspectionData } from "../../services/client/context";
+import FormTextArea from "../../components/FormTextArea";
+import { useRef, useState } from "react";
+import { putRequest } from "../../services/client";
 
 const JobSummary = () => {
   const navigate = useNavigate();
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const recommendationRef = useRef<HTMLTextAreaElement | null>(null);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
-  const { inspection }: any = useInspectionData();
+  const { inspection, updateRecom }: any = useInspectionData();
+  const addRecommedation = async () => {
+    const recommendation = recommendationRef.current!.value.trim();
+    if (recommendation === "") {
+      return;
+    }
+
+    setSaving(true);
+    const response = await updateRecommendation(recommendation);
+
+    if (!response.success) {
+      toast({
+        title: "Could not add recommendation",
+        duration: 4000,
+        status: "error",
+      });
+      setSaving(false);
+      return;
+    }
+
+    toast({
+      title: "Recommendation added successfully",
+      duration: 4000,
+      status: "success",
+    });
+    setSaving(false);
+    updateRecom(recommendation);
+    onClose();
+  };
+
+  const deleteRecommendation = async () => {
+    setSaving(true);
+    const response = await updateRecommendation("");
+
+    if (!response.success) {
+      toast({
+        title: "Could not delete recommendation",
+        duration: 4000,
+        status: "error",
+      });
+      setSaving(false);
+      return;
+    }
+
+    toast({
+      title: "Recommendation Deleted successfully",
+      duration: 4000,
+      status: "success",
+    });
+    setSaving(false);
+    updateRecom("");
+  };
+
+  const updateRecommendation = async (recommendation: string) => {
+    const response = await putRequest(
+      `/client/inspections/recommendation?inspectionId=${inspection.id}`,
+      {
+        body: JSON.stringify({
+          recommendation,
+        }),
+      }
+    );
+    return response;
+  };
 
   return (
     <PageLayout title="Job Summary">
@@ -52,7 +136,7 @@ const JobSummary = () => {
             </Flex>
           </Box>
         </Box>
-        <Box mt={3}>
+        {/* <Box mt={3}>
           <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
             Previous Inspection Items
           </Heading>
@@ -65,7 +149,7 @@ const JobSummary = () => {
               <ButtonPrimary px={3}>Add / View Previous Items</ButtonPrimary>
             </Flex>
           </Box>
-        </Box>
+        </Box> */}
         <Box mt={3}>
           <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
             New Report Items
@@ -86,7 +170,9 @@ const JobSummary = () => {
               >
                 Add New Items
               </ButtonPrimary>
-              <ButtonOutline onClick={()=> navigate("./all-items")}>View Added Items</ButtonOutline>
+              <ButtonOutline onClick={() => navigate("./all-items")}>
+                View Added Items
+              </ButtonOutline>
             </Flex>
           </Box>
         </Box>
@@ -95,7 +181,18 @@ const JobSummary = () => {
             Recommendation
           </Heading>
           <Box px={3} mt={2}>
-            <ButtonPrimary w={"200px"}>Add Recommendation</ButtonPrimary>
+            {inspection?.recommendation && inspection?.recommendation !== "" ? (
+              <>
+                <Text>{inspection?.recommendation}</Text>
+                <ButtonOutline onClick={deleteRecommendation}>
+                  Delete Recommendation
+                </ButtonOutline>
+              </>
+            ) : (
+              <ButtonPrimary w={"200px"} onClick={onOpen}>
+                Add Recommendation
+              </ButtonPrimary>
+            )}
           </Box>
         </Box>
         <Flex gap={4} direction={{ base: "column", sm: "row" }} mt={8}>
@@ -107,6 +204,29 @@ const JobSummary = () => {
           </ButtonOutline>
         </Flex>
       </Box>
+      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+        <ModalOverlay />
+        <ModalContent>
+          <ModalHeader>Recommendations</ModalHeader>
+          <ModalBody>
+            <FormTextArea name="recommendation" ref={recommendationRef} />
+          </ModalBody>
+
+          <ModalFooter>
+            <Button
+              size={{ base: "sm", md: "md" }}
+              onClick={addRecommedation}
+              isLoading={saving}
+              loadingText="Saving"
+              colorScheme="blue"
+              mr={3}
+            >
+              Add
+            </Button>
+            <Button onClick={onClose}>Cancel</Button>
+          </ModalFooter>
+        </ModalContent>
+      </Modal>
     </PageLayout>
   );
 };

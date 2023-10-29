@@ -245,3 +245,14 @@ export const deleteInspectionItems = async (itemsId: string[], id: string) => {
     return null;
   }
 };
+
+export const addRecommendation = async (recommendation: string, id: string) => {
+  try {
+    const inspectionid = await Db.inspectionReports.update(id, {
+      recommendation,
+    });
+    return inspectionid;
+  } catch (err) {
+    return null;
+  }
+};

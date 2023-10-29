@@ -51,9 +51,23 @@ const InspectionJobLayout = () => {
     });
   };
 
+  const updateRecom = (recom: string) => {
+    dispatch({
+      type: "RECOMMENDATION",
+      payload: recom,
+    });
+  };
+
   return (
     <InspectionContext.Provider
-      value={{ inspection, libIndex, addNotes, addItem, deleteItems }}
+      value={{
+        inspection,
+        libIndex,
+        addNotes,
+        addItem,
+        deleteItems,
+        updateRecom,
+      }}
     >
       <Outlet />
     </InspectionContext.Provider>

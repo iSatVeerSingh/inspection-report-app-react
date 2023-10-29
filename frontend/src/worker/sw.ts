@@ -14,6 +14,7 @@ import {
 import {
   addInspectionItemsController,
   addInspectionNotesController,
+  addRecommendationController,
   createInspectionController,
   createJobController,
   deleteInspectionItemsController,
@@ -73,6 +74,11 @@ registerRoute(
   ({ url }) => url.pathname === "/client/inspections/items",
   deleteInspectionItemsController,
   "DELETE"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspections/recommendation",
+  addRecommendationController,
+  "PUT"
 );
 
 let allowlist: undefined | RegExp[];
