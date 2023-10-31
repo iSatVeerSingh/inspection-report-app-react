@@ -279,7 +279,6 @@ const AddInspectionItems = () => {
           </Flex>
         </form>
         <Flex mt={10} justifyContent={"space-between"}>
-          <ButtonPrimary>See Added Items</ButtonPrimary>
           <ButtonOutline onClick={onOpen}>Create Custom Item</ButtonOutline>
         </Flex>
       </Box>

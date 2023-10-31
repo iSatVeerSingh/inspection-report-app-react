@@ -196,8 +196,8 @@ const JobSummary = () => {
           </Box>
         </Box>
         <Flex gap={4} direction={{ base: "column", sm: "row" }} mt={8}>
-          <ButtonPrimary width={{ base: "full", sm: "250px" }}>
-            Generate PDF
+          <ButtonPrimary width={{ base: "full", sm: "250px" }} onClick={()=> navigate("./preview")}>
+            Review & Generate PDF
           </ButtonPrimary>
           <ButtonOutline width={{ base: "full", sm: "200px" }}>
             Send Report

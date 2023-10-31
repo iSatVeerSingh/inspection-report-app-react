@@ -5,12 +5,7 @@ import {
 } from "workbox-precaching";
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
-import {
-  addInspectionItem,
-  addInspectionNotes,
-  getInspectionById,
-  startNewInspection,
-} from "./inspection";
+
 import {
   addInspectionItemsController,
   addInspectionNotesController,

@@ -18,6 +18,7 @@ import InspectionJobLayout, {
 } from "../Layout/InspectionJobLayout";
 import { getRequest } from "../services/client";
 import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
+import ReportPreview from "../pages/Jobs/ReportPreview";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
             path: Routes.ITEM_PREVIEW,
             element: <ItemPreview />,
           },
+          {
+            path: Routes.REPORT_PREVIEW,
+            element: <ReportPreview />
+          }
         ],
       },
       {

@@ -6,7 +6,8 @@ export class InspectionReport extends Dexie {
   libraryItems!: Table<any>;
   inspectionReports!: Table<any>;
   jobs!: Table<any>;
-  libraryIndex!: Table<any>
+  libraryIndex!: Table<any>;
+  template!: Table<any>;
 
   constructor() {
     super("inspection-db");
@@ -15,6 +16,7 @@ export class InspectionReport extends Dexie {
       inspectionReports: "++id, category, jobNumber, date, status",
       jobs: "++jobNumber, category",
       libraryIndex: "++id, item, category",
+      template: "++id",
     });
   }
 }
@@ -37,3 +39,15 @@ export class IRAuser extends Dexie {
 }
 
 export const UserDB = new IRAuser();
+
+export class Demo extends Dexie {
+  demoData!: Table<any>;
+  constructor() {
+    super("demo-db");
+    this.version(1).stores({
+      demoData: "++id",
+    });
+  }
+}
+
+export const demoDb = new Demo();

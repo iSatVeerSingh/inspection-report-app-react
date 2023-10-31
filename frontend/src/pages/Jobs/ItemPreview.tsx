@@ -2,7 +2,6 @@ import { Box, Flex, Heading, Image, Text } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate, useParams } from "react-router-dom";
 import { useInspectionData } from "../../services/client/context";
 

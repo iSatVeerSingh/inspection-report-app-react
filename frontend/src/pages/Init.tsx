@@ -52,6 +52,16 @@ const Init = () => {
             }
           }
         }
+
+        const templateResponse = await inspectionApi.get(
+          "/report-template.json"
+        );
+        if (templateResponse.status === 200) {
+          await Db.template.add({
+            ...templateResponse.data,
+            id: "defaultTemplate"
+          });
+        }
         setInstalled(true);
         setInstalling(false);
       } catch (err) {
