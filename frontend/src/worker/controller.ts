@@ -12,6 +12,7 @@ import {
   deleteInspectionItems,
   getAllInspections,
   getInspectionById,
+  getPdf,
   startNewInspection,
 } from "./inspection";
 import { json } from "stream/consumers";
@@ -214,4 +215,25 @@ const getBadRequestResponse = (message?: string) => {
   return new Response(JSON.stringify(resData), {
     status: 400,
   });
+};
+
+export const generateReportController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const inspectionId = url.searchParams.get("inspectionId");
+  if (!inspectionId || inspectionId === "") {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+  if (!body) {
+    return getBadRequestResponse();
+  }
+
+  const reportData = await getPdf(body.items, inspectionId);
+  if (!reportData) {
+    return getBadRequestResponse();
+  }
+  return getSuccessResponse(reportData);
 };

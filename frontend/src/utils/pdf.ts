@@ -47,7 +47,10 @@ const MONTHS = [
   "December",
 ];
 
-export const generatePdf = async (reportData: any, template: any) => {
+export const generatePdf = async (
+  reportData: any,
+  template: any,
+) => {
   const docDefinition: TDocumentDefinitions = {
     ...getMeta(reportData, template),
     content: [
@@ -66,11 +69,24 @@ export const generatePdf = async (reportData: any, template: any) => {
     ],
     defaultStyle: {
       font: "Times",
-      fontSize: 12
+      fontSize: 11,
+    },
+    info: {
+      title: `${reportData.jobNumber} - ${reportData.jobType} Inspection Report`,
+      author: "Correct Inspections",
+      subject: `${reportData.jobType}`,
+      keywords: "Inspection Report, Correct Inspections",
     },
   };
 
-  pdfMake.createPdf(docDefinition).open();
+  return new Promise((resolve) => {
+    pdfMake.createPdf(docDefinition).getDataUrl((result) => {
+      resolve(result);
+    });
+    // pdfMake.createPdf(docDefinition).getBlob((result) => {
+    //   resolve(result);
+    // });
+  });
 };
 
 const getMeta = (
@@ -407,6 +423,7 @@ const getItemsTable = (inspectionItems: any[]): Content => {
     const item = inspectionItems[i];
 
     const reportItem: Content = {
+      pageBreak: i !== 0 && item.pageBreak ? "before" : undefined,
       stack: [
         {
           text: item.itemName,
@@ -429,7 +446,12 @@ const getItemsTable = (inspectionItems: any[]): Content => {
       text: item.closingParagraph,
     });
 
-    body.push([i + 1, reportItem]);
+    const serial: Content = {
+      pageBreak: i !== 0 && item.pageBreak ? "before" : undefined,
+      text: `${i + 1}`,
+    };
+
+    body.push([serial, reportItem]);
   }
 
   return {

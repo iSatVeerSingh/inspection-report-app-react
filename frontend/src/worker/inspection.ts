@@ -1,4 +1,5 @@
 import { Db } from "../services/clientdb";
+import { generatePdf } from "../utils/pdf";
 import { Job } from "../utils/types";
 
 export const startNewInspection = async (jobData: Job) => {
@@ -252,6 +253,42 @@ export const addRecommendation = async (recommendation: string, id: string) => {
       recommendation,
     });
     return inspectionid;
+  } catch (err) {
+    return null;
+  }
+};
+
+export const getPdf = async (itemsHeights: any[], id: string) => {
+  try {
+    const trs = await Db.transaction(
+      "rw",
+      Db.inspectionReports,
+      Db.template,
+      async () => {
+        const inspection = await Db.inspectionReports.get(id);
+        const template = await Db.template.get("defaultTemplate");
+        if (inspection && template) {
+          return { inspection, template };
+        }
+        return null;
+      }
+    );
+
+    if (!trs) {
+      return null;
+    }
+
+    trs.inspection.inspectionItems = itemsHeights.map((height: any) => {
+      const insItem = trs.inspection.inspectionItems.find(
+        (item: any) => item.id === height.id
+      );
+      insItem.pageBreak = height.pageBreak;
+      return insItem;
+    });
+
+    const pdfUrl = await generatePdf(trs.inspection, trs.template);
+
+    return pdfUrl;
   } catch (err) {
     return null;
   }
