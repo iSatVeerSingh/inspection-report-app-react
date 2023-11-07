@@ -19,6 +19,8 @@ import InspectionJobLayout, {
 import { getRequest } from "../services/client";
 import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 import ReportPreview from "../pages/Jobs/ReportPreview";
+import Test from "../pages/Test";
+import LibraryEditor from "../pages/LibraryEditor";
 
 const router = createBrowserRouter([
   {
@@ -84,6 +86,14 @@ const router = createBrowserRouter([
         path: Routes.REPORTS,
         element: <Reports />,
       },
+      {
+        path: '/test',
+        element: <Test />
+      },
+      {
+        path: '/editor',
+        element: <LibraryEditor />
+      }
     ],
   },
   {

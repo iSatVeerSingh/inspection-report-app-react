@@ -23,6 +23,7 @@ class AuthController extends Controller
         }
 
         $user = User::where('email', $validated['email'])->first();
+        $user->tokens()->delete();
 
         return response()->json([
             'access_token' => $user->createToken('api_token')->plainTextToken,
