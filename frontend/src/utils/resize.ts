@@ -1,13 +1,19 @@
 export const getResizedBase64Images = async (images: File[]) => {
   const resizedImages = [];
+  const imagesPromises = [];
   for (let i = 0; i < images.length; i++) {
     const imagefile = images[i];
     const bitmap = await createImageBitmap(imagefile);
-    const resize = getResizedImage(bitmap);
-    resizedImages.push(resize);
+    if (bitmap.width > 300 || bitmap.height > 300) {
+      const resize = getResizedImage(bitmap);
+      resizedImages.push(resize);
+    } else {
+      const imagePromise = getBase64(imagefile);
+      imagesPromises.push(imagePromise);
+    }
   }
 
-  return resizedImages;
+  return [...resizedImages, ...(await Promise.all(imagesPromises))];
 };
 
 const getResizedImage = (bitmap: ImageBitmap) => {
@@ -29,4 +35,14 @@ const getResizedImage = (bitmap: ImageBitmap) => {
   const imgStr = ctx?.canvas.toDataURL("image/jpeg", 0.9);
 
   return imgStr;
+};
+
+const getBase64 = async (imgBlob: Blob | File) => {
+  return new Promise((resolve) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(imgBlob);
+    reader.addEventListener("load", (e) => {
+      resolve(e.target?.result);
+    });
+  });
 };

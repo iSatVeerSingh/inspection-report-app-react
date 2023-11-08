@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import PageLayout from "../Layout/PageLayout";
-import Editor from "../components/Editor";
+import Editor from "../components/RichEditor";
 import { Button } from "@chakra-ui/react";
 import { getParagraphDataFromEditor } from "../utils/editorData";
 import { SerializedEditorState } from "lexical";

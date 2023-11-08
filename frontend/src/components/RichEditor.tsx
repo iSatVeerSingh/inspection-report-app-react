@@ -1,7 +1,14 @@
 "use client";
 import "../styles/libraryEditor.css";
 
-import { Box, Flex, IconButton, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Flex,
+  FormErrorMessage,
+  FormLabel,
+  IconButton,
+  Text,
+} from "@chakra-ui/react";
 import {
   LexicalComposer,
   InitialConfigType,
@@ -24,22 +31,6 @@ import {
   UnderlineIcon,
 } from "../icons";
 import React, { useCallback, useEffect, useRef, useState } from "react";
-
-const editorConfig: InitialConfigType = {
-  namespace: "LibraryEditor",
-  theme: {
-    text: {
-      bold: "editor-text-bold",
-      italic: "editor-text-italic",
-      underline: "editor-text-underline",
-      strikethrough: "editor-text-strikethrough",
-      underlineStrikethrough: "editor-text-underlineStrikethrough",
-    },
-  },
-  onError: (error: Error) => {
-    console.log(error);
-  },
-};
 
 const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext();
@@ -108,9 +99,31 @@ const ToolbarPlugin = () => {
 
 type EditorProps = {
   initialState?: any;
+  label?: string;
+  inputError?: string;
 };
 
-const Editor = ({ initialState }: EditorProps, ref: any) => {
+const RichEditor = (
+  { initialState, label, inputError }: EditorProps,
+  ref: any
+) => {
+  const editorConfig: InitialConfigType = {
+    namespace: "LibraryEditor",
+    theme: {
+      text: {
+        bold: "editor-text-bold",
+        italic: "editor-text-italic",
+        underline: "editor-text-underline",
+        strikethrough: "editor-text-strikethrough",
+        underlineStrikethrough: "editor-text-underlineStrikethrough",
+      },
+    },
+    onError: (error: Error) => {
+      console.log(error);
+    },
+    editorState: initialState,
+  };
+
   const editorRef = ref || useRef({});
 
   const onChange = (state: EditorState) => {
@@ -119,7 +132,12 @@ const Editor = ({ initialState }: EditorProps, ref: any) => {
   };
 
   return (
-    <Box bg={"main-bg"} p={3}>
+    <Box bg={"main-bg"}>
+      {label && (
+        <FormLabel color="rich-black" fontSize="xl" mb="0">
+          {label}
+        </FormLabel>
+      )}
       <LexicalComposer initialConfig={editorConfig}>
         <Box
           borderColor="blue-primary"
@@ -142,8 +160,9 @@ const Editor = ({ initialState }: EditorProps, ref: any) => {
         </Box>
         <OnChangePlugin onChange={onChange} />
       </LexicalComposer>
+      {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </Box>
   );
 };
 
-export default React.forwardRef(Editor);
+export default React.forwardRef(RichEditor);

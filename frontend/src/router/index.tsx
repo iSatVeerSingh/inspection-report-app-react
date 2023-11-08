@@ -21,6 +21,7 @@ import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 import ReportPreview from "../pages/Jobs/ReportPreview";
 import Test from "../pages/Test";
 import LibraryEditor from "../pages/LibraryEditor";
+import NewLibraryItem from "../pages/Library/NewLibraryItem";
 
 const router = createBrowserRouter([
   {
@@ -83,16 +84,16 @@ const router = createBrowserRouter([
         element: <CreateCustomJob />,
       },
       {
-        path: Routes.REPORTS,
-        element: <Reports />,
-      },
-      {
         path: '/test',
         element: <Test />
       },
       {
         path: '/editor',
         element: <LibraryEditor />
+      },
+      {
+        path: Routes.NEW_LIBRARY_ITEM,
+        element: <NewLibraryItem />
       }
     ],
   },
