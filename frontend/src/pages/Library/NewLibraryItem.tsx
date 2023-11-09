@@ -1,6 +1,6 @@
 "use client";
 
-import { Box, Flex } from "@chakra-ui/react";
+import { Box, Flex, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import FormInput from "../../components/FormInput";
 import FormSelect from "../../components/FormSelect";
@@ -12,27 +12,29 @@ import ButtonPrimary from "../../components/ButtonPrimary";
 import { getParagraphDataFromEditor } from "../../utils/editorData";
 import { SerializedEditorState } from "lexical";
 import { getResizedBase64Images } from "../../utils/resize";
+import { libraryApi } from "../../services/api";
 
 const NewLibraryItem = () => {
   const [formErrors, setFormErrors] = useState<any>(null);
-  const openingParagraphRef = useRef({});
-  const closingParagraphRef = useRef({});
+  const openingParagraphRef = useRef<any>();
+  const closingParagraphRef = useRef<any>();
   const cateogryRef = useRef<HTMLSelectElement | null>(null);
   const nameRef = useRef<HTMLInputElement | null>(null);
   const embeddedImageRef = useRef<HTMLInputElement | null>(null);
   const summaryRef = useRef<HTMLTextAreaElement | null>(null);
   const [saving, setSaving] = useState(false);
+  const toast = useToast();
 
   const handleCreateItem = async () => {
     const errors: any = {};
     const category = cateogryRef.current?.value.trim();
     const itemName = nameRef.current?.value.trim();
     const openingParagraph = getParagraphDataFromEditor(
-      openingParagraphRef.current as SerializedEditorState
+      openingParagraphRef.current!.state as SerializedEditorState
     );
     const embeddedImage = embeddedImageRef.current?.files;
     const closingParagraph = getParagraphDataFromEditor(
-      closingParagraphRef.current as SerializedEditorState
+      closingParagraphRef.current.state as SerializedEditorState
     );
     const summary = summaryRef.current?.value.trim();
 
@@ -59,8 +61,8 @@ const NewLibraryItem = () => {
     const itemData: any = {
       category,
       name: itemName,
-      openingParagraph: openingParagraph,
-      closingParagraph: closingParagraph,
+      openingParagraph: JSON.stringify(openingParagraph),
+      closingParagraph: JSON.stringify(closingParagraph),
     };
 
     if (embeddedImage?.length === 1) {
@@ -74,8 +76,30 @@ const NewLibraryItem = () => {
       itemData.summary = summary;
     }
 
+    const response = await libraryApi.post("", itemData);
+    if (response.status !== 201) {
+      toast({
+        title: "Item creation is unsuccessful",
+        status: "error",
+        duration: 4000,
+      });
+      setSaving(false);
+      return;
+    }
+
+    toast({
+      title: "Inspection Item Created successfull",
+      duration: 4000,
+      status: "success",
+    });
+
+    cateogryRef.current!.value = "";
+    nameRef.current!.value = "";
+    embeddedImageRef.current!.value = "";
+    summaryRef.current!.value = "";
+    openingParagraphRef.current.clearEditor();
+    closingParagraphRef.current.clearEditor();
     setSaving(false);
-    console.log(itemData);
   };
 
   const categories = ["Pre-Slab", "Post-Slab", "Waterproofling"];
@@ -122,7 +146,13 @@ const NewLibraryItem = () => {
             inputError={formErrors?.itemSummary}
             ref={summaryRef}
           />
-          <ButtonPrimary onClick={handleCreateItem} isLoading={saving} loadingText="Saving">Create Item</ButtonPrimary>
+          <ButtonPrimary
+            onClick={handleCreateItem}
+            isLoading={saving}
+            loadingText="Saving"
+          >
+            Create Item
+          </ButtonPrimary>
         </Flex>
       </Box>
     </PageLayout>

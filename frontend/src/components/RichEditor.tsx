@@ -17,9 +17,11 @@ import { RichTextPlugin } from "@lexical/react/LexicalRichTextPlugin";
 import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
+import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
 import {
   $getSelection,
   $isRangeSelection,
+  CLEAR_EDITOR_COMMAND,
   EditorState,
   FORMAT_TEXT_COMMAND,
 } from "lexical";
@@ -30,7 +32,14 @@ import {
   StrikethroughIcon,
   UnderlineIcon,
 } from "../icons";
-import React, { useCallback, useEffect, useRef, useState } from "react";
+import React, {
+  useCallback,
+  useEffect,
+  useImperativeHandle,
+  forwardRef,
+  useRef,
+  useState,
+} from "react";
 
 const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext();
@@ -103,6 +112,18 @@ type EditorProps = {
   inputError?: string;
 };
 
+const CustomClearCommand = forwardRef((_props, ref) => {
+  const [editor] = useLexicalComposerContext();
+
+  useImperativeHandle(ref, ()=> ({
+    clearEditor() {
+      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+    }
+  }))
+
+  return null
+});
+
 const RichEditor = (
   { initialState, label, inputError }: EditorProps,
   ref: any
@@ -128,7 +149,7 @@ const RichEditor = (
 
   const onChange = (state: EditorState) => {
     const jsonState = state.toJSON();
-    editorRef!.current = jsonState;
+    editorRef!.current.state = jsonState;
   };
 
   return (
@@ -159,6 +180,8 @@ const RichEditor = (
           </Box>
         </Box>
         <OnChangePlugin onChange={onChange} />
+        <ClearEditorPlugin />
+        <CustomClearCommand ref={editorRef} />
       </LexicalComposer>
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </Box>

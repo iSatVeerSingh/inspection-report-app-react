@@ -10,3 +10,10 @@ const inspectionApi = axios.create({
 });
 
 export default inspectionApi;
+
+export const libraryApi = axios.create({
+  baseURL: "https://dev.inspectionapp.com/api/library-items",
+  headers: {
+    Accept: "application/json",
+  },
+});
