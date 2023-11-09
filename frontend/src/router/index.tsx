@@ -22,6 +22,7 @@ import ReportPreview from "../pages/Jobs/ReportPreview";
 import Test from "../pages/Test";
 import LibraryEditor from "../pages/LibraryEditor";
 import NewLibraryItem from "../pages/Library/NewLibraryItem";
+import LibraryItems from "../pages/Library/LibraryItems";
 
 const router = createBrowserRouter([
   {
@@ -75,8 +76,8 @@ const router = createBrowserRouter([
           },
           {
             path: Routes.REPORT_PREVIEW,
-            element: <ReportPreview />
-          }
+            element: <ReportPreview />,
+          },
         ],
       },
       {
@@ -84,17 +85,21 @@ const router = createBrowserRouter([
         element: <CreateCustomJob />,
       },
       {
-        path: '/test',
-        element: <Test />
+        path: "/test",
+        element: <Test />,
       },
       {
-        path: '/editor',
-        element: <LibraryEditor />
+        path: "/editor",
+        element: <LibraryEditor />,
+      },
+      {
+        path: Routes.LIBRARY_ITEMS,
+        element: <LibraryItems />,
       },
       {
         path: Routes.NEW_LIBRARY_ITEM,
-        element: <NewLibraryItem />
-      }
+        element: <NewLibraryItem />,
+      },
     ],
   },
   {

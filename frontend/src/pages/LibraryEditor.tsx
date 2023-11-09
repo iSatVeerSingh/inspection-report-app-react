@@ -1,27 +1,52 @@
 "use client";
 
-import { useRef } from "react";
 import PageLayout from "../Layout/PageLayout";
-import Editor from "../components/RichEditor";
-import { Button } from "@chakra-ui/react";
-import { getParagraphDataFromEditor } from "../utils/editorData";
-import { SerializedEditorState } from "lexical";
+import ButtonPrimary from "../components/ButtonPrimary";
+import inspectionApi, { libraryApi } from "../services/api";
 
 const LibraryEditor = () => {
+  const handleAllItems = async () => {
+    const response = await inspectionApi.get("/all-library-items.json");
+    if (response.status !== 200) {
+      console.log("something went wrong");
+      return;
+    }
 
-  const editorRef = useRef({});
+    const allitems = response.data;
 
-  const handleSave = () => {
-    const paragraphData = getParagraphDataFromEditor(editorRef.current as SerializedEditorState)
-    console.log(paragraphData)
-  }
+    for (let i = 120; i < allitems.length; i++) {
+      const item = allitems[i];
+
+      const newItem: any = {
+        category: item.category,
+        name: item.itemName,
+        openingParagraph: JSON.stringify([
+          {
+            text: item.openingParagraph,
+          },
+        ]),
+        closingParagraph: JSON.stringify([
+          {
+            text: item.closingParagraph,
+          },
+        ]),
+        summary: item.summary,
+      };
+
+      if(item['embeddedImage']) {
+        newItem['embeddedImage'] = item['embeddedImage'].toString();
+      }
+
+      const newRes = await libraryApi.post("", newItem);
+      console.log(newRes.data);
+    }
+  };
 
   return (
     <PageLayout title="Libary Editor">
-      <Editor ref={editorRef} />
-      <Button onClick={handleSave}>Save</Button>
+      <ButtonPrimary onClick={handleAllItems}>Add All Items</ButtonPrimary>
     </PageLayout>
-  )
-}
+  );
+};
 
 export default LibraryEditor;
