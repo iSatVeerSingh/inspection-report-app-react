@@ -3,6 +3,8 @@ import "./index.css";
 
 import { RouterProvider } from "react-router-dom";
 import router from "./router";
+import { GlobalContext } from "./services/client/context";
+import { useState } from "react";
 // import { useEffect } from "react";
 
 const App = () => {
@@ -17,6 +19,8 @@ const App = () => {
     // });
   }
 
+  const [isOffline, setIsOffline] = useState(false);
+
   // useEffect(() => {
   //   setTimeout(() => {
   //     // navigator.serviceWorker.controller?.postMessage("hello satu")
@@ -25,7 +29,11 @@ const App = () => {
   //       .then((res) => console.log(res));
   //   }, 15000);
   // }, []);
-  return <RouterProvider router={router} />;
+  return (
+    <GlobalContext.Provider value={{ isOffline, setIsOffline }}>
+      <RouterProvider router={router} />
+    </GlobalContext.Provider>
+  );
 };
 
 export default App;

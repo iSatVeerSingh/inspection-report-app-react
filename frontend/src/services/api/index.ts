@@ -1,4 +1,6 @@
-import axios from "axios";
+import axios, { AxiosError, AxiosResponse } from "axios";
+
+const HOST = "https://dev.inspectionapp.com";
 
 const inspectionApi = axios.create({
   baseURL: "",
@@ -12,8 +14,18 @@ const inspectionApi = axios.create({
 export default inspectionApi;
 
 export const libraryApi = axios.create({
-  baseURL: "https://dev.inspectionapp.com/api/library-items",
+  baseURL: HOST + "/api/library-items",
   headers: {
     Accept: "application/json",
   },
 });
+
+libraryApi.interceptors.response.use(
+  (response: AxiosResponse) => {
+    return response;
+  },
+  (error: AxiosError) => {
+    console.log(error)
+    return error;
+  }
+);

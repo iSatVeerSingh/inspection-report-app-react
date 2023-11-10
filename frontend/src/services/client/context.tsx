@@ -39,3 +39,9 @@ export const inspectionReducer = (state: any, action: any) => {
 export const useInspectionData = () => {
   return useContext(InspectionContext);
 };
+
+export const GlobalContext = createContext({});
+
+export const useGlobalContext = () => {
+  return useContext(GlobalContext);
+};

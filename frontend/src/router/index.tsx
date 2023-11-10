@@ -23,6 +23,7 @@ import Test from "../pages/Test";
 import LibraryEditor from "../pages/LibraryEditor";
 import NewLibraryItem from "../pages/Library/NewLibraryItem";
 import LibraryItems from "../pages/Library/LibraryItems";
+import LibraryItem from "../pages/Library/LibraryItem";
 
 const router = createBrowserRouter([
   {
@@ -100,6 +101,10 @@ const router = createBrowserRouter([
         path: Routes.NEW_LIBRARY_ITEM,
         element: <NewLibraryItem />,
       },
+      {
+        path: Routes.LIBRARY_ITEM_VIEW_EDIT,
+        element: <LibraryItem />
+      }
     ],
   },
   {

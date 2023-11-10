@@ -19,11 +19,9 @@ const LibraryItems = () => {
     setLoading(true);
 
     const response = await libraryApi.get(apiUrl);
-    https://dev.inspectionapp.com/api/library-items
-    if (response.status !== 200) {
+    if(response.status !== 200) {
       return;
     }
-
     setAllItems(response.data.data);
     setNext(response.data.links.next);
     setPrev(response.data.links.prev);
@@ -65,7 +63,7 @@ const LibraryItems = () => {
                   </Flex>
                   <Box>
                     <Text>
-                      Created:-{" "}
+                      Created:-
                       {new Date(item?.created_at).toLocaleDateString()}
                     </Text>
                     <Text color="main-text">

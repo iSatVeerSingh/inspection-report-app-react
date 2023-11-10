@@ -10,4 +10,5 @@ export const ALL_ADDED_ITEMS = JOB_SUMMARY + "/all-items";
 export const ITEM_PREVIEW = ALL_ADDED_ITEMS + "/:item";
 export const REPORT_PREVIEW  = JOB_SUMMARY + "/preview";
 export const LIBRARY_ITEMS = "/library-items"
+export const LIBRARY_ITEM_VIEW_EDIT = LIBRARY_ITEMS + "/:itemId"
 export const NEW_LIBRARY_ITEM = LIBRARY_ITEMS + "/new"

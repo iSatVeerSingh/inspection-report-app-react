@@ -9,6 +9,7 @@ import {
 import { Outlet, useMatch, useNavigate } from "react-router-dom";
 // import Sidebar from "../Layout/Sidebar";
 import { useEffect } from "react";
+import { useGlobalContext } from "../services/client/context";
 // import { MenuIcon } from "../icons";
 // import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
@@ -16,6 +17,7 @@ import { useEffect } from "react";
 const RootLayout = () => {
   const navigate = useNavigate();
   const match = useMatch("/");
+  // const {isOffline, setIsOffline}: any = useGlobalContext();
 
   useEffect(() => {
     if (Boolean(match)) {
@@ -28,6 +30,8 @@ const RootLayout = () => {
 
   // const { isOpen, onOpen, onClose } = useDisclosure();
   // const btnRef = useRef(null);
+
+  // console.log(isOffline)
 
   return (
     <Grid h="100vh" templateColumns={"auto"} bg="app-bg">

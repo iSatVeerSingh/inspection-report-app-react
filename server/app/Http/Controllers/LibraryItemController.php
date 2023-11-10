@@ -12,9 +12,13 @@ class LibraryItemController extends Controller
 {
     public function index(Request $request)
     {
+        if ($request->query('install') === 'true') {
+            return new LibraryItemCollection(LibraryItem::all());
+        }
+
         $libraryItems = QueryBuilder::for(LibraryItem::class)
             ->allowedFilters('category')
-            ->defaultSort('-created_at')
+            ->defaultSort('-updated_at')
             ->allowedSorts(['category', 'name', 'updated_at'])
             ->paginate();
 

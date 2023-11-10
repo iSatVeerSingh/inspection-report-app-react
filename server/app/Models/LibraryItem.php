@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
@@ -17,4 +18,9 @@ class LibraryItem extends Model
         'embeddedImage',
         'summary'
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('d-m-Y h:i A');
+    }
 }
