@@ -3,7 +3,11 @@
 namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+
+use App\Models\LibraryItem;
+use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Storage;
 
 class DatabaseSeeder extends Seeder
 {
@@ -12,11 +16,22 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // \App\Models\User::factory(10)->create();
+        $user = new User([
+            'name' => 'SatVeer Singh',
+            'email' => 'developer.satveer@gmail.com',
+            'phone' => '7297036755',
+            'password' => 'satu0099',
+            'role' => 'owner'
+        ]);
 
-        // \App\Models\User::factory()->create([
-        //     'name' => 'Test User',
-        //     'email' => 'test@example.com',
-        // ]);
+        $user->save();
+
+        $allitems = Storage::json('libraryitems.json');
+
+        foreach ($allitems as $key => $value) {
+            $item = new LibraryItem($value);
+
+            $item->save();
+        }
     }
 }

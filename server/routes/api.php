@@ -22,6 +22,8 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class)->middleware(EnsureUserIsOwner::class);
+    Route::apiResource('/library-items', LibraryItemController::class)->except(['index']);
 });
 
-Route::apiResource('/library-items', LibraryItemController::class);
+Route::apiResource('/library-items', LibraryItemController::class)->only(['index']);
+
