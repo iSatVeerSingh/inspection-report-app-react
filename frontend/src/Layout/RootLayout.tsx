@@ -9,17 +9,21 @@ import {
 import { Outlet, redirect, useMatch, useNavigate } from "react-router-dom";
 // import Sidebar from "../Layout/Sidebar";
 import { useEffect } from "react";
+import { UserDB } from "../services/clientdb";
 // import { MenuIcon } from "../icons";
 // import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
 
 export const rootLoader = async () => {
-  const isUser = localStorage.getItem("user");
-  if (!isUser) {
+  try {
+    const user = await UserDB.user.get("user");
+    if (!user) {
+      return redirect("/login");
+    }
+    return null;
+  } catch (err) {
     return redirect("/login");
   }
-
-  return null;
 };
 
 const RootLayout = () => {
