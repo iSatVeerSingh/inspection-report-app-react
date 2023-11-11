@@ -13,7 +13,12 @@ class LibraryItemController extends Controller
     public function index(Request $request)
     {
         if ($request->query('install') === 'true') {
-            return new LibraryItemCollection(LibraryItem::all());
+            $allItems = new LibraryItemCollection(LibraryItem::all());
+            $jsonData = $allItems->toJson();
+
+            $contentLength = strlen($jsonData);
+
+            return response($jsonData)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
         }
 
         $libraryItems = QueryBuilder::for(LibraryItem::class)
