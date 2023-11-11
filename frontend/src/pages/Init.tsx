@@ -4,9 +4,26 @@ import { useEffect, useRef, useState } from "react";
 import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
-import { useNavigate } from "react-router-dom";
+import { redirect, useNavigate } from "react-router-dom";
 // import inspectionApi from "../services/api";
 import { Db } from "../services/clientdb";
+import Dexie from "dexie";
+
+export const initLoader = async () => {
+  try {
+    const isExists = await Dexie.exists("inspection-db");
+    if (isExists) {
+      const count = await Db.libraryItems.count();
+      if (count !== 0) {
+        return redirect("/jobs");
+      }
+      return null;
+    }
+    return null;
+  } catch (err) {
+    return redirect("/login");
+  }
+};
 
 const Init = () => {
   const navigate = useNavigate();

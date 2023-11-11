@@ -3,7 +3,7 @@ import RootLayout, { rootLoader } from "../Layout/RootLayout";
 import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
 import { getInitStatus } from "../services/auth";
-import Init from "../pages/Init";
+import Init, { initLoader } from "../pages/Init";
 
 import Login from "../pages/Login";
 
@@ -22,17 +22,11 @@ const router = createBrowserRouter([
   },
   {
     path: "/login",
-    element: <Login />
+    element: <Login />,
   },
   {
     path: "/init",
-    async loader() {
-      const isInit = await getInitStatus();
-      if (isInit) {
-        return redirect("/jobs");
-      }
-      return null;
-    },
+    loader: initLoader,
     element: <Init />,
   },
 ]);
