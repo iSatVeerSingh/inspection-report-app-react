@@ -1,8 +1,6 @@
 import Dexie, { Table } from "dexie";
 
 export class InspectionReport extends Dexie {
-  // 'friends' is added by dexie when declaring the stores()
-  // We just tell the typing system this is the case
   libraryItems!: Table<any>;
   inspectionReports!: Table<any>;
   jobs!: Table<any>;
@@ -23,31 +21,15 @@ export class InspectionReport extends Dexie {
 
 export const Db = new InspectionReport();
 
-interface User {
-  email: string;
-  role?: string;
-}
+export class IRAUser extends Dexie {
+  user!: Table<any>;
 
-export class IRAuser extends Dexie {
-  user!: Table<User>;
   constructor() {
-    super("ira-user");
+    super('user');
     this.version(1).stores({
-      user: "++email",
-    });
+      user: "++user",
+    })
   }
 }
 
-export const UserDB = new IRAuser();
-
-export class Demo extends Dexie {
-  demoData!: Table<any>;
-  constructor() {
-    super("demo-db");
-    this.version(1).stores({
-      demoData: "++id",
-    });
-  }
-}
-
-export const demoDb = new Demo();
+export const UserDB = new IRAUser();

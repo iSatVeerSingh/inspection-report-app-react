@@ -1,42 +1,62 @@
-import { Box, Center, Heading, VStack, Text, Link } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Heading,
+  VStack,
+  Text,
+  Link,
+} from "@chakra-ui/react";
 import { FormEventHandler, useState } from "react";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
-import { loginUser } from "../services/auth";
-import { UserLogin } from "../utils/types";
-import { isValidateLogin } from "../utils/userValidation";
+import { UserLogin } from "../types";
+import { validateLogin } from "../utils/validation";
+import { loginUser } from "../services/api";
+import { UserDB } from "../services/clientdb";
 
 const Login = () => {
   const navigate = useNavigate();
 
   const [formErrors, setFormErrors] = useState<Partial<UserLogin> | null>(null);
+  const [loading, setLoading] = useState(false);
 
   const handleLogin: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
+
     const formData = new FormData(e.target as HTMLFormElement);
-    const user: UserLogin = {
+
+    const loginData: UserLogin = {
       email: formData.get("email")?.toString().trim() || "",
       password: formData.get("password")?.toString().trim() || "",
     };
 
-    const isInvalid = isValidateLogin(user);
-    if (isInvalid) {
+    const isInvalid = validateLogin(loginData);
+    if (isInvalid !== null) {
       setFormErrors(isInvalid);
       return;
     }
-    if (formErrors) {
-      setFormErrors(null);
-    }
 
-    const loggedIn = await loginUser(user);
-    if(loggedIn) {
-      navigate("/init");
+    setFormErrors(null);
+    setLoading(true);
+
+    const response = await loginUser(loginData);
+    if (response.status !== 200) {
+      setFormErrors({
+        email: response.data.message,
+        password: response.data.message,
+      });
+      setLoading(false);
       return;
     }
 
-    console.log("something went wrong");
-
+    await UserDB.user.clear();
+    await UserDB.user.add({
+      user: "user",
+      ...response.data,
+    });
+    setLoading(false);
+    navigate('/init')
   };
 
   return (
@@ -51,33 +71,35 @@ const Login = () => {
         maxW="2xl"
       >
         <Box textAlign="center">
-          <Heading color="rich-black">Welcome Back &#128075;</Heading>
+          <Heading color="rich-black">Welcome &#128075;</Heading>
           <Text color="main-text">Let's do some inspections</Text>
         </Box>
-        <VStack
-          as="form"
-          mt="10"
-          maxW="lg"
-          mx="auto"
-          spacing="4"
-          onSubmit={handleLogin as FormEventHandler}
-        >
-          <FormInput
-            type="text"
-            name="email"
-            placeholder="Email"
-            inputError={formErrors?.email}
-          />
-          <FormInput
-            type="password"
-            name="password"
-            placeholder="Password"
-            inputError={formErrors?.password}
-          />
-          <ButtonPrimary type="submit" w="full">
-            Login Now
-          </ButtonPrimary>
-        </VStack>
+        <form onSubmit={handleLogin}>
+          <VStack mt="10" maxW="lg" mx="auto" spacing="4">
+            <FormInput
+              type="email"
+              name="email"
+              placeholder="Email"
+              required
+              inputError={formErrors?.email}
+            />
+            <FormInput
+              type="password"
+              name="password"
+              placeholder="Password"
+              required
+              inputError={formErrors?.password}
+            />
+            <ButtonPrimary
+              type="submit"
+              w="full"
+              loadingText="Logging in..."
+              isLoading={loading}
+            >
+              Login Now
+            </ButtonPrimary>
+          </VStack>
+        </form>
         <Box textAlign="center" mt="6">
           <Link textDecoration="underline" color={"blue"}>
             Forgot Password

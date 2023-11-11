@@ -5,7 +5,7 @@ import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { useNavigate } from "react-router-dom";
-import inspectionApi from "../services/api";
+// import inspectionApi from "../services/api";
 import { Db } from "../services/clientdb";
 
 const Init = () => {
@@ -21,60 +21,60 @@ const Init = () => {
     setInstalling(true);
   };
 
-  useEffect(() => {
-    const installApp = async () => {
-      statusRef.current!.textContent = "Fetching library items...";
-      try {
-        const response = await inspectionApi.get("/all-library-items.json", {
-          onDownloadProgress: (e) => {
-            const progress = Math.floor(e.progress! * 100);
-            if (progressval !== progress) {
-              setProgressval(progress);
-            }
-          },
-        });
+  // useEffect(() => {
+  //   const installApp = async () => {
+  //     statusRef.current!.textContent = "Fetching library items...";
+  //     try {
+  //       const response = await inspectionApi.get("/all-library-items.json", {
+  //         onDownloadProgress: (e) => {
+  //           const progress = Math.floor(e.progress! * 100);
+  //           if (progressval !== progress) {
+  //             setProgressval(progress);
+  //           }
+  //         },
+  //       });
 
-        if (response.status === 200 && Array.isArray(response.data)) {
-          statusRef.current!.textContent = "Setting up local database...";
-          for (let i = 0; i < response.data.length; i++) {
-            const item = response.data[i];
-            item.id = Date.now().toString(36);
-            await Db.libraryItems.add(item);
-            await Db.libraryIndex.add({
-              id: Date.now().toString(12),
-              item: item.id,
-              category: item.category,
-              name: item.itemName,
-            });
-            const progress = Math.floor((i / response.data.length) * 100);
-            if (progressval !== progress) {
-              setProgressval(progress);
-            }
-          }
-        }
+  //       if (response.status === 200 && Array.isArray(response.data)) {
+  //         statusRef.current!.textContent = "Setting up local database...";
+  //         for (let i = 0; i < response.data.length; i++) {
+  //           const item = response.data[i];
+  //           item.id = Date.now().toString(36);
+  //           await Db.libraryItems.add(item);
+  //           await Db.libraryIndex.add({
+  //             id: Date.now().toString(12),
+  //             item: item.id,
+  //             category: item.category,
+  //             name: item.itemName,
+  //           });
+  //           const progress = Math.floor((i / response.data.length) * 100);
+  //           if (progressval !== progress) {
+  //             setProgressval(progress);
+  //           }
+  //         }
+  //       }
 
-        const templateResponse = await inspectionApi.get(
-          "/report-template.json"
-        );
-        if (templateResponse.status === 200) {
-          await Db.template.add({
-            ...templateResponse.data,
-            id: "defaultTemplate"
-          });
-        }
-        setInstalled(true);
-        setInstalling(false);
-      } catch (err) {
-        console.log(err);
-        setInstalling(false);
-        setError(true);
-      }
-    };
+  //       const templateResponse = await inspectionApi.get(
+  //         "/report-template.json"
+  //       );
+  //       if (templateResponse.status === 200) {
+  //         await Db.template.add({
+  //           ...templateResponse.data,
+  //           id: "defaultTemplate"
+  //         });
+  //       }
+  //       setInstalled(true);
+  //       setInstalling(false);
+  //     } catch (err) {
+  //       console.log(err);
+  //       setInstalling(false);
+  //       setError(true);
+  //     }
+  //   };
 
-    if (installing) {
-      installApp();
-    }
-  }, [installing]);
+  //   if (installing) {
+  //     installApp();
+  //   }
+  // }, [installing]);
 
   const handleGoto = () => {
     navigate("/jobs");

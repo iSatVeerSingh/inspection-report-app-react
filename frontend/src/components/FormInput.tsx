@@ -5,7 +5,7 @@ import {
   Input,
   InputProps,
 } from "@chakra-ui/react";
-import React from 'react';
+import React from "react";
 
 type FormInputProps = InputProps & {
   label?: string;
@@ -18,7 +18,10 @@ const FormInput = (
   ref: React.Ref<HTMLInputElement>
 ) => {
   return (
-    <FormControl isInvalid={inputError !== undefined} isRequired={required}>
+    <FormControl
+      isInvalid={inputError !== undefined && inputError !== ""}
+      isRequired={required}
+    >
       {label && (
         <FormLabel color="rich-black" fontSize="xl" mb="0">
           {label}
@@ -28,13 +31,30 @@ const FormInput = (
         type={type}
         name={name}
         placeholder={placeholder}
-        required={required}
         borderColor="blue-primary"
         autoComplete="off"
         ref={ref}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </FormControl>
+
+    // <FormControl isInvalid={inputError !== undefined} isRequired={required}>
+    //   {label && (
+    //     <FormLabel color="rich-black" fontSize="xl" mb="0">
+    //       {label}
+    //     </FormLabel>
+    //   )}
+    //   <Input
+    //     type={type}
+    //     name={name}
+    //     placeholder={placeholder}
+    //     required={required}
+    //     borderColor="blue-primary"
+    //     autoComplete="off"
+    //     ref={ref}
+    //   />
+    //   {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
+    // </FormControl>
   );
 };
 

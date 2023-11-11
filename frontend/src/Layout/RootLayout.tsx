@@ -6,13 +6,21 @@ import {
   // IconButton,
   // useDisclosure,
 } from "@chakra-ui/react";
-import { Outlet, useMatch, useNavigate } from "react-router-dom";
+import { Outlet, redirect, useMatch, useNavigate } from "react-router-dom";
 // import Sidebar from "../Layout/Sidebar";
 import { useEffect } from "react";
-import { useGlobalContext } from "../services/client/context";
 // import { MenuIcon } from "../icons";
 // import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
+
+export const rootLoader = async () => {
+  const isUser = localStorage.getItem("user");
+  if (!isUser) {
+    return redirect("/login");
+  }
+
+  return null;
+};
 
 const RootLayout = () => {
   const navigate = useNavigate();
