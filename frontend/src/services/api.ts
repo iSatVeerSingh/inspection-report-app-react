@@ -1,7 +1,16 @@
 import axios, { AxiosError } from "axios";
 import { UserLogin } from "../types";
+import { UserDB } from "./clientdb";
 
 const BASE_URL = "https://dev.inspectionapp.com/api";
+
+const getAccessToken = async () => {
+  const user = await UserDB.user.get("user");
+  if (user && user.access_token) {
+    return user.access_token;
+  }
+  return null;
+};
 
 export const loginUser = async (userData: UserLogin) => {
   try {
@@ -16,3 +25,18 @@ export const loginUser = async (userData: UserLogin) => {
     return err.response;
   }
 };
+
+export const inspectionApi = axios.create({
+  baseURL: BASE_URL,
+  headers: {
+    Accept: "application/json",
+  },
+});
+
+inspectionApi.interceptors.request.use(async (config) => {
+  const access_token = await getAccessToken();
+  if (access_token) {
+    config.headers.Authorization = `Bearer ${access_token}`;
+  }
+  return config;
+});

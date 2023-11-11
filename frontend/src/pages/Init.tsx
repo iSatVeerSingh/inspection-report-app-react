@@ -1,13 +1,22 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
+import {
+  Box,
+  Center,
+  Heading,
+  Progress,
+  StepStatus,
+  Text,
+} from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { redirect, useNavigate } from "react-router-dom";
-// import inspectionApi from "../services/api";
 import { Db } from "../services/clientdb";
 import Dexie from "dexie";
+import { inspectionApi } from "../services/api";
+import { LibraryItem } from "../types";
+import axios from "axios";
 
 export const initLoader = async () => {
   try {
@@ -28,7 +37,8 @@ export const initLoader = async () => {
 const Init = () => {
   const navigate = useNavigate();
   const statusRef = useRef<HTMLDivElement | null>(null);
-  const [progressval, setProgressval] = useState(0);
+
+  const [progressBar, setProgressBar] = useState(0);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
   const [error, setError] = useState(false);
@@ -38,60 +48,68 @@ const Init = () => {
     setInstalling(true);
   };
 
-  // useEffect(() => {
-  //   const installApp = async () => {
-  //     statusRef.current!.textContent = "Fetching library items...";
-  //     try {
-  //       const response = await inspectionApi.get("/all-library-items.json", {
-  //         onDownloadProgress: (e) => {
-  //           const progress = Math.floor(e.progress! * 100);
-  //           if (progressval !== progress) {
-  //             setProgressval(progress);
-  //           }
-  //         },
-  //       });
+  useEffect(() => {
+    const installApp = async () => {
+      statusRef.current!.textContent = "Fetching library items...";
+      try {
+        const response = await inspectionApi.get(
+          "/library-items?install=true",
+          {
+            onDownloadProgress: (e) => {
+              const progress = Math.floor(e.progress! * 100);
+              setProgressBar(progress);
+            },
+          }
+        );
 
-  //       if (response.status === 200 && Array.isArray(response.data)) {
-  //         statusRef.current!.textContent = "Setting up local database...";
-  //         for (let i = 0; i < response.data.length; i++) {
-  //           const item = response.data[i];
-  //           item.id = Date.now().toString(36);
-  //           await Db.libraryItems.add(item);
-  //           await Db.libraryIndex.add({
-  //             id: Date.now().toString(12),
-  //             item: item.id,
-  //             category: item.category,
-  //             name: item.itemName,
-  //           });
-  //           const progress = Math.floor((i / response.data.length) * 100);
-  //           if (progressval !== progress) {
-  //             setProgressval(progress);
-  //           }
-  //         }
-  //       }
+        if (response.status !== 200) {
+          setError(true);
+          setInstalling(false);
+          return;
+        }
 
-  //       const templateResponse = await inspectionApi.get(
-  //         "/report-template.json"
-  //       );
-  //       if (templateResponse.status === 200) {
-  //         await Db.template.add({
-  //           ...templateResponse.data,
-  //           id: "defaultTemplate"
-  //         });
-  //       }
-  //       setInstalled(true);
-  //       setInstalling(false);
-  //     } catch (err) {
-  //       console.log(err);
-  //       setInstalling(false);
-  //       setError(true);
-  //     }
-  //   };
+        const allItems = response.data as LibraryItem[];
 
-  //   if (installing) {
-  //     installApp();
-  //   }
-  // }, [installing]);
+        statusRef.current!.textContent = "Setting up local database...";
+        for (let i = 0; i < allItems.length; i++) {
+          const item = allItems[i];
+
+          await Db.libraryItems.add({
+            ...item,
+            openingParagraph: JSON.parse(item.openingParagraph as string),
+            closingParagraph: JSON.parse(item.closingParagraph as string),
+          });
+
+          await Db.libraryIndex.add({
+            id: item.id,
+            category: item.category,
+            name: item.name,
+          });
+
+          const progress = Math.floor((i / allItems.length) * 100);
+          setProgressBar(progress);
+        }
+
+        const templateResponse = await axios.get("/report-template.json");
+        if (templateResponse.status === 200) {
+          await Db.template.add({
+            ...templateResponse.data,
+            id: "defaultTemplate",
+          });
+        }
+
+        setInstalled(true);
+        setInstalling(false);
+      } catch (err) {
+        setError(true);
+        setInstalling(false);
+      }
+    };
+
+    if (installing) {
+      installApp();
+    }
+  }, [installing]);
 
   const handleGoto = () => {
     navigate("/jobs");
@@ -119,7 +137,7 @@ const Init = () => {
             </Text>
             <Box mt={5}>
               <ButtonPrimary onClick={handleInstall}>
-                Install Application
+                Seup Application
               </ButtonPrimary>
             </Box>
           </Box>
@@ -129,7 +147,7 @@ const Init = () => {
             <Text fontSize={"xl"} ref={statusRef}>
               Installing App...
             </Text>
-            <Progress hasStripe value={progressval} />
+            <Progress hasStripe value={progressBar} />
           </Box>
         )}
         {installed && !installing && (

@@ -1,7 +1,8 @@
 import Dexie, { Table } from "dexie";
+import { LibraryItem } from "../../types";
 
 export class InspectionReport extends Dexie {
-  libraryItems!: Table<any>;
+  libraryItems!: Table<LibraryItem>;
   inspectionReports!: Table<any>;
   jobs!: Table<any>;
   libraryIndex!: Table<any>;
