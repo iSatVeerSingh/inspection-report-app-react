@@ -1,10 +1,10 @@
 import {
-  // Drawer,
-  // DrawerContent,
-  // DrawerOverlay,
+  Drawer,
+  DrawerContent,
+  DrawerOverlay,
   Grid,
-  // IconButton,
-  // useDisclosure,
+  IconButton,
+  useDisclosure,
 } from "@chakra-ui/react";
 import {
   Outlet,
@@ -13,14 +13,13 @@ import {
   useMatch,
   useNavigate,
 } from "react-router-dom";
-// import Sidebar from "../Layout/Sidebar";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { UserDB } from "../services/clientdb";
 import { GlobalContext } from "../services/context";
 import OfflineModal from "../components/OfflineModal";
-// import { MenuIcon } from "../icons";
-// import useMobile from "../hooks/useMobile";
-// import "../workers/workerInit";
+import Sidebar from "./Sidebar";
+import useMobile from "../hooks/useMobile";
+import { MenuIcon } from "../icons";
 
 export const rootLoader = async () => {
   try {
@@ -40,6 +39,8 @@ const RootLayout = () => {
   const [isOffline, setIsOffline] = useState(false);
   const navigate = useNavigate();
   const match = useMatch("/");
+  const { isOpen, onOpen, onClose } = useDisclosure();
+  const btnRef = useRef<HTMLButtonElement | null>(null);
 
   useEffect(() => {
     if (Boolean(match)) {
@@ -48,12 +49,7 @@ const RootLayout = () => {
     }
   }, []);
 
-  // const isMobile = useMobile();
-
-  // const { isOpen, onOpen, onClose } = useDisclosure();
-  // const btnRef = useRef(null);
-
-  // console.log(isOffline)
+  const isMobile = useMobile();
 
   return (
     <GlobalContext.Provider
@@ -61,34 +57,38 @@ const RootLayout = () => {
         user,
       }}
     >
-      <Grid h="100vh" templateColumns={"auto"} bg="app-bg">
-        {/* {isMobile ? (
-        <Drawer
-          isOpen={isOpen}
-          placement="left"
-          onClose={onClose}
-          finalFocusRef={btnRef}
+      <Grid
+        h="100vh"
+        templateColumns={isMobile ? "auto" : "250px auto"}
+        bg="app-bg"
+      >
+        {isMobile ? (
+          <Drawer
+            isOpen={isOpen}
+            placement="left"
+            onClose={onClose}
+            finalFocusRef={btnRef}
           >
-          <DrawerOverlay />
-          <DrawerContent>
-            <Sidebar closeMenu={onClose} />
+            <DrawerOverlay />
+            <DrawerContent>
+              <Sidebar closeMenu={onClose} />
             </DrawerContent>
-            </Drawer>
-            ) : (
-        <Sidebar />
-      )}
-      {isMobile && (
-        <IconButton
-          ref={btnRef}
-          onClick={onOpen}
-          icon={<MenuIcon />}
-          aria-label="Open Menu"
-          position={"absolute"}
-          top={"10px"}
-          left={"10px"}
-          zIndex={"10"}
+          </Drawer>
+        ) : (
+          <Sidebar />
+        )}
+        {isMobile && (
+          <IconButton
+            ref={btnRef}
+            onClick={onOpen}
+            icon={<MenuIcon />}
+            aria-label="Open Menu"
+            position={"absolute"}
+            top={"10px"}
+            left={"10px"}
+            zIndex={"10"}
           />
-      )} */}
+        )}
         <Outlet />
       </Grid>
       <OfflineModal isOffline={isOffline} setIsOffline={setIsOffline} />
