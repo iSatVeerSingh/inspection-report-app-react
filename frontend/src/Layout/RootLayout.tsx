@@ -14,9 +14,10 @@ import {
   useNavigate,
 } from "react-router-dom";
 // import Sidebar from "../Layout/Sidebar";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { UserDB } from "../services/clientdb";
 import { GlobalContext } from "../services/context";
+import OfflineModal from "../components/OfflineModal";
 // import { MenuIcon } from "../icons";
 // import useMobile from "../hooks/useMobile";
 // import "../workers/workerInit";
@@ -36,9 +37,9 @@ export const rootLoader = async () => {
 const RootLayout = () => {
   const user = useLoaderData();
 
+  const [isOffline, setIsOffline] = useState(false);
   const navigate = useNavigate();
   const match = useMatch("/");
-  // const {isOffline, setIsOffline}: any = useGlobalContext();
 
   useEffect(() => {
     if (Boolean(match)) {
@@ -90,6 +91,7 @@ const RootLayout = () => {
       )} */}
         <Outlet />
       </Grid>
+      <OfflineModal isOffline={isOffline} setIsOffline={setIsOffline} />
     </GlobalContext.Provider>
   );
 };
