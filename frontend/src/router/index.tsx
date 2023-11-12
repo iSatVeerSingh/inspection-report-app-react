@@ -1,8 +1,7 @@
-import { createBrowserRouter, redirect } from "react-router-dom";
+import { createBrowserRouter } from "react-router-dom";
 import RootLayout, { rootLoader } from "../Layout/RootLayout";
 import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
-import { getInitStatus } from "../services/auth";
 import Init, { initLoader } from "../pages/Init";
 
 import Login from "../pages/Login";

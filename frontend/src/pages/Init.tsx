@@ -6,7 +6,6 @@ import {
   Center,
   Heading,
   Progress,
-  StepStatus,
   Text,
 } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
