@@ -37,24 +37,6 @@ const FormInput = (
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
     </FormControl>
-
-    // <FormControl isInvalid={inputError !== undefined} isRequired={required}>
-    //   {label && (
-    //     <FormLabel color="rich-black" fontSize="xl" mb="0">
-    //       {label}
-    //     </FormLabel>
-    //   )}
-    //   <Input
-    //     type={type}
-    //     name={name}
-    //     placeholder={placeholder}
-    //     required={required}
-    //     borderColor="blue-primary"
-    //     autoComplete="off"
-    //     ref={ref}
-    //   />
-    //   {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
-    // </FormControl>
   );
 };
 

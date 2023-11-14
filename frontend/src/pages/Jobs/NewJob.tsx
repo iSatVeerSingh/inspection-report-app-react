@@ -7,9 +7,11 @@ import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate } from "react-router-dom";
 import { FormEvent, FormEventHandler, useState } from "react";
-import { postRequest } from "../../services/client";
+import { validateJobForm } from "../../utils/validation";
+import { JobDetails } from "../../types";
+import clientApi from "../../services/clientApi";
 
-const CreateCustomJob = () => {
+const NewJob = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
@@ -60,58 +62,52 @@ const CreateCustomJob = () => {
     },
   ];
 
-  const [formErrors, setFormErrors] = useState<any>(null);
+  const [formErrors, setFormErrors] = useState<Partial<JobDetails> | null>(
+    null
+  );
+
+  const [loading, setLoading] = useState(false);
 
   const handleCreateJob: FormEventHandler<HTMLFormElement> = async (
     e: FormEvent
   ) => {
     e.preventDefault();
     const jobForm = e.target as HTMLFormElement;
-    const formData = new FormData(jobForm);
-    const formValues: any = {};
-    const formErrors: any = {};
-    for (let [key, value] of formData) {
-      const trimmedValue = value.toString().trim();
-      if (trimmedValue === "") {
-        formErrors[key] = "This field is required";
-      } else {
-        formValues[key] = trimmedValue;
-      }
+    const formValues = new FormData(jobForm);
+    const jobData: any = {};
+
+    for (const [key, value] of formValues) {
+      jobData[key] = value.toString().trim();
     }
 
-    if (Object.keys(formErrors).length !== 0) {
-      setFormErrors(formErrors);
+    const isInvalid = validateJobForm(jobData);
+    if (isInvalid) {
+      setFormErrors(isInvalid);
       return;
     }
 
     setFormErrors(null);
-    formValues.category = reportType.find(
-      (item) => item.value === formValues.jobType
-    )?.text;
-    formValues.jobNumber = Number(formValues.jobNumber);
-    formValues.status = "Quote";
+    setLoading(true);
 
-    const response = await postRequest("/client/jobs/new", {
-      body: JSON.stringify(formValues),
-    });
-
-    if (!response.success) {
+    const response = await clientApi.post("/jobs/new", jobData);
+    if (response.status !== 201) {
       toast({
-        description: response.data,
+        title: response.data["message"],
         status: "error",
-        duration: 5000,
+        duration: 4000,
       });
-      jobForm.reset();
+      setLoading(false);
       return;
     }
 
     toast({
-      title: "Job Created",
-      description: `${response.data} created in successfully`,
-      duration: 5000,
+      title: `Job ${response.data} created successfully`,
       status: "success",
+      duration: 4000,
     });
-    navigate("/jobs");
+
+    jobForm.reset();
+    setLoading(false);
   };
 
   return (
@@ -128,15 +124,13 @@ const CreateCustomJob = () => {
               name="jobNumber"
               label="Job Number"
               placeholder="Enter job number"
-              required
-              inputError={formErrors?.jobNumber}
+              inputError={formErrors?.jobNumber as string}
             />
             <FormSelect
               label="Job Type"
               name="jobType"
               options={reportType}
               placeholder="Select a job type"
-              required
               inputError={formErrors?.jobType}
             />
             <FormInput
@@ -144,15 +138,13 @@ const CreateCustomJob = () => {
               name="customer"
               label="Name on the report"
               placeholder="Enter customer name which you want on report"
-              required
-              inputError={formErrors?.customerName}
+              inputError={formErrors?.customer}
             />
             <FormInput
               type="email"
               name="customerEmail"
               label="Customer Email"
               placeholder="Enter customer email"
-              required
               inputError={formErrors?.customerEmail}
             />
             <FormInput
@@ -160,21 +152,13 @@ const CreateCustomJob = () => {
               name="customerPhone"
               label="Customer Phone"
               placeholder="Enter customer phone"
-              required
               inputError={formErrors?.customerPhone}
             />
-            {/* <FormSelect
-              label="Inspector"
-              name="inspector"
-              options={[{ text: "hello", value: "option 1" }]}
-              placeholder="Select an inspector from list"
-            /> */}
             <FormInput
               type="date"
               name="date"
               label="Date"
               placeholder="Enter date"
-              required
               inputError={formErrors?.date}
             />
             <FormInput
@@ -182,7 +166,6 @@ const CreateCustomJob = () => {
               name="time"
               label="Time"
               placeholder="Enter time"
-              required
               inputError={formErrors?.time}
             />
             <FormInput
@@ -190,7 +173,6 @@ const CreateCustomJob = () => {
               name="siteAddress"
               label="Site Address"
               placeholder="Enter site address"
-              required
               inputError={formErrors?.siteAddress}
             />
             <GridItem colSpan={{ base: "auto", xl: 2 }}>
@@ -198,8 +180,7 @@ const CreateCustomJob = () => {
                 name="description"
                 label="Job Description"
                 placeholder="Start typing here"
-                required
-                inputError={formErrors?.jobDescription}
+                inputError={formErrors?.description}
               />
             </GridItem>
             <Flex
@@ -210,6 +191,8 @@ const CreateCustomJob = () => {
                 minW={"200px"}
                 type="submit"
                 minWidth={{ lg: "200px" }}
+                isLoading={loading}
+                loadingText="Creating"
               >
                 Create Job
               </ButtonPrimary>
@@ -228,4 +211,4 @@ const CreateCustomJob = () => {
   );
 };
 
-export default CreateCustomJob;
+export default NewJob;

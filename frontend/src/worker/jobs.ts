@@ -1,4 +1,5 @@
 import { Db } from "../services/clientdb";
+import { JobDetails } from "../types";
 
 export const getAllJobs = async () => {
   try {
@@ -20,11 +21,12 @@ export const getJobByJobNumber = async (jobNumber: number) => {
   }
 };
 
-export const createNewJob = async (jobData: any) => {
+export const createNewJob = async (jobData: JobDetails) => {
   try {
     const jobNumber = await Db.jobs.add({
       ...jobData,
       created: new Date(),
+      status: "Not started",
     });
     return jobNumber;
   } catch (err: any) {

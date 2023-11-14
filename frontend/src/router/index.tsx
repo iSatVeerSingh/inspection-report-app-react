@@ -5,6 +5,7 @@ import * as Routes from "./paths";
 import Init, { initLoader } from "../pages/Init";
 
 import Login from "../pages/Login";
+import NewJob from "../pages/Jobs/NewJob";
 
 const router = createBrowserRouter([
   {
@@ -17,6 +18,10 @@ const router = createBrowserRouter([
         path: Routes.JOBS,
         element: <Jobs />,
       },
+      {
+        path: Routes.NEW_JOB,
+        element: <NewJob />
+      }
     ],
   },
   {

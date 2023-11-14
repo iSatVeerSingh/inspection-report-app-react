@@ -51,7 +51,7 @@ const Jobs = () => {
       title="All Jobs"
       titleBtn="Create Custom Job"
       onBtnClick={() => {
-        navigate("/jobs/custom-job");
+        navigate("/jobs/new");
       }}
       isRoot
     >

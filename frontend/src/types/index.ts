@@ -21,3 +21,16 @@ export type Paragraph = {
     decoration?: string | string[];
   }[];
 };
+
+export type JobDetails = {
+  jobNumber: string | number;
+  jobType: string;
+  customer: string;
+  customerEmail?: string;
+  customerPhone?: string;
+  date: string;
+  time: string;
+  siteAddress: string;
+  description?: string;
+  status?: 'Not started' | 'In progress' | 'Completed'
+};

@@ -1,7 +1,7 @@
 export const ROOT = "/";
 export const JOBS = "/jobs";
 export const JOBS_DETAILS = "/jobs/:jobNumber";
-export const CUSTOM_JOB = JOBS + "/custom-job";
+export const NEW_JOB = JOBS + "/new"
 export const JOB_SUMMARY = JOBS_DETAILS + "/:inspectionId";
 export const ADD_INSPECTION_NOTES = JOB_SUMMARY + "/add-notes";
 export const ADD_INSPECTION_ITEMS = JOB_SUMMARY + "/add-items";

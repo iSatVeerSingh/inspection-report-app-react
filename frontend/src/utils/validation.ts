@@ -1,4 +1,4 @@
-import { UserLogin } from "../types";
+import { JobDetails, UserLogin } from "../types";
 
 export const validateLogin = ({
   email,
@@ -19,6 +19,47 @@ export const validateLogin = ({
   }
 
   if (Object.keys(formErrors).length !== 0) {
+    return formErrors;
+  }
+
+  return null;
+};
+
+export const validateJobForm = ({
+  jobNumber,
+  jobType,
+  customer,
+  date,
+  siteAddress,
+  time,
+}: JobDetails): Partial<JobDetails> | null => {
+  const formErrors: Partial<JobDetails> = {};
+
+  if (jobNumber === "" || Number.isNaN(parseInt(jobNumber as string))) {
+    formErrors.jobNumber = "Please provide a valid job number";
+  }
+
+  if (jobType === "") {
+    formErrors.jobType = "Please select a job type";
+  }
+
+  if (customer === "") {
+    formErrors.customer = "Please provide customer's name";
+  }
+
+  if (date === "") {
+    formErrors.date = "Please select a date";
+  }
+
+  if (time === "") {
+    formErrors.time = "Please select time";
+  }
+
+  if (siteAddress === "") {
+    formErrors.siteAddress = "Please provide site address";
+  }
+
+  if (Object.entries(formErrors).length !== 0) {
     return formErrors;
   }
 

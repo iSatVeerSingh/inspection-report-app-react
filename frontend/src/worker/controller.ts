@@ -15,7 +15,6 @@ import {
   getPdf,
   startNewInspection,
 } from "./inspection";
-import { json } from "stream/consumers";
 
 export const getJobsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
@@ -51,7 +50,7 @@ export const createJobController: RouteHandler = async ({ request }) => {
   if (!jobNumber) {
     return getBadRequestResponse();
   }
-  return getSuccessResponse(jobNumber);
+  return getSuccessResponse(jobNumber, 201);
 };
 
 export const createInspectionController: RouteHandler = async ({ request }) => {
@@ -118,14 +117,12 @@ export const addInspectionNotesController: RouteHandler = async ({
   return getSuccessResponse(inspectionId);
 };
 
-const getSuccessResponse = (data: any) => {
-  const resData = {
-    success: true,
-    data: data,
-  };
-
-  return new Response(JSON.stringify(resData), {
-    status: 200,
+const getSuccessResponse = (data: any, status?: number) => {
+  return new Response(JSON.stringify(data), {
+    status: status || 200,
+    headers: {
+      "Content-Type": "application/json",
+    },
   });
 };
 
@@ -207,14 +204,14 @@ const getNotFoundResponse = () => {
 };
 
 const getBadRequestResponse = (message?: string) => {
-  const resData = {
-    success: false,
-    data: message || "Invalid request",
-  };
-
-  return new Response(JSON.stringify(resData), {
-    status: 400,
-  });
+  return new Response(
+    JSON.stringify({
+      message: message || "Invalid request",
+    }),
+    {
+      status: 400,
+    }
+  );
 };
 
 export const generateReportController: RouteHandler = async ({
