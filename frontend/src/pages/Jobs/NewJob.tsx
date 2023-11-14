@@ -15,51 +15,65 @@ const NewJob = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
+  // const reportType = [
+  //   {
+  //     text: "Pre-Slab Inspection",
+  //     value: "PRE-SLAB",
+  //   },
+  //   {
+  //     text: "Post-Slab Inspection",
+  //     value: "POST-SLAB",
+  //   },
+  //   {
+  //     text: "Frame Inspection",
+  //     value: "FRAME",
+  //   },
+  //   {
+  //     text: "Pre-Plaster Inspection",
+  //     value: "PRE-PLASTER",
+  //   },
+  //   {
+  //     text: "Lock-up Inspection",
+  //     value: "LOCK-UP",
+  //   },
+  //   {
+  //     text: "Fixing Inspection",
+  //     value: "FIXING",
+  //   },
+  //   {
+  //     text: "Waterproofing Inspection",
+  //     value: "WATERPROOFING",
+  //   },
+  //   {
+  //     text: "Point In Time Inspection",
+  //     value: "POINT IN TIME",
+  //   },
+  //   {
+  //     text: "Handover Inspection",
+  //     value: "HANDOVER",
+  //   },
+  //   {
+  //     text: "Maintenance Inspection",
+  //     value: "MAINTENANCE & WARRANTY",
+  //   },
+  //   {
+  //     text: "Other",
+  //     value: "BUILDING",
+  //   },
+  // ];
+
   const reportType = [
-    {
-      text: "Pre-Slab Inspection",
-      value: "PRE-SLAB",
-    },
-    {
-      text: "Post-Slab Inspection",
-      value: "POST-SLAB",
-    },
-    {
-      text: "Frame Inspection",
-      value: "FRAME",
-    },
-    {
-      text: "Pre-Plaster Inspection",
-      value: "PRE-PLASTER",
-    },
-    {
-      text: "Lock-up Inspection",
-      value: "LOCK-UP",
-    },
-    {
-      text: "Fixing Inspection",
-      value: "FIXING",
-    },
-    {
-      text: "Waterproofing Inspection",
-      value: "WATERPROOFING",
-    },
-    {
-      text: "Point In Time Inspection",
-      value: "POINT IN TIME",
-    },
-    {
-      text: "Handover Inspection",
-      value: "HANDOVER",
-    },
-    {
-      text: "Maintenance Inspection",
-      value: "MAINTENANCE & WARRANTY",
-    },
-    {
-      text: "Other",
-      value: "BUILDING",
-    },
+    "Pre-Slab Inspection",
+    "Post-Slab Inspection",
+    "Frame Inspection",
+    "Pre-Plaster Inspection",
+    "Lock-up Inspection",
+    "Fixing Inspection",
+    "Waterproofing Inspection",
+    "Point In Time Inspection",
+    "Handover Inspection",
+    "Maintenance Inspection",
+    "Other",
   ];
 
   const [formErrors, setFormErrors] = useState<Partial<JobDetails> | null>(
@@ -125,6 +139,7 @@ const NewJob = () => {
               label="Job Number"
               placeholder="Enter job number"
               inputError={formErrors?.jobNumber as string}
+              required
             />
             <FormSelect
               label="Job Type"
@@ -132,6 +147,7 @@ const NewJob = () => {
               options={reportType}
               placeholder="Select a job type"
               inputError={formErrors?.jobType}
+              required
             />
             <FormInput
               type="text"
@@ -139,6 +155,7 @@ const NewJob = () => {
               label="Name on the report"
               placeholder="Enter customer name which you want on report"
               inputError={formErrors?.customer}
+              required
             />
             <FormInput
               type="email"
@@ -160,12 +177,14 @@ const NewJob = () => {
               label="Date"
               placeholder="Enter date"
               inputError={formErrors?.date}
+              required
             />
             <FormInput
               type="time"
               name="time"
               label="Time"
               placeholder="Enter time"
+              required
               inputError={formErrors?.time}
             />
             <FormInput
@@ -174,6 +193,7 @@ const NewJob = () => {
               label="Site Address"
               placeholder="Enter site address"
               inputError={formErrors?.siteAddress}
+              required
             />
             <GridItem colSpan={{ base: "auto", xl: 2 }}>
               <FormTextArea

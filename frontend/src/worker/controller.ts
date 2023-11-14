@@ -19,10 +19,10 @@ import {
 export const getJobsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
     const jobs = await getAllJobs();
-    if (jobs && jobs.length !== 0) {
-      return getSuccessResponse(jobs);
+    if (!jobs) {
+      return getBadRequestResponse("Something went wrong");
     }
-    return getNotFoundResponse();
+    return getSuccessResponse(jobs);
   }
 
   const jobNumber = url.searchParams.get("jobNumber");
