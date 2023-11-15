@@ -9,6 +9,7 @@ import NewJob from "../pages/Jobs/NewJob";
 import JobDetails from "../pages/Jobs/JobDetails";
 import JobSummary from "../pages/Jobs/JobSummary";
 import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
+import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 
 const router = createBrowserRouter([
   {
@@ -36,6 +37,10 @@ const router = createBrowserRouter([
       {
         path: Routes.ADD_INSPECTION_NOTES,
         element: <AddInspectionNotes />,
+      },
+      {
+        path: Routes.ALL_ADDED_NOTES,
+        element: <AllAddedNotes />,
       },
     ],
   },
