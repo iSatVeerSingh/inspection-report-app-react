@@ -1,5 +1,5 @@
 import { Db } from "../services/clientdb";
-import { Inspection, JobDetails } from "../types";
+import { Inspection, InspectionNote, JobDetails } from "../types";
 import { generatePdf } from "../utils/pdf";
 import reportType from "../utils/reportType";
 
@@ -59,9 +59,6 @@ export const getAllInspections = async () => {
 export const getInspectionById = async (id: string) => {
   try {
     const inspection = await Db.inspectionReports.get(id);
-    if (!inspection) {
-      return null;
-    }
     return inspection;
   } catch (err) {
     console.log(err);
@@ -69,14 +66,14 @@ export const getInspectionById = async (id: string) => {
   }
 };
 
-export const addInspectionNotes = async (notes: any[], id: string) => {
+export const addInspectionNotes = async (
+  notes: InspectionNote[],
+  id: string
+) => {
   try {
     const insId = await Db.inspectionReports.update(id, {
       inspectionNotes: notes,
-    });
-    if (!insId) {
-      return null;
-    }
+    } as Inspection);
     return insId;
   } catch (err) {
     console.log(err);

@@ -39,7 +39,7 @@ const JobDetails = () => {
 
   const startInspection = async () => {
     setStarting(true);
-    const response = await clientApi.post("/inspection/new", job);
+    const response = await clientApi.post("/inspections/new", job);
     if (response.status !== 201) {
       toast({
         title: response.data.message || "Invalid request",

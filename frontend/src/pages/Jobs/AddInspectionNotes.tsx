@@ -3,24 +3,46 @@ import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import FormTextArea from "../../components/FormTextArea";
-import { useNavigate } from "react-router-dom";
-import { useRef, useState } from "react";
-import { useInspectionData } from "../../services/client/context";
+import { useNavigate, useParams } from "react-router-dom";
+import { useEffect, useRef, useState } from "react";
 import DatalistInput from "../../components/DatalistInput";
-import { putRequest } from "../../services/client";
 import inspectionNotes from "../../utils/inspectionNote";
+import clientApi from "../../services/clientApi";
+import { Inspection } from "../../types";
+import Loading from "../../components/Loading";
 
 const AddInspectionNotes = () => {
   const toast = useToast();
 
-  const { inspection, addNotes }: any = useInspectionData();
   const commonNoteRef = useRef<HTMLInputElement | null>(null);
-  const inspectionNotesRef = useRef<string[]>(inspection?.inspectionNotes);
+  const inspectionNotesRef = useRef<string[]>([]);
   const [isAdded, setIsAdded] = useState(false);
   const customNoteRef = useRef<HTMLTextAreaElement | null>(null);
   const [saving, setSaving] = useState(false);
 
   const navigate = useNavigate();
+
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const [inspection, setInspection] = useState<Inspection | null>(null);
+  useEffect(() => {
+    const getInspection = async () => {
+      const response = await clientApi.get(
+        `/inspections?inspectionId=${params.inspectionId}`
+      );
+
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
+      }
+
+      setInspection(response.data);
+      inspectionNotesRef.current =
+        (response.data as Inspection).inspectionNotes || [];
+      setLoading(false);
+    };
+    getInspection();
+  }, []);
 
   const addCommonNote = () => {
     const note = commonNoteRef.current?.value.trim();
@@ -78,92 +100,102 @@ const AddInspectionNotes = () => {
     }
     setSaving(true);
 
-    const response = await putRequest(
-      `/client/inspections/notes?inspectionId=${inspection.id}`,
+    const response = await clientApi.put(
+      `/inspections/notes?inspectionId=${params.inspectionId}`,
       {
-        body: JSON.stringify({
-          inspectionNotes: inspectionNotesRef.current,
-        }),
+        inspectionNotes: inspectionNotesRef.current,
       }
     );
 
-    if (!response.success) {
+    if (response.status !== 200) {
       toast({
-        title: "Could not add inspection notes",
-        duration: 5000,
+        title: "Could not add notes.",
         status: "error",
+        duration: 4000,
       });
       setSaving(false);
       return;
     }
 
-    addNotes(inspectionNotesRef.current);
     setSaving(false);
     navigate(-1);
   };
 
   return (
     <PageLayout title="Add Inspection Notes">
-      <Box p="3" border={"stroke"} bg="main-bg" borderRadius={5}>
-        <Heading
-          as="h2"
-          fontSize={{ base: "xl", sm: "2xl" }}
-          fontWeight={"medium"}
-        >
-          &#35;{inspection?.jobNumber} - {inspection?.category}
-        </Heading>
-        <Flex direction={"column"} gap={1} px={3} mt={4}>
-          <MiniDetail property="Category" value={inspection.category} />
-          <MiniDetail property="Customer" value={inspection.customer} />
-          <MiniDetail property="Site Address" value={inspection.siteAddress} />
-        </Flex>
-        <Box mt={4}>
-          <DatalistInput
-            label="You can choose from common notes."
-            name="inspectionNotes"
-            dataList={inspectionNotes}
-            ref={commonNoteRef}
-          />
-          <ButtonPrimary
-            mt={2}
-            width={{ base: "full", sm: "200px" }}
-            onClick={addCommonNote}
-          >
-            Add Note
-          </ButtonPrimary>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Box p="3" border={"stroke"} bg="main-bg" borderRadius={5}>
+          {inspection ? (
+            <>
+              <Heading
+                as="h2"
+                fontSize={{ base: "xl", sm: "2xl" }}
+                fontWeight={"medium"}
+              >
+                &#35;{inspection?.jobNumber} - {inspection?.jobType}
+              </Heading>
+              <Flex direction={"column"} gap={1} px={3} mt={4}>
+                <MiniDetail property="Category" value={inspection?.jobType!} />
+                <MiniDetail property="Customer" value={inspection?.customer!} />
+                <MiniDetail
+                  property="Site Address"
+                  value={inspection?.siteAddress!}
+                />
+              </Flex>
+              <Box mt={4}>
+                <DatalistInput
+                  label="You can choose from common notes."
+                  name="inspectionNotes"
+                  dataList={inspectionNotes}
+                  ref={commonNoteRef}
+                />
+                <ButtonPrimary
+                  mt={2}
+                  width={{ base: "full", sm: "200px" }}
+                  onClick={addCommonNote}
+                >
+                  Add Note
+                </ButtonPrimary>
+              </Box>
+              <Box fontSize={"2xl"} textAlign={"center"} mt={4}>
+                Or
+              </Box>
+              <Box>
+                <Text fontSize={"lg"} color={"dark-gray"}>
+                  If you have not found relevant note to job category, please
+                  see in all categories
+                </Text>
+                <FormTextArea
+                  label="Add Custom Note"
+                  placeholder="Start typing here"
+                  ref={customNoteRef}
+                />
+                <ButtonPrimary
+                  mt={2}
+                  width={{ base: "full", sm: "auto" }}
+                  onClick={handleAddCustomNote}
+                >
+                  Add Custom Note
+                </ButtonPrimary>
+              </Box>
+              <Box mt={5}>
+                <ButtonPrimary
+                  width={{ base: "full", sm: "250px" }}
+                  onClick={handleAddInspectionNotes}
+                  isLoading={saving}
+                  loadingText="Saving"
+                >
+                  Save and Close
+                </ButtonPrimary>
+              </Box>
+            </>
+          ) : (
+            <Text>Job Not Found</Text>
+          )}
         </Box>
-        <Box fontSize={"2xl"} textAlign={"center"} mt={4}>
-          Or
-        </Box>
-        <Box>
-          <Text fontSize={"lg"} color={"dark-gray"}>
-            If you have not found relevant note to job category, please see in
-            all categories
-          </Text>
-          <FormTextArea
-            label="Add Custom Note"
-            placeholder="Start typing here"
-            ref={customNoteRef}
-          />
-          <ButtonPrimary
-            mt={2}
-            width={{ base: "full", sm: "auto" }}
-            onClick={handleAddCustomNote}
-          >
-            Add Custom Note
-          </ButtonPrimary>
-        </Box>
-        <Box mt={5}>
-          <ButtonPrimary
-            width={{ base: "full", sm: "250px" }}
-            onClick={handleAddInspectionNotes}
-            isLoading={saving}
-            loadingText="Saving"
-          >
-            Save and Close
-          </ButtonPrimary>
-        </Box>
-      </Box>
+      )}
     </PageLayout>
   );
 };

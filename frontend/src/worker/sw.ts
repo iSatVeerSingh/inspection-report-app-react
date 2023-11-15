@@ -41,7 +41,7 @@ registerRoute(
 );
 
 registerRoute(
-  ({ url }) => url.pathname === "/client/inspection/new",
+  ({ url }) => url.pathname === "/client/inspections/new",
   createInspectionController,
   "POST"
 );

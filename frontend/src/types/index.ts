@@ -43,6 +43,7 @@ export type Inspection = JobDetails & {
   completedAt?: string | Date;
   inspectionNotes?: InspectionNote[];
   inspectionItems?: InspectionItem[];
+  recommendation?: string;
 };
 
 export type InspectionNote = string;

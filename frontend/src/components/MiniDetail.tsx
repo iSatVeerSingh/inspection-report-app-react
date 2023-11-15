@@ -7,7 +7,7 @@ const MiniDetail = ({
   noChange,
 }: {
   property: string;
-  value: string;
+  value: string | number;
   vertical?: boolean;
   noChange?: boolean;
 }) => {

@@ -72,8 +72,8 @@ export const createInspectionController: RouteHandler = async ({ request }) => {
 export const getInspectionsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
     const inspections = await getAllInspections();
-    if (!inspections || inspections.length === 0) {
-      return getNotFoundResponse();
+    if(!inspections) {
+      return getBadRequestResponse();
     }
     return getSuccessResponse(inspections);
   }

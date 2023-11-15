@@ -7,6 +7,8 @@ import Init, { initLoader } from "../pages/Init";
 import Login from "../pages/Login";
 import NewJob from "../pages/Jobs/NewJob";
 import JobDetails from "../pages/Jobs/JobDetails";
+import JobSummary from "../pages/Jobs/JobSummary";
+import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
 
 const router = createBrowserRouter([
   {
@@ -21,12 +23,20 @@ const router = createBrowserRouter([
       },
       {
         path: Routes.NEW_JOB,
-        element: <NewJob />
+        element: <NewJob />,
       },
       {
         path: Routes.JOBS_DETAILS,
-        element: <JobDetails />
-      }
+        element: <JobDetails />,
+      },
+      {
+        path: Routes.JOB_SUMMARY,
+        element: <JobSummary />,
+      },
+      {
+        path: Routes.ADD_INSPECTION_NOTES,
+        element: <AddInspectionNotes />,
+      },
     ],
   },
   {
