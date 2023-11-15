@@ -24,24 +24,61 @@ import {
   useState,
   ChangeEventHandler,
   useRef,
+  useEffect,
 } from "react";
-import { useInspectionData } from "../../services/client/context";
 import DatalistInput from "../../components/DatalistInput";
 import { getResizedBase64Images } from "../../utils/resize";
-import { postRequest } from "../../services/client";
+import { useParams } from "react-router-dom";
+import { Inspection } from "../../types";
+import clientApi from "../../services/clientApi";
+import Loading from "../../components/Loading";
 
 const AddInspectionItems = () => {
-  const { inspection, libIndex, addItem }: any = useInspectionData();
-  const categories: string[] = Array.from(
-    new Set(libIndex.map((item: any) => item.category))
-  );
-
   const datalistRef = useRef<HTMLInputElement | null>(null);
   const { isOpen, onOpen, onClose } = useDisclosure();
   const [itemNames, setItemNames] = useState([]);
   const [formErrors, setFormErrors] = useState<any>(null);
   const [saving, setSaving] = useState(false);
   const toast = useToast();
+
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const [libIndex, setLibIndex] = useState<any>(null);
+  const [inspection, setInspection] = useState<Inspection | null>(null);
+  const [categories, setCategories] = useState<any[]>([]);
+
+  useEffect(() => {
+    const getInspection = async () => {
+      const response = await clientApi.get(
+        `/inspections?inspectionId=${params.inspectionId}`
+      );
+
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
+      }
+
+      setInspection(response.data);
+      setLoading(false);
+    };
+
+    const getLibIndex = async () => {
+      const response = await clientApi.get("/library-index");
+      if (response.status !== 200) {
+        return;
+      }
+      setLibIndex(response.data);
+
+      const allCategories = Array.from(
+        new Set(response.data.map((item: any) => item.category))
+      );
+
+      setCategories(allCategories);
+    };
+
+    getInspection();
+    getLibIndex();
+  }, []);
 
   const filterItemNames: ChangeEventHandler = (e) => {
     e.preventDefault();
@@ -91,10 +128,9 @@ const AddInspectionItems = () => {
     setFormErrors(null);
     setSaving(true);
     const library = libIndex.find((item: any) => item.name === itemName);
-    itemData.append("libraryId", library.item as string);
+    itemData.append("libraryId", library.id);
 
     if (!isOffScreen) {
-      console.log("not offscreen");
       itemData.delete("itemImages");
       const resizedImages = await getResizedBase64Images(images);
       for (let img of resizedImages) {
@@ -103,31 +139,28 @@ const AddInspectionItems = () => {
       itemData.append("type", "resized");
     }
 
-    const response = await postRequest(
-      `/client/inspections/items?inspectionId=${inspection.id}`,
-      {
-        body: itemData,
-      }
+    const response = await clientApi.post(
+      `/inspections/items?inspectionId=${params.inspectionId}`,
+      itemData
     );
 
-    if (!response.success) {
+    if (response.status !== 201) {
       toast({
-        title: response.data,
+        title: response.data.message || "Invalid request",
         duration: 4000,
         status: "error",
       });
-      target.reset();
       setSaving(false);
       return;
     }
 
     toast({
-      title: "Item saved successfully",
+      title: "Item created successfully",
       description: itemName + " saved",
       duration: 4000,
       status: "success",
     });
-    addItem(response.data);
+
     target.reset();
     setSaving(false);
   };
@@ -141,7 +174,6 @@ const AddInspectionItems = () => {
 
     const itemData = new FormData(target);
     const itemName = itemData.get("itemName")?.toString().trim();
-    const itemSummary = itemData.get("itemSummary")?.toString().trim();
     const images = itemData.getAll("itemImages") as File[];
     const openingParagraph = itemData
       .get("openingParagraph")
@@ -164,9 +196,6 @@ const AddInspectionItems = () => {
       formErrors.itemImages = "Max 8 images allowed";
     }
 
-    if (itemSummary === "") {
-      formErrors.itemSummary = "Please provide item summary";
-    }
     if (openingParagraph === "") {
       formErrors.openingParagraph = "Please provide opening paragraph";
     }
@@ -188,7 +217,6 @@ const AddInspectionItems = () => {
     }
 
     if (!isOffScreen) {
-      console.log("not offscreen");
       itemData.delete("itemImages");
       const resizedImages = await getResizedBase64Images(images);
       for (let img of resizedImages) {
@@ -199,89 +227,90 @@ const AddInspectionItems = () => {
 
     itemData.append("custom", "custom");
 
-    const response = await postRequest(
-      `/client/inspections/items?inspectionId=${inspection.id}`,
-      {
-        body: itemData,
-      }
+    const response = await clientApi.post(
+      `/inspections/items?inspectionId=${params.inspectionId}`,
+      itemData
     );
 
-    if (!response.success) {
+    if (response.status !== 201) {
       toast({
-        title: response.data,
+        title: response.data.message || "Invalid request",
         duration: 4000,
         status: "error",
       });
-      target.reset();
       setSaving(false);
       return;
     }
 
     toast({
-      title: "Item saved successfully",
+      title: "Item created successfully",
       description: itemName + " saved",
       duration: 4000,
       status: "success",
     });
-    addItem(response.data);
+
     target.reset();
     setSaving(false);
-    onClose();
   };
 
   return (
     <PageLayout title="Add New Items">
-      <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
-        <Heading as="h2" fontSize={"2xl"} fontWeight={"medium"}>
-          &#35;{inspection?.jobNumber} - {inspection?.category}
-        </Heading>
-        <Text fontSize={"lg"} color={"dark-gray"}>
-          {inspection?.siteAddress}
-        </Text>
-        <form onSubmit={handleAddItem}>
-          <Flex mt={4} direction={"column"} gap={3} alignItems={"start"}>
-            <FormSelect
-              options={categories}
-              label="Category"
-              placeholder="Select item category"
-              name="category"
-              onChange={filterItemNames}
-              inputError={formErrors?.category}
-            />
-            <DatalistInput
-              name="itemName"
-              label="Item Name"
-              placeholder="Search item name here"
-              dataList={itemNames}
-              inputError={formErrors?.itemName}
-              ref={datalistRef}
-            />
-            <FileInput
-              name="itemImages"
-              label="Item Images"
-              subLabel="Max 8 images allowed"
-              multiple
-              inputError={formErrors?.itemImages}
-            />
-            <FormTextArea
-              label="Item Note"
-              placeholder="Type item note here"
-              name="itemNote"
-            />
-            <ButtonPrimary
-              width={"200px"}
-              type="submit"
-              isLoading={saving}
-              loadingText="Saving"
-            >
-              Add Item
-            </ButtonPrimary>
+      {loading ? (
+        <Loading />
+      ) : (
+        <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
+          <Heading as="h2" fontSize={"2xl"} fontWeight={"medium"}>
+            &#35;{inspection?.jobNumber} - {inspection?.jobType}
+          </Heading>
+          <Text fontSize={"lg"} color={"dark-gray"}>
+            {inspection?.siteAddress}
+          </Text>
+          <form onSubmit={handleAddItem}>
+            <Flex mt={4} direction={"column"} gap={3} alignItems={"start"}>
+              <FormSelect
+                options={categories}
+                label="Category"
+                placeholder="Select item category"
+                name="category"
+                onChange={filterItemNames}
+                inputError={formErrors?.category}
+                required
+              />
+              <DatalistInput
+                name="itemName"
+                label="Item Name"
+                placeholder="Search item name here"
+                dataList={itemNames}
+                inputError={formErrors?.itemName}
+                ref={datalistRef}
+              />
+              <FileInput
+                name="itemImages"
+                label="Item Images"
+                subLabel="Max 8 images allowed"
+                multiple
+                inputError={formErrors?.itemImages}
+              />
+              <FormTextArea
+                label="Item Note"
+                placeholder="Type item note here"
+                name="itemNote"
+              />
+              <ButtonPrimary
+                width={"200px"}
+                type="submit"
+                isLoading={saving}
+                loadingText="Saving"
+              >
+                Add Item
+              </ButtonPrimary>
+            </Flex>
+          </form>
+          <Flex mt={10} justifyContent={"space-between"}>
+            <ButtonOutline onClick={onOpen}>Create Custom Item</ButtonOutline>
           </Flex>
-        </form>
-        <Flex mt={10} justifyContent={"space-between"}>
-          <ButtonOutline onClick={onOpen}>Create Custom Item</ButtonOutline>
-        </Flex>
-      </Box>
+        </Box>
+      )}
       <Modal
         closeOnOverlayClick={false}
         isOpen={isOpen}
@@ -354,7 +383,7 @@ const AddInspectionItems = () => {
                 >
                   Create Item
                 </ButtonPrimary>
-                <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
+                <ButtonOutline onClick={onClose}>Close</ButtonOutline>
               </Flex>
             </Flex>
           </form>

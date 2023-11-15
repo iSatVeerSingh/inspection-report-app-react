@@ -1,5 +1,10 @@
 import { Db } from "../services/clientdb";
-import { Inspection, InspectionNote, JobDetails } from "../types";
+import {
+  Inspection,
+  InspectionItem,
+  InspectionNote,
+  JobDetails,
+} from "../types";
 import { generatePdf } from "../utils/pdf";
 import reportType from "../utils/reportType";
 
@@ -82,7 +87,6 @@ export const addInspectionNotes = async (
 };
 
 export const addInspectionItem = async (itemData: FormData, id: string) => {
-  // const itemCategory = itemData.get("category");
   const itemName = itemData.get("itemName");
   const custom = itemData.get("custom");
   const type = itemData.get("type");
@@ -105,27 +109,29 @@ export const addInspectionItem = async (itemData: FormData, id: string) => {
 
   if (custom === "custom") {
     try {
-      const item = {
+      const newInspectionItem: InspectionItem = {
         id: Date.now().toString(36),
-        itemName,
-        itemImages: resizedImages,
-        itemSummary,
-        openingParagraph,
-        embeddedImage,
-        closingParagraph,
+        name: itemName as string,
+        category: "Custom Item",
+        images: resizedImages,
+        summary: (itemSummary as string) || undefined,
+        openingParagraph: openingParagraph as string,
+        embeddedImage: (embeddedImage as string) || undefined,
+        closingParagraph: closingParagraph as string,
       };
 
       const inspectionid = await Db.inspectionReports
         .where("id")
         .equals(id)
         .modify((inspection) => {
-          inspection.inspectionItems.push(item);
+          if (!inspection.inspectionItems) {
+            inspection.inspectionItems = [newInspectionItem];
+          } else {
+            inspection.inspectionItems.push(newInspectionItem);
+          }
         });
 
-      if (inspectionid) {
-        return item;
-      }
-      return item;
+      return inspectionid;
     } catch (err) {
       return null;
     }
@@ -139,24 +145,29 @@ export const addInspectionItem = async (itemData: FormData, id: string) => {
       Db.libraryItems,
       Db.inspectionReports,
       async () => {
-        const libraryItem = await Db.libraryItems.get(libraryId);
-        if (!libraryId) {
+        const libraryItem = await Db.libraryItems.get(parseInt(libraryId));
+        if (!libraryItem) {
           return null;
         }
 
-        libraryItem.id = Date.now().toString(36);
-        libraryItem.itemImages = resizedImages;
-        libraryItem.itemNote = itemNote;
+        const newInspectionItem: InspectionItem = {
+          ...libraryItem,
+          images: resizedImages,
+          note: (itemNote as string) || undefined,
+          id: Date.now().toString(36),
+        };
 
         const inspectionid = await Db.inspectionReports
           .where("id")
           .equals(id)
           .modify((inspection) => {
-            inspection.inspectionItems.push(libraryItem);
+            if (!inspection.inspectionItems) {
+              inspection.inspectionItems = [newInspectionItem];
+            } else {
+              inspection.inspectionItems.push(newInspectionItem);
+            }
           });
-        if (inspectionid) {
-          return libraryItem;
-        }
+        return inspectionid;
       }
     );
     return trs;

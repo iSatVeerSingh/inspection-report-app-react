@@ -72,7 +72,7 @@ export const createInspectionController: RouteHandler = async ({ request }) => {
 export const getInspectionsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
     const inspections = await getAllInspections();
-    if(!inspections) {
+    if (!inspections) {
       return getBadRequestResponse();
     }
     return getSuccessResponse(inspections);
@@ -145,7 +145,7 @@ export const addInspectionItemsController: RouteHandler = async ({
   if (!inspection) {
     return getBadRequestResponse();
   }
-  return getSuccessResponse(inspection);
+  return getSuccessResponse(inspection, 201);
 };
 
 export const deleteInspectionItemsController: RouteHandler = async ({
