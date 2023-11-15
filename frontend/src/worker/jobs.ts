@@ -27,6 +27,7 @@ export const createNewJob = async (jobData: JobDetails) => {
       ...jobData,
       created: new Date(),
       status: "Not started",
+      jobNumber: Number(jobData.jobNumber),
     });
     return jobNumber;
   } catch (err: any) {

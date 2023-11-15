@@ -1,5 +1,5 @@
 import Dexie, { Table } from "dexie";
-import { JobDetails, LibraryItem } from "../../types";
+import { Inspection, JobDetails, LibraryItem } from "../../types";
 
 type JobTable = JobDetails & {
   created: string | Date;
@@ -7,7 +7,7 @@ type JobTable = JobDetails & {
 
 export class InspectionReport extends Dexie {
   libraryItems!: Table<LibraryItem>;
-  inspectionReports!: Table<any>;
+  inspectionReports!: Table<Inspection>;
   jobs!: Table<JobTable>;
   libraryIndex!: Table<any>;
   template!: Table<any>;

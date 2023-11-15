@@ -15,53 +15,6 @@ const NewJob = () => {
   const navigate = useNavigate();
   const toast = useToast();
 
-  // const reportType = [
-  //   {
-  //     text: "Pre-Slab Inspection",
-  //     value: "PRE-SLAB",
-  //   },
-  //   {
-  //     text: "Post-Slab Inspection",
-  //     value: "POST-SLAB",
-  //   },
-  //   {
-  //     text: "Frame Inspection",
-  //     value: "FRAME",
-  //   },
-  //   {
-  //     text: "Pre-Plaster Inspection",
-  //     value: "PRE-PLASTER",
-  //   },
-  //   {
-  //     text: "Lock-up Inspection",
-  //     value: "LOCK-UP",
-  //   },
-  //   {
-  //     text: "Fixing Inspection",
-  //     value: "FIXING",
-  //   },
-  //   {
-  //     text: "Waterproofing Inspection",
-  //     value: "WATERPROOFING",
-  //   },
-  //   {
-  //     text: "Point In Time Inspection",
-  //     value: "POINT IN TIME",
-  //   },
-  //   {
-  //     text: "Handover Inspection",
-  //     value: "HANDOVER",
-  //   },
-  //   {
-  //     text: "Maintenance Inspection",
-  //     value: "MAINTENANCE & WARRANTY",
-  //   },
-  //   {
-  //     text: "Other",
-  //     value: "BUILDING",
-  //   },
-  // ];
-
   const reportType = [
     "Pre-Slab Inspection",
     "Post-Slab Inspection",

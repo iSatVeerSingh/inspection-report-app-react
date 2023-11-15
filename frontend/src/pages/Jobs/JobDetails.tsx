@@ -4,61 +4,54 @@ import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
-import { Job } from "../../utils/types";
-// import { Db } from "../../services/clientdb";
 import Loading from "../../components/Loading";
-import { getRequest, postRequest } from "../../services/client";
+import clientApi from "../../services/clientApi";
+import { JobDetails as JobType } from "../../types";
 
 const JobDetails = () => {
-  // const job: any = {}
   const navigate = useNavigate();
   const params = useParams();
   const toast = useToast();
 
-  const [job, setJob] = useState<any | null>(null);
+  const [job, setJob] = useState<JobType | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState(false);
   const [starting, setStarting] = useState(false);
 
   useEffect(() => {
-    const getJobData = async () => {
-      const response = await getRequest(
-        `/client/jobs?jobNumber=${params.jobNumber}`
+    const getJob = async () => {
+      const response = await clientApi.get(
+        `/jobs?jobNumber=${params.jobNumber}`
       );
-      if (!response.success) {
+
+      if (response.status !== 200) {
         setNotFound(true);
         setLoading(false);
         return;
       }
+
       setJob(response.data);
       setLoading(false);
     };
-    getJobData();
+
+    getJob();
   }, []);
 
   const startInspection = async () => {
     setStarting(true);
-    const response = await postRequest("/client/inspection/new", {
-      body: JSON.stringify(job),
-    })
-
-    if(!response.success) {
+    const response = await clientApi.post("/inspection/new", job);
+    if (response.status !== 201) {
       toast({
-        title: response.data,
-        description: "Could not start inspection",
-        duration: 5000,
+        title: response.data.message || "Invalid request",
         status: "error",
-      })
+        duration: 4000,
+      });
+      setStarting(false);
       return;
     }
 
     setStarting(false);
-    navigate(`./${response.data}`);
-
-  };
-
-  const continueInspection = () => {
-    navigate(`./${job.inspectionId}`);
+    navigate("./" + response.data);
   };
 
   return (
@@ -77,15 +70,11 @@ const JobDetails = () => {
                 fontWeight={"semibold"}
                 color={"rich-black"}
               >
-                &#35;{job?.jobNumber} - {job?.category}
+                &#35;{job?.jobNumber} - {job?.jobType}
               </Heading>
               <Grid gap={1} mt={3} mb={10}>
-                <MiniDetail property="Category" value={job?.category!} />
+                <MiniDetail property="Category" value={job?.jobType!} />
                 <MiniDetail property="Customer" value={job?.customer!} />
-                {/* <MiniDetail
-                  property="Assigned Inspector"
-                  value={job?.inspector!}
-                /> */}
                 <MiniDetail property="Date" value={job?.date!} />
                 <MiniDetail property="Time" value={job?.time!} />
                 <MiniDetail property="Site Address" value={job?.siteAddress!} />
@@ -93,16 +82,20 @@ const JobDetails = () => {
                 <MiniDetail
                   vertical
                   property="Description"
-                  value={job?.description!}
+                  value={job?.description === "" ? "N/A" : job?.description!}
                 />
               </Grid>
-              {job?.status !== "inprogress" ? (
-                <ButtonPrimary loadingText="Starting..." isLoading={starting} onClick={startInspection}>
-                  Start Inspection
+              {job?.status === "In progress" ? (
+                <ButtonPrimary onClick={() => navigate("./" + job?.inspection)}>
+                  Continue Inspection
                 </ButtonPrimary>
               ) : (
-                <ButtonPrimary onClick={continueInspection}>
-                  Continue Inspection
+                <ButtonPrimary
+                  onClick={startInspection}
+                  isLoading={starting}
+                  loadingText="Starting"
+                >
+                  Start Inspection
                 </ButtonPrimary>
               )}
             </>

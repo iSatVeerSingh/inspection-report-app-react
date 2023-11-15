@@ -1,27 +1,9 @@
-import {
-  Box,
-  Flex,
-  Text,
-  Grid,
-  Heading,
-  // IconButton,
-  // Drawer,
-  // useDisclosure,
-  // DrawerOverlay,
-  // DrawerContent,
-  // DrawerCloseButton,
-  // DrawerHeader,
-} from "@chakra-ui/react";
+import { Box, Flex, Text, Grid, Heading } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-// import FilterInput from "../../components/FilterInput";
-// import FilterSelect from "../../components/FilterSelect";
-// import SearchFilter from "../../components/SearchFilter";
 import { Link, useNavigate } from "react-router-dom";
 import { LocationIcon, UserIcon } from "../../icons";
-// import useIsMobile from "../../hooks/useMobile";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
-import { getRequest } from "../../services/client";
 import clientApi from "../../services/clientApi";
 import { JobDetails } from "../../types";
 
@@ -49,6 +31,7 @@ const Jobs = () => {
       title="All Jobs"
       titleBtn="Create New Job"
       onBtnClick={() => navigate("/jobs/new")}
+      isRoot
     >
       {loading ? (
         <Loading />

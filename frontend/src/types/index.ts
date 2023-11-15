@@ -32,5 +32,24 @@ export type JobDetails = {
   time: string;
   siteAddress: string;
   description?: string;
-  status?: 'Not started' | 'In progress' | 'Completed'
+  status?: "Not started" | "In progress" | "Completed";
+  inspection?: string;
 };
+
+export type Inspection = JobDetails & {
+  id: string | number;
+  category: string;
+  startedAt: string | Date;
+  completedAt?: string | Date;
+  inspectionNotes?: InspectionNote[];
+  inspectionItems?: InspectionItem[];
+};
+
+export type InspectionNote = string;
+
+export type InspectionItem = LibraryItem & {
+  note?: string;
+  images?: ItemImage;
+};
+
+export type ItemImage = string;

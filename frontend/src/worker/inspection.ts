@@ -1,31 +1,31 @@
 import { Db } from "../services/clientdb";
+import { Inspection, JobDetails } from "../types";
 import { generatePdf } from "../utils/pdf";
-import { Job } from "../utils/types";
+import reportType from "../utils/reportType";
 
-export const startNewInspection = async (jobData: Job) => {
+export const startNewInspection = async (jobData: JobDetails) => {
   try {
     const trs = await Db.transaction(
       "rw",
       Db.inspectionReports,
       Db.jobs,
       async () => {
-        const newReport = {
+        const newInspection: Inspection = {
           ...jobData,
           id: Date.now().toString(36),
-          inspectionStart: new Date(),
-          status: "inprogress",
-          inspectionNotes: [],
-          inspectionItems: [],
+          startedAt: new Date(),
+          status: "In progress",
+          category: reportType[jobData.jobType] || reportType.Other,
         };
 
-        const reportId = await Db.inspectionReports.add(newReport);
-        if (reportId !== null) {
+        const inspectionId = await Db.inspectionReports.add(newInspection);
+        if (inspectionId !== null) {
           const success = await Db.jobs.update(jobData.jobNumber, {
-            status: "inprogress",
-            inspectionId: reportId,
-          });
+            status: "In progress",
+            inspection: inspectionId,
+          } as Partial<JobDetails>);
           if (success !== null) {
-            return reportId;
+            return inspectionId;
           }
         }
         return null;

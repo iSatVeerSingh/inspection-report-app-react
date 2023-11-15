@@ -6,6 +6,7 @@ import Init, { initLoader } from "../pages/Init";
 
 import Login from "../pages/Login";
 import NewJob from "../pages/Jobs/NewJob";
+import JobDetails from "../pages/Jobs/JobDetails";
 
 const router = createBrowserRouter([
   {
@@ -21,6 +22,10 @@ const router = createBrowserRouter([
       {
         path: Routes.NEW_JOB,
         element: <NewJob />
+      },
+      {
+        path: Routes.JOBS_DETAILS,
+        element: <JobDetails />
       }
     ],
   },

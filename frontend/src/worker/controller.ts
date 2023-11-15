@@ -26,15 +26,16 @@ export const getJobsController: RouteHandler = async ({ url }) => {
   }
 
   const jobNumber = url.searchParams.get("jobNumber");
-  if (jobNumber && jobNumber !== "") {
-    const job = await getJobByJobNumber(Number(jobNumber));
-    if (job) {
-      return getSuccessResponse(job);
-    }
+  if (!jobNumber || jobNumber === "") {
+    return getBadRequestResponse();
+  }
+
+  const job = await getJobByJobNumber(parseInt(jobNumber));
+  if (!job) {
     return getNotFoundResponse();
   }
 
-  return getBadRequestResponse();
+  return getSuccessResponse(job);
 };
 
 export const createJobController: RouteHandler = async ({ request }) => {
@@ -65,7 +66,7 @@ export const createInspectionController: RouteHandler = async ({ request }) => {
   if (!inspectionId) {
     return getBadRequestResponse();
   }
-  return getSuccessResponse(inspectionId);
+  return getSuccessResponse(inspectionId, 201);
 };
 
 export const getInspectionsController: RouteHandler = async ({ url }) => {
@@ -193,14 +194,14 @@ export const addRecommendationController: RouteHandler = async ({
 };
 
 const getNotFoundResponse = () => {
-  const resData = {
-    success: false,
-    data: "Resource not found",
-  };
-
-  return new Response(JSON.stringify(resData), {
-    status: 404,
-  });
+  return new Response(
+    JSON.stringify({
+      message: "Resource Not Found",
+    }),
+    {
+      status: 404,
+    }
+  );
 };
 
 const getBadRequestResponse = (message?: string) => {
