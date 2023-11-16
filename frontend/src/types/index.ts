@@ -51,6 +51,7 @@ export type InspectionNote = string;
 export type InspectionItem = LibraryItem & {
   note?: string;
   images?: ItemImage[];
+  pageBreak?: boolean;
 };
 
 export type ItemImage = string;

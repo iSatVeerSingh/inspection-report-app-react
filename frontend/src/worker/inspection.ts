@@ -281,15 +281,17 @@ export const getPdf = async (itemsHeights: any[], id: string) => {
       return null;
     }
 
-    trs.inspection.inspectionItems = itemsHeights.map((height: any) => {
-      const insItem = trs.inspection.inspectionItems.find(
-        (item: any) => item.id === height.id
+    const { inspection, template } = trs;
+
+    inspection.inspectionItems = itemsHeights.map((height: any) => {
+      const inspectionItem = inspection.inspectionItems?.find(
+        (item) => item.id === height.id
       );
-      insItem.pageBreak = height.pageBreak;
-      return insItem;
+      inspectionItem!.pageBreak = height.pageBreak;
+      return inspectionItem!;
     });
 
-    const pdfUrl = await generatePdf(trs.inspection, trs.template);
+    const pdfUrl = await generatePdf(inspection, template);
 
     return pdfUrl;
   } catch (err) {

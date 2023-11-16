@@ -6,6 +6,12 @@ import {
   TDocumentDefinitions,
 } from "pdfmake/interfaces";
 import pdfFonts from "./pdfFonts";
+import {
+  Inspection,
+  InspectionItem,
+  InspectionNote,
+  ItemImage,
+} from "../types";
 
 (pdfMake as any).vfs = pdfFonts;
 pdfMake.fonts = {
@@ -47,10 +53,7 @@ const MONTHS = [
   "December",
 ];
 
-export const generatePdf = async (
-  reportData: any,
-  template: any,
-) => {
+export const generatePdf = async (reportData: Inspection, template: any) => {
   const docDefinition: TDocumentDefinitions = {
     ...getMeta(reportData, template),
     content: [
@@ -58,12 +61,12 @@ export const generatePdf = async (
       getTableOfContents(),
       getClientPropertyDetails(reportData),
       getReportDetails(reportData),
-      getInspectionNotes(reportData.inspectionNotes),
+      getInspectionNotes(reportData.inspectionNotes!),
       getReportSummary(reportData),
       getPurpose(template),
       getGeneral(template),
       getBuildingDefects(template),
-      getItemsTable(reportData.inspectionItems),
+      getItemsTable(reportData.inspectionItems!),
       getResponsibility(template),
       getTandC(template),
     ],
@@ -90,7 +93,7 @@ export const generatePdf = async (
 };
 
 const getMeta = (
-  reportData: any,
+  reportData: Inspection,
   template: any
 ): Partial<TDocumentDefinitions> => {
   return {
@@ -128,7 +131,7 @@ const getMeta = (
       return currentPage === 1
         ? undefined
         : {
-            text: `${reportData.jobNumber} - ${reportData.jobType} Inspection Report`,
+            text: `${reportData.jobNumber} - ${reportData.category} Inspection Report`,
             color: "#002060",
             fontSize: 10,
             font: "Roboto",
@@ -140,7 +143,7 @@ const getMeta = (
   };
 };
 
-const getTitlePage = (reportData: any, template: any): Content => {
+const getTitlePage = (reportData: Inspection, template: any): Content => {
   return [
     {
       image: template.images.topImage,
@@ -153,11 +156,6 @@ const getTitlePage = (reportData: any, template: any): Content => {
       height: 225,
       absolutePosition: { x: 0, y: 617 },
     },
-    // {
-    //   image: template.images.companyImage,
-    //   width: 200,
-    //   absolutePosition: { x: 350, y: 736 },
-    // },
     {
       stack: [
         {
@@ -208,7 +206,7 @@ const getTitlePage = (reportData: any, template: any): Content => {
       alignment: "center",
     },
     {
-      text: `${reportData.jobType}\nINSPECTION REPORT\n& DEFECTS LIST`,
+      text: `${reportData.category}\nINSPECTION REPORT\n& DEFECTS LIST`,
       alignment: "right",
       fontSize: 33,
       marginBottom: 10,
@@ -264,7 +262,7 @@ const getMainHeading = (heading: string, pageBreak?: PageBreak): Content => {
   };
 };
 
-const getClientPropertyDetails = (reportData: any): Content => {
+const getClientPropertyDetails = (reportData: Inspection): Content => {
   return {
     pageBreak: "before",
     stack: [
@@ -296,16 +294,13 @@ const getMiniDetails = (property: string, value: string): Content => {
   };
 };
 
-const getReportDetails = (reportData: any): Content => {
+const getReportDetails = (reportData: Inspection): Content => {
   return {
     stack: [
       getMainHeading("Inspection & Report Details"),
-      getMiniDetails(
-        "Inspection Date:",
-        getDateString(reportData.inspectionStart)
-      ),
+      getMiniDetails("Inspection Date:", getDateString(reportData.startedAt)),
       getMiniDetails("Inspection Time:", timeTo12Hours(reportData.time)),
-      getMiniDetails("Stage Of Works:", getStage(reportData.jobType)),
+      getMiniDetails("Stage Of Works:", getStage(reportData.category)),
       getMiniDetails("Date of this report:", getDateString()),
     ],
     marginBottom: 15,
@@ -315,17 +310,20 @@ const getReportDetails = (reportData: any): Content => {
 const getStage = (type: string): string => {
   const stage: any = {
     "PRE-SLAB": "Prior to concrete slab pour.",
-    "POST-SLAB": "After concrete slab pour.",
+    "POST-SLAB": "After the concrete slab has been poured.",
     FRAME: "Approaching frame stage.",
     "PRE-PLASTER": "Approaching lock-up stage.",
+    "LOCK-UP": "Approaching lock-up stage.",
     FIXING: "Approaching fixing stage.",
     WATERPROOFING: "Approaching fixing stage.",
+    "POINT IN TIME":
+      "A point in time not necessarily aligning with a building contract stage.",
     HANDOVER: "Approaching completion.",
-    MAINTENANCE: "Maintenance/Warranty stage.",
+    "MAINTENANCE & WARRANTY": "Maintenance/Warranty stage, after settlement.",
     REINSPECTION: "Reinspection of previous report.",
   };
 
-  return stage[type];
+  return stage[type] || "Not Applicable";
 };
 
 const getDateString = (str?: any) => {
@@ -365,7 +363,7 @@ const getFormatDateValue = (str: string) => {
   return str.length === 2 ? str : "0" + str;
 };
 
-const getInspectionNotes = (notes: string[]): Content => {
+const getInspectionNotes = (notes: InspectionNote[]): Content => {
   return {
     stack: [
       getMainHeading("Inspection Notes"),
@@ -416,7 +414,7 @@ const getBuildingDefects = (template: any): Content => {
   };
 };
 
-const getItemsTable = (inspectionItems: any[]): Content => {
+const getItemsTable = (inspectionItems: InspectionItem[]): Content => {
   const body = [];
 
   for (let i = 0; i < inspectionItems.length; i++) {
@@ -426,25 +424,27 @@ const getItemsTable = (inspectionItems: any[]): Content => {
       pageBreak: i !== 0 && item.pageBreak ? "before" : undefined,
       stack: [
         {
-          text: item.itemName,
+          text: item.name,
           bold: true,
         },
-        {
-          text: item.openingParagraph,
-        },
+        ...((typeof item.openingParagraph === "string"
+          ? [{ text: item.openingParagraph }]
+          : item.openingParagraph) as unknown as Content[]),
       ],
     };
-    if (item.itemNote) {
+    if (item.note) {
       reportItem.stack.push({
-        text: `Note:- ${item.itemNote}`,
+        text: `Note:- ${item.note}`,
       });
     }
 
-    reportItem.stack.push(getImages(item.itemImages));
+    reportItem.stack.push(getImages(item.images!));
 
-    reportItem.stack.push({
-      text: item.closingParagraph,
-    });
+    reportItem.stack.push(
+      ...((typeof item.closingParagraph === "string"
+        ? [{ text: item.closingParagraph }]
+        : item.closingParagraph) as unknown as Content[])
+    );
 
     const serial: Content = {
       pageBreak: i !== 0 && item.pageBreak ? "before" : undefined,
@@ -472,7 +472,7 @@ const getItemsTable = (inspectionItems: any[]): Content => {
   };
 };
 
-const getImages = (itemImages: string[]): Content => {
+const getImages = (itemImages: ItemImage[]): Content => {
   const imgStack: Content = [];
 
   const imgRow: Content = {

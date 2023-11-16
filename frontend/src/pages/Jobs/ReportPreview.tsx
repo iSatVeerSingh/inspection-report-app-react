@@ -1,75 +1,92 @@
 "use client";
 import { Box, Flex, Heading, Text } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import { useInspectionData } from "../../services/client/context";
 import { useState, useRef, useEffect } from "react";
 import Loading from "../../components/Loading";
-import { postRequest } from "../../services/client";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import inspectionApi from "../../services/api";
+import { useParams } from "react-router-dom";
+import clientApi from "../../services/clientApi";
+import { Inspection } from "../../types";
 
 const ReportPreview = () => {
-  const { inspection }: any = useInspectionData();
   const parentRef = useRef<HTMLDivElement | null>(null);
   const [pdfUrl, setPdfUrl] = useState<any>(null);
+  const params = useParams();
+
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const getPDF = async () => {
-      const maxwidth = 495 - 20;
-      const maxHeightInpx = 1009;
+    const getInspection = async () => {
+      const response = await clientApi.get(
+        `/inspections?inspectionId=${params.inspectionId}`
+      );
+
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
+      }
+
+      const inspection = response.data as Inspection;
+
+      const maxwidth = 495 - 20; // in points
+      const maxHeightInpx = 1009; // in pixels
+
       const itemsHeights: any[] = [];
 
       parentRef.current!.innerHTML = "";
 
-      const items = inspection.inspectionItems as any[];
-      for (let i = 0; i < items.length; i++) {
-        const item = items[i];
+      for (let i = 0; i < inspection.inspectionItems!.length; i++) {
+        const item = inspection.inspectionItems![i];
         const itemDiv = document.createElement("div");
         itemDiv.style.width = `${maxwidth}pt`;
-        itemDiv.style.backgroundColor = "#fff8dc";
         itemDiv.style.fontFamily = "'Times New Roman', serif";
         itemDiv.style.fontSize = "11pt";
         itemDiv.style.lineHeight = "1.2";
         itemDiv.style.paddingTop = "5pt";
-        itemDiv.className = "tableRow";
-
         parentRef.current!.appendChild(itemDiv);
 
-        const itemNamepara = document.createElement("p");
-        itemNamepara.style.fontWeight = "bold";
-        itemNamepara.textContent = item.itemName;
+        const itemNameParagraph = document.createElement("p");
+        itemNameParagraph.style.fontWeight = "bold";
+        itemNameParagraph.textContent = item.name;
+        itemDiv.appendChild(itemNameParagraph);
 
-        itemDiv.appendChild(itemNamepara);
-
-        const openingPara = document.createElement("p");
+        const openingParagraph = document.createElement("div");
         if (typeof item.openingParagraph === "string") {
-          openingPara.textContent = item.openingParagraph;
+          openingParagraph.textContent = item.openingParagraph;
         } else {
           for (let j = 0; j < item.openingParagraph.length; j++) {
-            const subItem = item.openingParagraph[j];
-            const span = document.createElement("span");
-            span.textContent = subItem.text;
+            const paragraph = item.openingParagraph[j];
+            const paragraphDiv = document.createElement("p");
 
-            if (subItem.bold) {
-              span.style.fontWeight = "bold";
-            }
-            if (subItem.italics) {
-              span.style.fontStyle = "italic";
-            }
-            if (subItem.decoration) {
-              span.style.textDecoration = "underline";
-            }
+            for (let k = 0; k < paragraph.text.length; k++) {
+              const spanItem = paragraph.text[k];
+              const span = document.createElement("span");
+              span.textContent = spanItem.text;
 
-            openingPara.appendChild(span);
+              if (spanItem.bold) {
+                span.style.fontWeight = "bold";
+              }
+              if (spanItem.italics) {
+                span.style.fontStyle = "italic";
+              }
+              if (spanItem.decoration) {
+                if (typeof spanItem.decoration === "string") {
+                  span.style.textDecoration = spanItem.decoration;
+                } else {
+                  span.style.textDecoration = "underline line-through";
+                }
+              }
+              paragraphDiv.appendChild(span);
+            }
+            openingParagraph.appendChild(paragraphDiv);
           }
         }
-        itemDiv.appendChild(openingPara);
+        itemDiv.appendChild(openingParagraph);
 
-        if (item.itemNote && item.itemNote !== "") {
-          const notePara = document.createElement("p");
-          notePara.textContent = `Note:- ${item.itemNote}`;
-
-          itemDiv.appendChild(notePara);
+        if (item.note && item.note !== "") {
+          const noteParagraph = document.createElement("p");
+          noteParagraph.textContent = `Note :- ${item.note}`;
+          itemDiv.appendChild(noteParagraph);
         }
 
         const imageDiv = document.createElement("div");
@@ -77,45 +94,52 @@ const ReportPreview = () => {
         imageDiv.style.flexWrap = "wrap";
         imageDiv.style.gap = "5pt";
 
-        for (let j = 0; j < item.itemImages.length; j++) {
-          const imgStr = item.itemImages[j];
-
+        for (let j = 0; j < item.images!.length; j++) {
+          const imageStr = item.images![j];
           const img = document.createElement("img");
-          img.src = imgStr;
+          img.src = imageStr;
           img.style.width = "220pt";
-          img.style.height = "200pt";
+          img.style.height = "220pt";
           imageDiv.appendChild(img);
         }
-
         itemDiv.appendChild(imageDiv);
 
-        const closingPara = document.createElement("p");
+        const closingParagraph = document.createElement("div");
         if (typeof item.closingParagraph === "string") {
-          closingPara.textContent = item.closingParagraph;
+          closingParagraph.textContent = item.closingParagraph;
         } else {
           for (let j = 0; j < item.closingParagraph.length; j++) {
-            const subItem = item.closingParagraph[j];
-            const span = document.createElement("span");
-            span.textContent = subItem.text;
+            const paragraph = item.closingParagraph[j];
+            const paragraphDiv = document.createElement("p");
 
-            if (subItem.bold) {
-              span.style.fontWeight = "bold";
-            }
-            if (subItem.italics) {
-              span.style.fontStyle = "italic";
-            }
-            if (subItem.decoration) {
-              span.style.textDecoration = "underline";
-            }
+            for (let k = 0; k < paragraph.text.length; k++) {
+              const spanItem = paragraph.text[k];
+              const span = document.createElement("span");
+              span.textContent = spanItem.text;
 
-            closingPara.appendChild(span);
+              if (spanItem.bold) {
+                span.style.fontWeight = "bold";
+              }
+              if (spanItem.italics) {
+                span.style.fontStyle = "italic";
+              }
+              if (spanItem.decoration) {
+                if (typeof spanItem.decoration === "string") {
+                  span.style.textDecoration = spanItem.decoration;
+                } else {
+                  span.style.textDecoration = "underline line-through";
+                }
+              }
+              paragraphDiv.appendChild(span);
+            }
+            closingParagraph.appendChild(paragraphDiv);
           }
         }
-        itemDiv.appendChild(closingPara);
+        itemDiv.appendChild(closingParagraph);
 
         const height = itemDiv.clientHeight;
         itemsHeights.push({
-          id: item.id,
+          id: item.id as string,
           height,
         });
       }
@@ -126,7 +150,11 @@ const ReportPreview = () => {
         let item = itemsHeights[i];
         let total = 0;
 
-        if (final.includes(item)) {
+        const isExists = final.find(
+          (finalItem: any) => finalItem.id === item.id
+        );
+
+        if (isExists) {
           continue;
         }
 
@@ -148,98 +176,61 @@ const ReportPreview = () => {
         }
       }
 
-      const response = await postRequest(
-        `/client/inspections/generate-report?inspectionId=${inspection.id}`,
+      const pdfResponse = await clientApi.post(
+        `/inspections/generate-report?inspectionId=${params.inspectionId}`,
         {
-          body: JSON.stringify({
-            items: final,
-          }),
+          items: final,
         }
       );
 
-      if (!response.success) {
-        console.log("not suuces");
-        return;
+      if (pdfResponse.status !== 200) {
+        setLoading(false);
       }
 
-      setPdfUrl(response.data);
+      setPdfUrl(pdfResponse.data);
+      setLoading(false);
     };
 
-    getPDF();
+    getInspection();
   }, []);
-
-  const sendReport = async () => {
-    if (!pdfUrl) {
-      return;
-    }
-
-    const reportGenDate = new Date();
-    const day = reportGenDate.getDate().toString();
-    const month = (reportGenDate.getMonth() + 1).toString();
-
-    const year = reportGenDate.getFullYear().toString();
-
-    const newFolderName = `${day.length === 2 ? day : "0" + day}${
-      month.length === 2 ? month : "0" + month
-    }${year} - ${inspection.customer} - ${
-      inspection.jobType
-    } Inspection Report`;
-
-    const response = await inspectionApi.post(
-      "https://script.google.com/macros/s/AKfycbzwe0Glz4kODE6IH8qf_AooyxcfI-Zp13XQYtkRr3Fc_FakhxmFnEn4Bh_JtQ0IWOPA/exec",
-      {
-        folderName: newFolderName,
-        base64Pdf: pdfUrl,
-        subject: `${inspection.jobNumber} - ${inspection.jobType}`,
-      },
-      {
-        onUploadProgress: (e) => {
-          console.log(e.progress);
-        },
-      }
-    );
-
-    console.log(response)
-  };
 
   return (
     <PageLayout title="Report Preview">
-      <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
-        {pdfUrl ? (
-          <>
-            <Box mx="auto" width={"600px"} border={"1px"}>
-              <embed
-                type="application/pdf"
-                src={pdfUrl}
-                width="600"
-                height="700"
-              />
+      {loading ? (
+        <Box h={"500px"} position={"relative"} overflow={"hidden"}>
+          <div
+            ref={parentRef}
+            style={{ position: "absolute", zIndex: "-1" }}
+          ></div>
+          <Flex
+            h={"full"}
+            mx={"auto"}
+            alignItems={"center"}
+            justifyContent={"center"}
+            direction={"column"}
+          >
+            <Box>
+              <Loading />
             </Box>
-            <Box mt={5} textAlign={"center"}>
-              <ButtonPrimary onClick={sendReport}>Send Report</ButtonPrimary>
-            </Box>
-          </>
-        ) : (
-          <Box h={"500px"} position={"relative"} overflow={"hidden"}>
-            <div
-              ref={parentRef}
-              style={{ position: "absolute", zIndex: "-1" }}
-            ></div>
-            <Flex
-              h={"full"}
-              mx={"auto"}
-              alignItems={"center"}
-              justifyContent={"center"}
-              direction={"column"}
-            >
-              <Box>
-                <Loading />
+            <Text>Please wait while generating Report PDF</Text>
+          </Flex>
+        </Box>
+      ) : (
+        <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
+          <Box>
+            {pdfUrl && (
+              <Box mx="auto" width={"600px"} border={"1px"}>
+                <embed
+                  type="application/pdf"
+                  src={pdfUrl}
+                  width="600"
+                  height="600"
+                />
               </Box>
-              <Text>Please wait while generating Report PDF</Text>
-            </Flex>
+            )}
           </Box>
-        )}
-      </Box>
+        </Box>
+      )}
     </PageLayout>
   );
 };

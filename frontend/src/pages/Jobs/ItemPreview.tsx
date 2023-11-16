@@ -142,7 +142,7 @@ const ItemPreview = () => {
                             text.decoration
                               ? typeof text.decoration === "string"
                                 ? text.decoration
-                                : "underline strikethrough"
+                                : "underline line-through"
                               : "none"
                           }
                         >
@@ -201,7 +201,7 @@ const ItemPreview = () => {
                             text.decoration
                               ? typeof text.decoration === "string"
                                 ? text.decoration
-                                : "underline strikethrough"
+                                : "underline line-through"
                               : "none"
                           }
                         >
