@@ -50,7 +50,7 @@ export type InspectionNote = string;
 
 export type InspectionItem = LibraryItem & {
   note?: string;
-  images?: ItemImage;
+  images?: ItemImage[];
 };
 
 export type ItemImage = string;

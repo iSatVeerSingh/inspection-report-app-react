@@ -9,7 +9,7 @@ import {
   addInspectionItem,
   addInspectionNotes,
   addRecommendation,
-  deleteInspectionItems,
+  deleteInspectionItem,
   getAllInspections,
   getInspectionById,
   getPdf,
@@ -150,26 +150,21 @@ export const addInspectionItemsController: RouteHandler = async ({
 
 export const deleteInspectionItemsController: RouteHandler = async ({
   url,
-  request,
 }) => {
   const inspectionId = url.searchParams.get("inspectionId");
   if (!inspectionId || inspectionId === "") {
     return getBadRequestResponse();
   }
 
-  const body = await request.json();
-  if (!body) {
+  const itemId = url.searchParams.get("itemId");
+  if (!itemId || itemId === "") {
     return getBadRequestResponse();
   }
 
-  const inspection = await deleteInspectionItems(
-    body.inspectionItems as string[],
-    inspectionId
-  );
+  const inspection = await deleteInspectionItem(itemId, inspectionId);
   if (!inspection) {
     return getBadRequestResponse();
   }
-
   return getSuccessResponse(inspection);
 };
 

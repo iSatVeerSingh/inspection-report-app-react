@@ -11,6 +11,9 @@ import JobSummary from "../pages/Jobs/JobSummary";
 import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
 import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
+import AllAddedItems from "../pages/Jobs/AllAddedItems";
+import ItemPreview from "../pages/Jobs/ItemPreview";
+import InspectionItemLayout from "../Layout/InspectionItemLayout";
 
 const router = createBrowserRouter([
   {
@@ -46,6 +49,20 @@ const router = createBrowserRouter([
       {
         path: Routes.ADD_INSPECTION_ITEMS,
         element: <AddInspectionItems />,
+      },
+      {
+        path: Routes.ALL_ADDED_ITEMS,
+        element: <InspectionItemLayout />,
+        children: [
+          {
+            index: true,
+            element: <AllAddedItems />,
+          },
+          {
+            path: Routes.ITEM_PREVIEW,
+            element: <ItemPreview />,
+          },
+        ],
       },
     ],
   },

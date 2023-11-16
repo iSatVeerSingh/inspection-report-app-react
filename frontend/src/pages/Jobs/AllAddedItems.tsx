@@ -1,185 +1,84 @@
-import {
-  Box,
-  Flex,
-  Heading,
-  Text,
-  Grid,
-  Checkbox,
-  useDisclosure,
-  Modal,
-  ModalOverlay,
-  ModalContent,
-  ModalHeader,
-  ModalBody,
-  ModalFooter,
-  Button,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Grid } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import { useInspectionData } from "../../services/client/context";
-import { Link } from "react-router-dom";
-import { useState } from "react";
-import SelectAndDelele from "../../components/SelectAndDelele";
-import { deleteRequest } from "../../services/client";
+import { Link, useParams } from "react-router-dom";
+import { useContext, useEffect, useState } from "react";
+import clientApi from "../../services/clientApi";
+import Loading from "../../components/Loading";
+import { InspectionItemContext } from "../../Layout/InspectionItemLayout";
 
 const AllAddedItems = () => {
-  const { isOpen, onOpen, onClose } = useDisclosure();
-  const { inspection, deleteItems }: any = useInspectionData();
-  const [allSelected, setAllSelected] = useState(false);
-  const [selectedItems, setSelectedItems] = useState<string[]>([]);
-  const [saving, setSaving] = useState(false);
-  const toast = useToast();
+  const params = useParams();
+  const [loading, setLoading] = useState(true);
+  const { inspection, setInspection } = useContext(InspectionItemContext);
 
-  const handleSelectAll = () => {
-    if (allSelected) {
-      setSelectedItems([]);
-      setAllSelected(false);
-      return;
-    }
+  useEffect(() => {
+    const getInspection = async () => {
+      const response = await clientApi.get(
+        `/inspections?inspectionId=${params.inspectionId}`
+      );
 
-    const allItems = inspection.inspectionItems.map((item: any) => item.id);
-    setSelectedItems(allItems);
-    setAllSelected(true);
-  };
-
-  const handleSelect = (itemid: string) => {
-    if (selectedItems.includes(itemid)) {
-      if (allSelected) {
-        setAllSelected(false);
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
       }
-      setSelectedItems((prev) => prev.filter((item) => item !== itemid));
-      return;
-    }
-    setSelectedItems((prev) => [...prev, itemid]);
-  };
 
-  const handleDelete = () => {
-    console.log(selectedItems);
-    if (selectedItems.length === 0) {
-      return;
-    }
-    onOpen();
-  };
+      setInspection(response.data);
+      setLoading(false);
+    };
 
-  const deleteSelectedItems = async () => {
-    if (selectedItems.length === 0) {
-      onClose();
-      return;
-    }
-
-    setSaving(true);
-
-    const response = await deleteRequest(
-      `/client/inspections/items?inspectionId=${inspection.id}`,
-      {
-        body: JSON.stringify({
-          inspectionItems: selectedItems,
-        }),
-      }
-    );
-
-    if (!response.success) {
-      toast({
-        title: "Could not delete the items.",
-        duration: 4000,
-        status: "error",
-      });
-      setSaving(false);
-      onClose();
-      return;
-    }
-
-    toast({
-      title: "Items deleted successfully",
-      duration: 4000,
-      status: "success",
-    });
-    setSaving(false);
-    onClose();
-    deleteItems(response.data);
-    setSelectedItems([]);
-  };
+    getInspection();
+  }, []);
 
   return (
     <PageLayout title="Newly added items">
-      <Box>
+      {loading ? (
+        <Loading />
+      ) : (
         <Box>
-          <Heading
-            fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
-            fontWeight={"medium"}
-            color={"rich-black"}
-          >
-            &#35;{inspection?.jobNumber} - {inspection?.category}
-          </Heading>
-          <Text fontSize={"lg"} color={"dark-gray"}>
-            {inspection?.siteAddress}
-          </Text>
-        </Box>
-        <SelectAndDelele
-          isAllSelected={allSelected}
-          onClickSelectAll={handleSelectAll}
-          selectCount={selectedItems.length}
-          onClickDelete={handleDelete}
-        />
-        <Grid mt={4} gap={2}>
-          {inspection.inspectionItems.map((item: any) => (
-            <Flex gap={2} bg={"main-bg"} p="2" borderRadius={5} key={item.id}>
-              <Box mt={1}>
-                <Checkbox
-                  colorScheme="blue"
-                  borderColor={"blue.400"}
-                  isChecked={selectedItems.includes(item.id)}
-                  onChange={() => handleSelect(item.id)}
-                />
-              </Box>
-              <Link to={`./${item.id}`} style={{ flexGrow: 1 }}>
-                <Box>
-                  <Flex
-                    alignItems={"center"}
-                    justifyContent={"space-between"}
-                    w={"full"}
-                  >
-                    <Text
-                      fontSize={"lg"}
-                      color={"rich-black"}
-                      fontWeight={"semibold"}
-                    >
-                      {item.category || "Custom Item"} :- {item.itemName}
-                    </Text>
-                    <Text fontSize={"lg"} color={"dark-gray"}>
-                      ({item.itemImages.length}) Images
-                    </Text>
-                  </Flex>
-                  {item.itemNote && item.itemNote !== "" && (
-                    <Text color={"main-text"}>Note:- {item.itemNote}</Text>
-                  )}
-                </Box>
-              </Link>
-            </Flex>
-          ))}
-        </Grid>
-      </Box>
-      <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Are you sure?</ModalHeader>
-          <ModalBody py={0}>
-            <Text>You can not undo this action after deletion</Text>
-          </ModalBody>
-          <ModalFooter>
-            <Button
-              colorScheme="blue"
-              mr={3}
-              isLoading={saving}
-              loadingText="Deleting"
-              onClick={deleteSelectedItems}
+          <Box>
+            <Heading
+              fontSize={{ base: "lg", sm: "xl", md: "2xl" }}
+              fontWeight={"medium"}
+              color={"rich-black"}
             >
-              Yes, Delete
-            </Button>
-            <Button onClick={onClose}>Cancel</Button>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+              &#35;{inspection?.jobNumber} - {inspection?.jobType}
+            </Heading>
+            <Text fontSize={"lg"} color={"dark-gray"}>
+              {inspection?.siteAddress}
+            </Text>
+          </Box>
+          {inspection?.inspectionItems &&
+          inspection.inspectionItems.length !== 0 ? (
+            <Grid mt={4} gap={2}>
+              {inspection.inspectionItems.map((item) => (
+                <Link to={"./" + item.id} key={item.id}>
+                  <Box bg={"main-bg"} p={2} borderRadius={5}>
+                    <Flex
+                      alignItems={"center"}
+                      justifyContent={"space-between"}
+                      w={"full"}
+                    >
+                      <Text
+                        fontSize={"lg"}
+                        color={"rich-black"}
+                        fontWeight={"semibold"}
+                      >
+                        {item.category} :- {item.name}
+                      </Text>
+                      <Text>({item.images?.length}) Images</Text>
+                    </Flex>
+                    <Text color={"main-text"}>Note:- {item.note || "N/A"}</Text>
+                  </Box>
+                </Link>
+              ))}
+            </Grid>
+          ) : (
+            <Box mt={3} bg="main-bg" p="3" borderRadius={5}>
+              <Text>No Items Found</Text>
+            </Box>
+          )}
+        </Box>
+      )}
     </PageLayout>
   );
 };

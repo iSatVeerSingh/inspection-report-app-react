@@ -234,22 +234,17 @@ const getBase64 = async (imgBlob: Blob) => {
   });
 };
 
-export const deleteInspectionItems = async (itemsId: string[], id: string) => {
+export const deleteInspectionItem = async (itemId: string, id: string) => {
   try {
-    const trs = await Db.transaction("rw", Db.inspectionReports, async () => {
-      const inspectionid = await Db.inspectionReports
-        .where("id")
-        .equals(id)
-        .modify((inspection) => {
-          inspection.inspectionItems = inspection.inspectionItems.filter(
-            (item: any) => !itemsId.includes(item.id)
-          );
-        });
-      if (inspectionid) {
-        return itemsId;
-      }
-    });
-    return trs;
+    const success = Db.inspectionReports
+      .where("id")
+      .equals(id)
+      .modify((inspection) => {
+        inspection.inspectionItems = inspection.inspectionItems?.filter(
+          (item) => item.id !== itemId
+        );
+      });
+    return success;
   } catch (err: any) {
     return null;
   }
