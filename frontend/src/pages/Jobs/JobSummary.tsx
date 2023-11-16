@@ -20,7 +20,6 @@ import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate, useParams } from "react-router-dom";
 import FormTextArea from "../../components/FormTextArea";
 import { useEffect, useRef, useState } from "react";
-import { putRequest } from "../../services/client";
 import clientApi from "../../services/clientApi";
 import { Inspection } from "../../types";
 import Loading from "../../components/Loading";
@@ -54,68 +53,49 @@ const JobSummary = () => {
     getInspection();
   }, []);
 
-  const addRecommedation = async () => {
-    const recommendation = recommendationRef.current!.value.trim();
-    if (recommendation === "") {
-      return;
+  const updateRecommendation = async ({ isDelete }: { isDelete: boolean }) => {
+    let recommendation: string;
+    if (isDelete) {
+      recommendation = "";
+    } else {
+      recommendation = recommendationRef.current!.value.trim();
+      if (recommendation === "") {
+        return;
+      }
     }
 
     setSaving(true);
-    const response = await updateRecommendation(recommendation);
-
-    if (!response.success) {
-      toast({
-        title: "Could not add recommendation",
-        duration: 4000,
-        status: "error",
-      });
-      setSaving(false);
-      return;
-    }
-
-    toast({
-      title: "Recommendation added successfully",
-      duration: 4000,
-      status: "success",
-    });
-    setSaving(false);
-    // updateRecom(recommendation);
-    onClose();
-  };
-
-  const deleteRecommendation = async () => {
-    setSaving(true);
-    const response = await updateRecommendation("");
-
-    if (!response.success) {
-      toast({
-        title: "Could not delete recommendation",
-        duration: 4000,
-        status: "error",
-      });
-      setSaving(false);
-      return;
-    }
-
-    toast({
-      title: "Recommendation Deleted successfully",
-      duration: 4000,
-      status: "success",
-    });
-    setSaving(false);
-    updateRecom("");
-  };
-
-  const updateRecommendation = async (recommendation: string) => {
-    const response = await putRequest(
-      `/client/inspections/recommendation?inspectionId=${inspection.id}`,
+    const response = await clientApi.put(
+      `/inspections/recommendation?inspectionId=${params.inspectionId}`,
       {
-        body: JSON.stringify({
-          recommendation,
-        }),
+        recommendation,
       }
     );
-    return response;
+
+    if (response.status !== 200) {
+      toast({
+        title: `Could not ${isDelete ? "delete" : "add"} recommendation`,
+        status: "error",
+        duration: 4000,
+      });
+      setSaving(false);
+      return;
+    }
+
+    setInspection((prev) => {
+      return {
+        ...prev!,
+        recommendation: recommendation,
+      };
+    });
+
+    toast({
+      title: `Recommendation ${isDelete ? "deleted" : "added"} successfully`,
+      status: "success",
+      duration: 4000,
+    });
+    onClose();
+    setSaving(false);
   };
 
   return (
@@ -170,20 +150,6 @@ const JobSummary = () => {
                   </Flex>
                 </Box>
               </Box>
-              {/* <Box mt={3}>
-          <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
-            Previous Inspection Items
-            </Heading>
-            <Box px={3}>
-            <MiniDetail
-            property="Total items from previous report"
-            value={inspection?.inspectionItems.length}
-            />
-              <Flex gap={4} mt={2}>
-              <ButtonPrimary px={3}>Add / View Previous Items</ButtonPrimary>
-              </Flex>
-              </Box>
-          </Box> */}
               <Box mt={3}>
                 <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
                   New Report Items
@@ -222,7 +188,9 @@ const JobSummary = () => {
                   inspection?.recommendation !== "" ? (
                     <>
                       <Text>{inspection?.recommendation}</Text>
-                      <ButtonOutline onClick={deleteRecommendation}>
+                      <ButtonOutline
+                        onClick={() => updateRecommendation({ isDelete: true })}
+                      >
                         Delete Recommendation
                       </ButtonOutline>
                     </>
@@ -259,7 +227,7 @@ const JobSummary = () => {
           <ModalFooter>
             <Button
               size={{ base: "sm", md: "md" }}
-              onClick={addRecommedation}
+              onClick={() => updateRecommendation({ isDelete: false })}
               isLoading={saving}
               loadingText="Saving"
               colorScheme="blue"
