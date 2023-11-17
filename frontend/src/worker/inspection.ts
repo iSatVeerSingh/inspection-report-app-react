@@ -116,7 +116,7 @@ export const addInspectionItem = async (itemData: FormData, id: string) => {
         images: resizedImages,
         summary: (itemSummary as string) || undefined,
         openingParagraph: openingParagraph as string,
-        embeddedImage: (embeddedImage as string) || undefined,
+        embeddedImage: (embeddedImage as string) || null,
         closingParagraph: closingParagraph as string,
       };
 

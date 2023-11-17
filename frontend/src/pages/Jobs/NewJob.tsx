@@ -174,7 +174,7 @@ const NewJob = () => {
                   navigate(-1);
                 }}
               >
-                Cancel
+                Close
               </ButtonOutline>
             </Flex>
           </Grid>

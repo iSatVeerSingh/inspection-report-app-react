@@ -22,6 +22,8 @@ import { useContext, useEffect, useRef, useState } from "react";
 import { InspectionItemContext } from "../../Layout/InspectionItemLayout";
 import ButtonOutline from "../../components/ButtonOutline";
 import clientApi from "../../services/clientApi";
+import { Paragraph } from "../../types";
+import { getItemPargarph } from "../../utils/itemParagraph";
 
 const ItemPreview = () => {
   const params = useParams();
@@ -29,6 +31,12 @@ const ItemPreview = () => {
   const toast = useToast();
   const { inspection } = useContext(InspectionItemContext);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const [openingParagraph, setOpeningParagraph] = useState<
+    Paragraph[] | string
+  >("");
+  const [closingParagraph, setClosingParagraph] = useState<
+    Paragraph[] | string
+  >("");
 
   const inspectionItem =
     inspection?.inspectionItems?.find((item) => item.id === params.itemId) ||
@@ -37,6 +45,9 @@ const ItemPreview = () => {
   useEffect(() => {
     if (!inspection || !inspectionItem) {
       navigate(-1);
+    } else {
+      setOpeningParagraph(getItemPargarph(inspectionItem.openingParagraph));
+      setClosingParagraph(getItemPargarph(inspectionItem.closingParagraph));
     }
   }, []);
 
@@ -108,10 +119,11 @@ const ItemPreview = () => {
               value={inspectionItem?.note || "N/A"}
               vertical
             />
-            {typeof inspectionItem.openingParagraph === "string" ? (
+            {typeof openingParagraph === "string" ? (
               <MiniDetail
                 property="Opening Paragraph"
-                value={inspectionItem.openingParagraph}
+                value={openingParagraph}
+                vertical
               />
             ) : (
               <Box>
@@ -124,7 +136,7 @@ const ItemPreview = () => {
                   Opening Paragraph
                 </Text>
                 <Box>
-                  {inspectionItem.openingParagraph.map((paragraph, index) => (
+                  {openingParagraph.map((paragraph, index) => (
                     <Text
                       key={index}
                       bg="text-bg"
@@ -167,10 +179,11 @@ const ItemPreview = () => {
                 <Image src={inspectionItem.embeddedImage} maxW={"200px"} />
               </Box>
             )}
-            {typeof inspectionItem.closingParagraph === "string" ? (
+            {typeof closingParagraph === "string" ? (
               <MiniDetail
                 property="Opening Paragraph"
-                value={inspectionItem.closingParagraph}
+                value={closingParagraph}
+                vertical
               />
             ) : (
               <Box>
@@ -183,7 +196,7 @@ const ItemPreview = () => {
                   Closing Paragraph
                 </Text>
                 <Box>
-                  {inspectionItem.closingParagraph.map((paragraph, index) => (
+                  {closingParagraph.map((paragraph, index) => (
                     <Text
                       key={index}
                       bg="text-bg"

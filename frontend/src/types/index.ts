@@ -7,9 +7,9 @@ export type LibraryItem = {
   id: number | string;
   category: string;
   name: string;
-  openingParagraph: string | Paragraph[];
-  closingParagraph: string | Paragraph[];
-  embeddedImage?: string;
+  openingParagraph: string;
+  closingParagraph: string;
+  embeddedImage?: string | null;
   summary?: string;
 };
 

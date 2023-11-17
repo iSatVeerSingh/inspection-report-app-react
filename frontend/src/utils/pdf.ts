@@ -12,6 +12,7 @@ import {
   InspectionNote,
   ItemImage,
 } from "../types";
+import { getItemPargarph } from "./itemParagraph";
 
 (pdfMake as any).vfs = pdfFonts;
 pdfMake.fonts = {
@@ -420,6 +421,9 @@ const getItemsTable = (inspectionItems: InspectionItem[]): Content => {
   for (let i = 0; i < inspectionItems.length; i++) {
     const item = inspectionItems[i];
 
+    const openingParagraph = getItemPargarph(item.openingParagraph);
+    const closingParagraph = getItemPargarph(item.closingParagraph);
+
     const reportItem: Content = {
       pageBreak: i !== 0 && item.pageBreak ? "before" : undefined,
       stack: [
@@ -427,9 +431,9 @@ const getItemsTable = (inspectionItems: InspectionItem[]): Content => {
           text: item.name,
           bold: true,
         },
-        ...((typeof item.openingParagraph === "string"
-          ? [{ text: item.openingParagraph }]
-          : item.openingParagraph) as unknown as Content[]),
+        ...((typeof openingParagraph === "string"
+          ? [{ text: openingParagraph }]
+          : openingParagraph) as unknown as Content[]),
       ],
     };
     if (item.note) {
@@ -441,9 +445,9 @@ const getItemsTable = (inspectionItems: InspectionItem[]): Content => {
     reportItem.stack.push(getImages(item.images!));
 
     reportItem.stack.push(
-      ...((typeof item.closingParagraph === "string"
-        ? [{ text: item.closingParagraph }]
-        : item.closingParagraph) as unknown as Content[])
+      ...((typeof closingParagraph === "string"
+        ? [{ text: closingParagraph }]
+        : closingParagraph) as unknown as Content[])
     );
 
     const serial: Content = {

@@ -214,6 +214,8 @@ const AddInspectionItems = () => {
       itemData.delete("embeddedImage");
       const resizedEmb = await getResizedBase64Images([embeddedImage]);
       itemData.append("embeddedImage", resizedEmb[0] as string);
+    } else {
+      itemData.delete("embeddedImage");
     }
 
     if (!isOffScreen) {
@@ -341,7 +343,6 @@ const AddInspectionItems = () => {
                 name="itemSummary"
                 placeholder="Type item summary"
                 inputError={formErrors?.itemSummary}
-                required
               />
               <FileInput
                 name="itemImages"

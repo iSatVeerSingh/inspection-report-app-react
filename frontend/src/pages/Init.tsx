@@ -1,13 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import {
-  Box,
-  Center,
-  Heading,
-  Progress,
-  Text,
-} from "@chakra-ui/react";
+import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { redirect, useNavigate } from "react-router-dom";
@@ -73,11 +67,7 @@ const Init = () => {
         for (let i = 0; i < allItems.length; i++) {
           const item = allItems[i];
 
-          await Db.libraryItems.add({
-            ...item,
-            openingParagraph: JSON.parse(item.openingParagraph as string),
-            closingParagraph: JSON.parse(item.closingParagraph as string),
-          });
+          await Db.libraryItems.add(item);
 
           await Db.libraryIndex.add({
             id: item.id,
