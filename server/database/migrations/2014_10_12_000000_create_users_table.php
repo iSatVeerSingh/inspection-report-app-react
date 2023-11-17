@@ -18,7 +18,8 @@ return new class extends Migration
             $table->string('phone')->unique();
             $table->string('password');
             $table->rememberToken();
-            $table->enum('role', ['inspector', 'admin', 'owner'])->default('inspector');
+            $table->enum('role', ['Inspector', 'Admin', 'Owner'])->default('Inspector');
+            $table->uuid('uuid')->nullable();
             $table->timestamps();
         });
     }
