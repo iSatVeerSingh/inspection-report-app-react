@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Job;
+use App\Models\User;
 use DateTime;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -41,15 +42,15 @@ class JobSeeder extends Seeder
         foreach ($allJobs as $key => $serviceJob) {
             $job = new Job();
             $job['uuid'] = $serviceJob['uuid'];
-            $job['siteAddress'] = $serviceJob['job_address'];
             $job['jobNumber'] = $serviceJob['generated_job_id'];
-            $job['status'] = $serviceJob['status'];
-            $job['workOrder'] = new DateTime($serviceJob['work_order_date']);
             if ($serviceJob['category_uuid'] === "") {
                 $job['category'] = "Other";
             } else {
                 $job['category'] = $categories[$serviceJob['category_uuid']];
             }
+            $job['orderedAt'] = new DateTime($serviceJob['work_order_date']);
+            $job['siteAddress'] = $serviceJob['job_address'];
+            $job['status'] = $serviceJob['status'];
             $job['description'] = $serviceJob['job_description'];
 
             $companyUuid = $serviceJob['company_uuid'];
@@ -63,13 +64,25 @@ class JobSeeder extends Seeder
 
                 foreach ($contacts as $key => $contact) {
                     if (str_contains(strtolower($contact['type']), "report")) {
-                        $customerData['nameOnReport'] = trim($contact['first']);
+                        $customerData['nameOnReport'] = trim($contact['first'] . " " . $contact['last']);
                     }
 
                     if (str_contains(strtolower($contact['type']), "billing")) {
                         $customerData['name'] = trim($contact['first'] . " " . $contact['last']);
                         $customerData['email'] = strtolower($contact['email']);
                         $customerData['phone'] = $contact['mobile'];
+                    }
+
+                    if (str_contains(strtolower($contact['type']), "builder")) {
+                        $customerData['builder'] = trim($contact['first'] . " " . $contact['last']);
+                        $customerData['builderEmail'] = strtolower($contact['email']);
+                        $customerData['builderPhone'] = $contact['mobile'];
+                    }
+
+                    if (str_contains(strtolower($contact['type']), "supervisor")) {
+                        $customerData['supervisor'] = trim($contact['first'] . " " . $contact['last']);
+                        $customerData['supervisorEmail'] = strtolower($contact['email']);
+                        $customerData['supervisorPhone'] = $contact['mobile'];
                     }
                 }
 
@@ -82,6 +95,23 @@ class JobSeeder extends Seeder
             } else {
                 $customerData = Customer::where('uuid', $companyUuid)->first();
                 $job['customer'] = $customerData['id'];
+            }
+
+            $acitvityResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/jobactivity.json?%24filter=job_uuid%20eq%20'" . $serviceJob['uuid'] . "'");
+
+            $activities = [];
+            foreach ($acitvityResponse->json() as $key => $activity) {
+                if ($activity['active'] === 1) {
+                    array_push($activities, $activity);
+                    break;
+                }
+            };
+
+            if (count($activities) !== 0) {
+                $inspector = User::where('uuid', $activities[0]['staff_uuid'])->first();
+                if ($inspector) {
+                    $job['inspector'] = $inspector['id'];
+                }
             }
 
             $job->save();

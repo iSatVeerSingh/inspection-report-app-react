@@ -50,7 +50,7 @@ class DatabaseSeeder extends Seeder
                 if ($member['mobile'] !== "") {
                     $user['phone'] = $member['mobile'];
                 }
-                $user['password'] = trim($member['first']) . "0099";
+                $user['password'] = trim(strtolower($member['first'])) . "0099";
                 $user['role'] = $role;
 
                 $user->save();

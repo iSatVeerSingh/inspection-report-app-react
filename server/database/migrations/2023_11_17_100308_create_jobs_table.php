@@ -18,7 +18,7 @@ return new class extends Migration
             $table->string('category');
             $table->dateTime('orderedAt');
             $table->foreignId('customer')->constrained('customers');
-            $table->foreignId('inspector')->constrained('users');
+            $table->foreignId('inspector')->nullable()->constrained('users');
             $table->string('siteAddress');
             $table->string('status');
             $table->dateTime('completedAt')->nullable();
