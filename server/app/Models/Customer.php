@@ -18,6 +18,12 @@ class Customer extends Model
         'email',
         'phone',
         'billingAddress',
+        'builder',
+        'builderEmail',
+        'builderPhone',
+        'supervisor',
+        'supervisorEmail',
+        'supervisorPhone'
     ];
 
     protected function serializeDate(DateTimeInterface $date)

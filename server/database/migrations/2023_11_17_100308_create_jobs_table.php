@@ -16,11 +16,12 @@ return new class extends Migration
             $table->uuid('uuid')->unique();
             $table->string('jobNumber')->unique();
             $table->string('category');
-            $table->dateTime('workOrder');
+            $table->dateTime('orderedAt');
             $table->foreignId('customer')->constrained('customers');
+            $table->foreignId('inspector')->constrained('users');
             $table->string('siteAddress');
             $table->string('status');
-            $table->dateTime('completed_at')->nullable();
+            $table->dateTime('completedAt')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

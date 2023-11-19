@@ -19,20 +19,13 @@ return new class extends Migration
             $table->string('email')->default('');
             $table->string('phone')->default('');
             $table->string('billingAddress')->nullable();
+            $table->string('builder')->nullable();
+            $table->string('builderEmail')->nullable();
+            $table->string('builderPhone')->nullable();
+            $table->string('supervisor')->nullable();
+            $table->string('supervisorEmail')->nullable();
+            $table->string('supervisorPhone')->nullable();
             $table->timestamps();
-
-            // $table->uuid('uuid')->unique();
-            // $table->string('nameOnReport')->default("");
-            // $table->string('name')->default("");
-            // $table->string('email')->default("");
-            // $table->string('phone')->default("");
-            // $table->string('builder')->nullable();
-            // $table->string('builderEmail')->nullable();
-            // $table->string('builderPhone')->nullable();
-            // $table->string('builderCompany')->nullable();
-            // $table->string('builderCompanyEmail')->nullable();
-            // $table->string('builderCompanyPhone')->nullable();
-            // $table->string('address')->nullable();
         });
     }
 

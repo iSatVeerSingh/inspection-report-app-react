@@ -17,39 +17,41 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // $user = new User([
-        //     'name' => 'SatVeer Singh',
-        //     'email' => 'developer.satveer@gmail.com',
-        //     'phone' => '7297036755',
-        //     'password' => 'satu0099',
-        //     'role' => 'Owner'
-        // ]);
+        $serviceUrl = env("SERVICEM8_BASEURL");
+        $username = env("SERVICEM8_EMAIL");
+        $password = env("SERVICEM8_PASSWORD");
 
-        // $user->save();
+        // ['Inspector', 'Admin', 'Owner']
+        $staffMembers = Http::withBasicAuth($username, $password)->get($serviceUrl . "/staff.json")->json();
+        $staff = array_filter($staffMembers, function ($member) {
+            return $member['active'] === 1;
+        });
 
-        // $allitems = Storage::json('libraryitems.json');
+        foreach ($staff as $key => $member) {
+            $role = "";
 
-        // foreach ($allitems as $key => $value) {
-        //     $item = new LibraryItem($value);
+            if (str_contains(strtolower($member['job_title']), "admin")) {
+                $role = "Admin";
+            }
 
-        //     $item->save();
-        // }
+            if (str_contains(strtolower($member['job_title']), "director")) {
+                $role = "Owner";
+            }
 
+            if (str_contains(strtolower($member['job_title']), "inspector")) {
+                $role = "Inspector";
+            }
 
-        // get staff members or users from service m8
-        $response = Http::withBasicAuth(env("SERVICEM8_EMAIL"), env("SERVICEM8_PASSWORD"))->get("https://api.servicem8.com/api_1.0/staff.json");
-
-        $staffMembers = $response->json();
-
-        foreach ($staffMembers as $key => $value) {
-            if ($value['job_title'] === "Inspector") {
+            if ($role !== "") {
                 $user = new User();
-                $user->name = $value['first'] . " " . $value['last'];
-                $user->email = $value['email'];
-                $user->uuid = $value['uuid'];
-                $user->phone = $value['mobile'];
-                $user->role = "Inspector";
-                $user->password = strtolower($value['first']) . "0099";
+                $user['uuid'] = $member['uuid'];
+                $user['name'] = trim($member['first'] . " " . $member['last']);
+                $user['email'] = $member['email'];
+                if ($member['mobile'] !== "") {
+                    $user['phone'] = $member['mobile'];
+                }
+                $user['password'] = trim($member['first']) . "0099";
+                $user['role'] = $role;
 
                 $user->save();
             }

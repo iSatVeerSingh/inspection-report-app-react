@@ -13,12 +13,14 @@ class Job extends Model
 
     protected $fillable = [
         'uuid',
-        'siteAddress',
         'jobNumber',
-        'status',
-        'workOrder',
-        'completed_at',
         'category',
+        'orderedAt',
+        'customer',
+        'inspector',
+        'siteAddress',
+        'status',
+        'completedAt',
         'description'
     ];
 
@@ -35,5 +37,15 @@ class Job extends Model
     public function customer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer');
+    }
+
+    /**
+     * Get the inspector that owns the Job
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function inspector(): BelongsTo
+    {
+        return $this->belongsTo(User::class, 'inspector');
     }
 }
