@@ -14,12 +14,13 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique();
-            $table->string('siteAddress');
             $table->string('jobNumber')->unique();
-            $table->string('status');
-            $table->dateTime('workOrder');
-            $table->dateTime('completed_at')->nullable();
             $table->string('category');
+            $table->dateTime('workOrder');
+            $table->foreignId('customer')->constrained('customers');
+            $table->string('siteAddress');
+            $table->string('status');
+            $table->dateTime('completed_at')->nullable();
             $table->text('description')->nullable();
             $table->timestamps();
         });

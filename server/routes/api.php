@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\CustomerController;
 use App\Http\Controllers\LibraryItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsOwner;
@@ -21,10 +22,12 @@ use Illuminate\Support\Facades\Route;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::get('/user', function(Request $request){
+    Route::get('/user', function (Request $request) {
         return $request->user();
     });
     Route::apiResource('/users', UserController::class)->middleware(EnsureUserIsOwner::class);
     Route::apiResource('/library-items', LibraryItemController::class)->except(['index'])->middleware(EnsureUserIsOwner::class);
     Route::apiResource('/library-items', LibraryItemController::class)->only(['index']);
 });
+
+Route::get('/demo', [CustomerController::class, 'index']);
