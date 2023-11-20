@@ -34,8 +34,8 @@ class JobResource extends JsonResource
             "status" => $this["status"],
             "completedAt" => $this["completedAt"],
             "description" => $this["description"],
-            "created_at" => $this["created_at"]->format('d-m-Y h:i A'),
-            "updated_at" => $this["updated_at"]->format('d-m-Y h:i A')
+            "createdAt" => $this["created_at"]->format('d-m-Y h:i A'),
+            "updatedAt" => $this["updated_at"]->format('d-m-Y h:i A')
         ];
 
         $inspector = User::find($this['inspector']);
