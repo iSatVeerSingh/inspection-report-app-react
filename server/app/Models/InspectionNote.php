@@ -8,4 +8,10 @@ use Illuminate\Database\Eloquent\Model;
 class InspectionNote extends Model
 {
     use HasFactory;
+
+
+    protected $fillable = [
+        "category",
+        "text"
+    ];
 }

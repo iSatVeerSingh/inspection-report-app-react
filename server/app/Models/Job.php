@@ -22,6 +22,8 @@ class Job extends Model
         'customer',
         'inspector',
         'siteAddress',
+        'startDate',
+        'endDate',
         'status',
         'completedAt',
         'description'

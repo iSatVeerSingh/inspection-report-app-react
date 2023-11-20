@@ -23,8 +23,8 @@ class User extends Authenticatable
         'uuid',
         'name',
         'email',
-        'password',
         'phone',
+        'password',
         'role',
     ];
 

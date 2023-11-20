@@ -10,8 +10,21 @@ class InspectionItem extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        "isCustom",
+        "job",
+        "library",
+        "note",
+        "images",
+        "openingParagraph",
+        "closingParagraph",
+        "embeddedImage",
+        "previousJob",
+    ];
+
     protected $casts = [
         'images' => 'array',
+        'isCustom' => 'boolean'
     ];
 
     /**
