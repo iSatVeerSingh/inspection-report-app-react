@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->boolean('isCustom')->default(false);
             $table->foreignId('job')->constrained('jobs');
-            $table->foreignId('library')->nullable()->constrained('library_items');
+            $table->foreignId('libraryItem')->nullable()->constrained('library_items');
             $table->string('note')->nullable();
             $table->json('images')->nullable();
             $table->string('openingParagraph')->nullable();

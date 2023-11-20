@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique();
+            $table->uuid('uuid')->unique()->nullable();
             $table->string('jobNumber')->unique();
             $table->string('category');
             $table->dateTime('orderedAt');

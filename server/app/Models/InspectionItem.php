@@ -44,6 +44,6 @@ class InspectionItem extends Model
      */
     public function libraryItem(): BelongsTo
     {
-        return $this->belongsTo(LibraryItem::class, 'library');
+        return $this->belongsTo(LibraryItem::class, 'libraryItem');
     }
 }
