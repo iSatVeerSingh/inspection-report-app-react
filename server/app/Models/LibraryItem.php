@@ -5,6 +5,7 @@ namespace App\Models;
 use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class LibraryItem extends Model
 {
@@ -22,5 +23,15 @@ class LibraryItem extends Model
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('d-m-Y h:i A');
+    }
+
+    /**
+     * Get all of the inspectionItems for the LibraryItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inspectionItems(): HasMany
+    {
+        return $this->hasMany(InspectionItem::class, 'library');
     }
 }

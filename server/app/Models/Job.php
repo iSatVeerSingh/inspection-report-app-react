@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Auth;
 
 class Job extends Model
@@ -52,6 +53,16 @@ class Job extends Model
     }
 
     /**
+     * Get all of the inspectionItems for the Job
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inspectionItems(): HasMany
+    {
+        return $this->hasMany(InspectionItem::class, 'job');
+    }
+
+    /**
      * Perform any actions required after the model boots.
      *
      * @return void
@@ -59,7 +70,10 @@ class Job extends Model
     protected static function booted(): void
     {
         static::addGlobalScope('inspector', function (Builder $builder) {
-            $builder->where('inspector', Auth::id());
+            if (Auth::user()['role'] === "Inspector") {
+                $builder->where('inspector', Auth::id());
+                return;
+            }
         });
     }
 }

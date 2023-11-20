@@ -20,6 +20,8 @@ return new class extends Migration
             $table->foreignId('customer')->constrained('customers');
             $table->foreignId('inspector')->nullable()->constrained('users');
             $table->string('siteAddress');
+            $table->dateTime('startDate')->nullable();
+            $table->dateTime('endDate')->nullable();
             $table->string('status');
             $table->dateTime('completedAt')->nullable();
             $table->text('description')->nullable();

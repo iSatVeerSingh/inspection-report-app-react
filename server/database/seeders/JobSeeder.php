@@ -8,6 +8,7 @@ use App\Models\User;
 use DateTime;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 
 class JobSeeder extends Seeder
@@ -101,7 +102,7 @@ class JobSeeder extends Seeder
 
             $activities = [];
             foreach ($acitvityResponse->json() as $key => $activity) {
-                if ($activity['active'] === 1) {
+                if ($activity['active'] === 1 && $activity['activity_was_scheduled'] === 1) {
                     array_push($activities, $activity);
                     break;
                 }
@@ -112,6 +113,9 @@ class JobSeeder extends Seeder
                 if ($inspector) {
                     $job['inspector'] = $inspector['id'];
                 }
+
+                $job['startDate'] = new DateTime($activities[0]["start_date"]);
+                $job['endDate'] = new DateTime($activities[0]['end_date']);
             }
 
             $job->save();

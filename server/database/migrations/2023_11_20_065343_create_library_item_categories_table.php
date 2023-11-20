@@ -11,14 +11,9 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('library_items', function (Blueprint $table) {
+        Schema::create('library_item_categories', function (Blueprint $table) {
             $table->id();
-            $table->string("category");
-            $table->string("name");
-            $table->text("openingParagraph");
-            $table->text("closingParagraph");
-            $table->longText("embeddedImage")->nullable();
-            $table->text("summary")->nullable();
+            $table->string('name')->unique();
             $table->timestamps();
         });
     }
@@ -28,6 +23,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('library_items');
+        Schema::dropIfExists('library_item_categories');
     }
 };
