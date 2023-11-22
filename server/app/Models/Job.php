@@ -14,9 +14,6 @@ class Job extends Model
 {
     use HasFactory;
 
-    const CREATED_AT = 'createdAt';
-    const UPDATED_AT = 'updatedAt';
-
     protected $fillable = [
         'uuid',
         'jobNumber',

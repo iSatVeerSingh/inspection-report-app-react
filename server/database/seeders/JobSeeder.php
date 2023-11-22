@@ -6,9 +6,7 @@ use App\Models\Customer;
 use App\Models\Job;
 use App\Models\User;
 use DateTime;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
 
 class JobSeeder extends Seeder
