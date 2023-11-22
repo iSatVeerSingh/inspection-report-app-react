@@ -2,7 +2,10 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CustomerController;
+use App\Http\Controllers\InspectionNoteCategoryController;
+use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
+use App\Http\Controllers\LibraryItemCategoryController;
 use App\Http\Controllers\LibraryItemController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsOwner;
@@ -29,7 +32,10 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class)->middleware(EnsureUserIsOwner::class);
     Route::apiResource('/jobs', JobController::class)->only(['index']);
     Route::apiResource('/library-items', LibraryItemController::class)->except(['index'])->middleware(EnsureUserIsOwner::class);
+    Route::apiResource('/categories', LibraryItemCategoryController::class)->only(['index']);
+    Route::apiResource('/inspection-note-categories', InspectionNoteCategoryController::class)->only(['index', 'store']);
     Route::apiResource('/library-items', LibraryItemController::class)->only(['index']);
 });
 
-Route::get('/demo', [CustomerController::class, 'index']);
+
+Route::get('/demo', [JobCategoryController::class, 'index']);

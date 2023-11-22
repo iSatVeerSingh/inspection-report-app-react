@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTimeInterface;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -22,5 +23,10 @@ class LibraryItemCategory extends Model
     public function libraryItems(): HasMany
     {
         return $this->hasMany(LibraryItem::class, 'category');
+    }
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('d-m-Y h:i A');
     }
 }
