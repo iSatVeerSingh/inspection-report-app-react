@@ -16,32 +16,27 @@ class JobResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        $customer = Customer::find($this['customer']);
+
+        $customer = $this->getCustomer;
 
         $job = [
-            "id" => $this["id"],
-            "jobNumber" => $this["jobNumber"],
-            "category" => $this["category"],
+            "id" => $this['id'],
+            "jobNumber" => $this['jobNumber'],
+            "category" => $this['category'] === null ? "N/A" : $this->jobCategory['name'],
             "customer" => [
                 "nameOnReport" => $customer["nameOnReport"],
                 "name" => $customer["name"],
                 "email" => $customer["email"],
                 "phone" => $customer["phone"]
             ],
-            "siteAddress" => $this["siteAddress"],
-            "startDate" => $this["startDate"]->format('d-m-Y h:i A'),
-            "endDate" => $this["endDate"]->format('d-m-Y h:i A'),
-            "status" => $this["status"],
-            "completedAt" => $this["completedAt"],
+            "siteAddress" => $this['siteAddress'],
+            "startDate" => $this['startDate']->format('d-m-Y h:i A'),
+            "endDate" => $this['endDate']->format('d-m-Y h:i A'),
+            "status" => $this['status'],
+            "completedAt" => $this['completedAt'] === null ? null : $this['completedAt']->format('d-m-Y h:i A'),
             "description" => $this["description"],
+            "inspector" => $this['inspector'] === null ? "Not Assigned" : $this->getInspector['name']
         ];
-
-        $inspector = User::find($this['inspector']);
-        if ($inspector) {
-            $job["inspector"] = $inspector["name"];
-        } else {
-            $job["inspector"] = "Not Assigned";
-        }
 
         return $job;
     }

@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->nullable();
             $table->string('jobNumber')->unique();
-            $table->string('category');
+            $table->foreignId('category')->nullable()->constrained('job_categories');
             $table->dateTime('orderedAt');
             $table->foreignId('customer')->constrained('customers');
             $table->foreignId('inspector')->nullable()->constrained('users');

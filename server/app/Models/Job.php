@@ -42,11 +42,26 @@ class Job extends Model
     }
 
     /**
+     * Perform any actions required after the model boots.
+     *
+     * @return void
+     */
+    protected static function booted(): void
+    {
+        static::addGlobalScope('inspector', function (Builder $builder) {
+            if (Auth::user()['role'] === "Inspector") {
+                $builder->where('inspector', Auth::id());
+                return;
+            }
+        });
+    }
+
+    /**
      * Get the customer that owns the Job
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function customer(): BelongsTo
+    public function getCustomer(): BelongsTo
     {
         return $this->belongsTo(Customer::class, 'customer');
     }
@@ -56,7 +71,7 @@ class Job extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function inspector(): BelongsTo
+    public function getInspector(): BelongsTo
     {
         return $this->belongsTo(User::class, 'inspector');
     }
@@ -72,17 +87,12 @@ class Job extends Model
     }
 
     /**
-     * Perform any actions required after the model boots.
+     * Get the jobCategory that owns the Job
      *
-     * @return void
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    protected static function booted(): void
+    public function jobCategory(): BelongsTo
     {
-        static::addGlobalScope('inspector', function (Builder $builder) {
-            if (Auth::user()['role'] === "Inspector") {
-                $builder->where('inspector', Auth::id());
-                return;
-            }
-        });
+        return $this->belongsTo(JobCategory::class, 'category');
     }
 }

@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Customer;
 use App\Models\Job;
+use App\Models\JobCategory;
 use App\Models\User;
 use DateTime;
 use Illuminate\Database\Seeder;
@@ -21,102 +22,106 @@ class JobSeeder extends Seeder
         $password = env("SERVICEM8_PASSWORD");
 
         // Categories for jobs
-        $categoryResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/category.json");
-        // $categories = [];
+        $categoryResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/category.json?%24filter=active%20eq%20'1'");
+        $categories = $categoryResponse->json();
 
-        // foreach ($categoryResponse->json() as $key => $category) {
-        //     $categories[$category['uuid']] = $category['name'];
-        // }
+        foreach ($categories as $key => $category) {
+            $jobCategory = new JobCategory([
+                'uuid' => $category['uuid'],
+                'name' => $category['name']
+            ]);
 
-        // // Get Customer or company contacts
-        // $companyResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/companycontact.json?%24filter=active%20eq%20'1'");
-        // $companies = $companyResponse->json();
+            $jobCategory->save();
+        }
 
-        // // Get All Jobs of work order
-        // $jobsResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/job.json?%24filter=status%20eq%20'Work Order'");
-        // $allJobs = array_filter($jobsResponse->json(), function ($job) {
-        //     return $job['active'] === 1;
-        // });
+        // Get Customer or company contacts
+        $companyResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/companycontact.json?%24filter=active%20eq%20'1'");
+        $companies = $companyResponse->json();
 
-        // foreach ($allJobs as $key => $serviceJob) {
-        //     $job = new Job();
-        //     $job['uuid'] = $serviceJob['uuid'];
-        //     $job['jobNumber'] = $serviceJob['generated_job_id'];
-        //     if ($serviceJob['category_uuid'] === "") {
-        //         $job['category'] = "Other";
-        //     } else {
-        //         $job['category'] = $categories[$serviceJob['category_uuid']];
-        //     }
-        //     $job['orderedAt'] = new DateTime($serviceJob['work_order_date']);
-        //     $job['siteAddress'] = $serviceJob['job_address'];
-        //     $job['status'] = $serviceJob['status'];
-        //     $job['description'] = $serviceJob['job_description'];
+        // Get All Jobs of work order
+        $jobsResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/job.json?%24filter=status%20eq%20'Work Order'");
+        $allJobs = array_filter($jobsResponse->json(), function ($job) {
+            return $job['active'] === 1;
+        });
 
-        //     $companyUuid = $serviceJob['company_uuid'];
-        //     if (!Customer::where('uuid', $companyUuid)->exists()) {
+        foreach ($allJobs as $key => $serviceJob) {
+            $job = new Job();
+            $job['uuid'] = $serviceJob['uuid'];
+            $job['jobNumber'] = $serviceJob['generated_job_id'];
+            if ($serviceJob['category_uuid'] !== "") {
+                $jobCategory = JobCategory::where('uuid', $serviceJob['category_uuid'])->first();
+                $job['category'] = $jobCategory['id'];
+            }
+            $job['orderedAt'] = new DateTime($serviceJob['work_order_date']);
+            $job['siteAddress'] = $serviceJob['job_address'];
+            $job['status'] = $serviceJob['status'];
+            $job['description'] = $serviceJob['job_description'];
 
-        //         $contacts = array_filter($companies, function ($company) use ($companyUuid) {
-        //             return $company['company_uuid'] === $companyUuid;
-        //         });
+            $companyUuid = $serviceJob['company_uuid'];
+            if (!Customer::where('uuid', $companyUuid)->exists()) {
 
-        //         $customerData = new Customer();
+                $contacts = array_filter($companies, function ($company) use ($companyUuid) {
+                    return $company['company_uuid'] === $companyUuid;
+                });
 
-        //         foreach ($contacts as $key => $contact) {
-        //             if (str_contains(strtolower($contact['type']), "report")) {
-        //                 $customerData['nameOnReport'] = trim($contact['first'] . " " . $contact['last']);
-        //             }
+                $customerData = new Customer();
 
-        //             if (str_contains(strtolower($contact['type']), "billing")) {
-        //                 $customerData['name'] = trim($contact['first'] . " " . $contact['last']);
-        //                 $customerData['email'] = strtolower($contact['email']);
-        //                 $customerData['phone'] = $contact['mobile'];
-        //             }
+                foreach ($contacts as $key => $contact) {
+                    if (str_contains(strtolower($contact['type']), "report")) {
+                        $customerData['nameOnReport'] = trim($contact['first'] . " " . $contact['last']);
+                    }
 
-        //             if (str_contains(strtolower($contact['type']), "builder")) {
-        //                 $customerData['builder'] = trim($contact['first'] . " " . $contact['last']);
-        //                 $customerData['builderEmail'] = strtolower($contact['email']);
-        //                 $customerData['builderPhone'] = $contact['mobile'];
-        //             }
+                    if (str_contains(strtolower($contact['type']), "billing")) {
+                        $customerData['name'] = trim($contact['first'] . " " . $contact['last']);
+                        $customerData['email'] = strtolower($contact['email']);
+                        $customerData['phone'] = $contact['mobile'];
+                    }
 
-        //             if (str_contains(strtolower($contact['type']), "supervisor")) {
-        //                 $customerData['supervisor'] = trim($contact['first'] . " " . $contact['last']);
-        //                 $customerData['supervisorEmail'] = strtolower($contact['email']);
-        //                 $customerData['supervisorPhone'] = $contact['mobile'];
-        //             }
-        //         }
+                    if (str_contains(strtolower($contact['type']), "builder")) {
+                        $customerData['builder'] = trim($contact['first'] . " " . $contact['last']);
+                        $customerData['builderEmail'] = strtolower($contact['email']);
+                        $customerData['builderPhone'] = $contact['mobile'];
+                    }
 
-        //         $customerData['uuid'] = $companyUuid;
-        //         $customerData['billingAddress'] = $serviceJob['billing_address'];
+                    if (str_contains(strtolower($contact['type']), "supervisor")) {
+                        $customerData['supervisor'] = trim($contact['first'] . " " . $contact['last']);
+                        $customerData['supervisorEmail'] = strtolower($contact['email']);
+                        $customerData['supervisorPhone'] = $contact['mobile'];
+                    }
+                }
 
-        //         $customerData->save();
+                $customerData['uuid'] = $companyUuid;
+                $customerData['billingAddress'] = $serviceJob['billing_address'];
 
-        //         $job['customer'] = $customerData['id'];
-        //     } else {
-        //         $customerData = Customer::where('uuid', $companyUuid)->first();
-        //         $job['customer'] = $customerData['id'];
-        //     }
+                $customerData->save();
 
-        //     $acitvityResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/jobactivity.json?%24filter=job_uuid%20eq%20'" . $serviceJob['uuid'] . "'");
+                $job['customer'] = $customerData['id'];
+            } else {
+                $customerData = Customer::where('uuid', $companyUuid)->first();
+                $job['customer'] = $customerData['id'];
+            }
 
-        //     $activities = [];
-        //     foreach ($acitvityResponse->json() as $key => $activity) {
-        //         if ($activity['active'] === 1 && $activity['activity_was_scheduled'] === 1) {
-        //             array_push($activities, $activity);
-        //             break;
-        //         }
-        //     };
+            $acitvityResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/jobactivity.json?%24filter=job_uuid%20eq%20'" . $serviceJob['uuid'] . "'");
 
-        //     if (count($activities) !== 0) {
-        //         $inspector = User::where('uuid', $activities[0]['staff_uuid'])->first();
-        //         if ($inspector) {
-        //             $job['inspector'] = $inspector['id'];
-        //         }
+            $activities = [];
+            foreach ($acitvityResponse->json() as $key => $activity) {
+                if ($activity['active'] === 1 && $activity['activity_was_scheduled'] === 1) {
+                    array_push($activities, $activity);
+                    break;
+                }
+            };
 
-        //         $job['startDate'] = new DateTime($activities[0]["start_date"]);
-        //         $job['endDate'] = new DateTime($activities[0]['end_date']);
-        //     }
+            if (count($activities) !== 0) {
+                $inspector = User::where('uuid', $activities[0]['staff_uuid'])->first();
+                if ($inspector) {
+                    $job['inspector'] = $inspector['id'];
+                }
 
-        //     $job->save();
-        // }
+                $job['startDate'] = new DateTime($activities[0]["start_date"]);
+                $job['endDate'] = new DateTime($activities[0]['end_date']);
+            }
+
+            $job->save();
+        }
     }
 }
