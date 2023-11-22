@@ -5,6 +5,7 @@ namespace Database\Seeders;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
 use App\Models\LibraryItem;
+use App\Models\LibraryItemCategory;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Http;
@@ -55,6 +56,40 @@ class DatabaseSeeder extends Seeder
 
                 $user->save();
             }
+        }
+
+
+        //library items and categories seeder
+        $allitems = Storage::json('libraryitems.json');
+
+        $allCategories = array_map(function ($item) {
+            return $item['category'];
+        }, $allitems);
+
+        $uniqueCategories = array_unique($allCategories);
+
+        foreach ($uniqueCategories as $key => $category) {
+            $itemCategory = new LibraryItemCategory([
+                "name" => trim($category)
+            ]);
+
+            $itemCategory->save();
+        }
+
+        foreach ($allitems as $key => $item) {
+            $category = LibraryItemCategory::where('name', $item['category'])->first();
+
+            $libItem = new LibraryItem();
+            $libItem['category'] = $category['id'];
+            $libItem['name'] = $item['name'];
+            $libItem['openingParagraph'] = $item['openingParagraph'];
+            $libItem['closingParagraph'] = $item['closingParagraph'];
+
+            if (array_key_exists('embeddedImage', $item)) {
+                $libItem['embeddedImage'] = $item['embeddedImage'];
+            }
+
+            $libItem->save();
         }
     }
 }
