@@ -7,7 +7,7 @@ export const validateLogin = ({
   const formErrors: Partial<UserLogin> = {};
 
   const regex = new RegExp(
-    /^[a-z0-9]{1,20}\.?[a-z0-9]{1,20}@[a-z0-9]{3,}\.{1}[a-z]{2,7}$/
+    /^[a-z0-9]{1,20}\.?[a-z0-9]{1,20}@[a-z0-9]{3,}\.{1}[a-z]{2,7}\.?[a-z]{2,7}$/
   );
 
   if (!email || !regex.test(email)) {

@@ -3,14 +3,71 @@ export type UserLogin = {
   password: string;
 };
 
-export type LibraryItem = {
-  id: number | string;
+export type Job = {
+  id: number;
+  jobNumber: string;
   category: string;
+  orderedAt?: string;
+  customer: Customer;
+  siteAddress: string;
+  startDate: string;
+  endDate: string;
+  status: "In progress" | "Not started" | "Completed";
+  completedAt?: string | Date;
+  description?: string;
+};
+
+export type Customer = {
+  nameOnReport: string;
+  name: string;
+  email: string;
+  phone: string;
+};
+
+export type LibraryItem = {
+  id: number;
+  category: number;
   name: string;
   openingParagraph: string;
   closingParagraph: string;
-  embeddedImage?: string | null;
+  embeddedImage?: string;
   summary?: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type LibraryItemCategory = {
+  id: number;
+  name: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type JobCategory = LibraryItemCategory;
+
+export type InspectionNote = {
+  id: number;
+  category: number;
+  text: string;
+  created_at?: string;
+  updated_at?: string;
+};
+
+export type InspectionItem = Partial<LibraryItem> & {
+  isCustom?: boolean;
+  job: number;
+  libraryItem?: number;
+  note?: string;
+  images: string[];
+  previousJob?: number;
+  pageBreak?: boolean;
+};
+
+export type Inspection = Job & {
+  inspectionType?: string;
+  inspectionNotes?: string[];
+  inspectionItems?: InspectionItem[];
+  recommendation?: string;
 };
 
 export type Paragraph = {
@@ -21,37 +78,3 @@ export type Paragraph = {
     decoration?: string | string[];
   }[];
 };
-
-export type JobDetails = {
-  jobNumber: string | number;
-  jobType: string;
-  customer: string;
-  customerEmail?: string;
-  customerPhone?: string;
-  date: string;
-  time: string;
-  siteAddress: string;
-  description?: string;
-  status?: "Not started" | "In progress" | "Completed";
-  inspection?: string;
-};
-
-export type Inspection = JobDetails & {
-  id: string | number;
-  category: string;
-  startedAt: string | Date;
-  completedAt?: string | Date;
-  inspectionNotes?: InspectionNote[];
-  inspectionItems?: InspectionItem[];
-  recommendation?: string;
-};
-
-export type InspectionNote = string;
-
-export type InspectionItem = LibraryItem & {
-  note?: string;
-  images?: ItemImage[];
-  pageBreak?: boolean;
-};
-
-export type ItemImage = string;

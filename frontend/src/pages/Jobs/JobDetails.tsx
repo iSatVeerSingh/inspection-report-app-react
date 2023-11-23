@@ -6,14 +6,14 @@ import { useNavigate, useParams } from "react-router-dom";
 import { useState, useEffect } from "react";
 import Loading from "../../components/Loading";
 import clientApi from "../../services/clientApi";
-import { JobDetails as JobType } from "../../types";
+import { Job } from "../../types";
 
 const JobDetails = () => {
   const navigate = useNavigate();
   const params = useParams();
   const toast = useToast();
 
-  const [job, setJob] = useState<JobType | null>(null);
+  const [job, setJob] = useState<Job | null>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [notFound, setNotFound] = useState(false);
   const [starting, setStarting] = useState(false);
@@ -70,23 +70,43 @@ const JobDetails = () => {
                 fontWeight={"semibold"}
                 color={"rich-black"}
               >
-                &#35;{job?.jobNumber} - {job?.jobType}
+                &#35;{job?.jobNumber} - {job?.category}
               </Heading>
               <Grid gap={1} mt={3} mb={10}>
-                <MiniDetail property="Category" value={job?.jobType!} />
-                <MiniDetail property="Customer" value={job?.customer!} />
-                <MiniDetail property="Date" value={job?.date!} />
-                <MiniDetail property="Time" value={job?.time!} />
+                <MiniDetail property="Category" value={job?.category!} />
+                <MiniDetail property="Customer" value={job?.customer!.name!} />
+                <MiniDetail
+                  property="Name On Report"
+                  value={job?.customer!.nameOnReport!}
+                />
+
+                <MiniDetail
+                  property="Customer Email"
+                  value={job?.customer!.email!}
+                />
+                <MiniDetail
+                  property="Customer Phone"
+                  value={job?.customer!.phone!}
+                />
+                <MiniDetail
+                  property="Start Date Time"
+                  value={job?.startDate!}
+                />
+                <MiniDetail property="End Date Time" value={job?.endDate!} />
                 <MiniDetail property="Site Address" value={job?.siteAddress!} />
                 <MiniDetail property="Status" value={job?.status!} />
                 <MiniDetail
                   vertical
                   property="Description"
-                  value={job?.description === "" ? "N/A" : job?.description!}
+                  value={
+                    !job?.description || job?.description === ""
+                      ? "N/A"
+                      : job?.description!
+                  }
                 />
               </Grid>
               {job?.status === "In progress" ? (
-                <ButtonPrimary onClick={() => navigate("./" + job?.inspection)}>
+                <ButtonPrimary onClick={() => navigate("./" + job?.id)}>
                   Continue Inspection
                 </ButtonPrimary>
               ) : (

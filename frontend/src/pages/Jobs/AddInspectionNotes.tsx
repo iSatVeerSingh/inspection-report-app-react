@@ -6,9 +6,8 @@ import FormTextArea from "../../components/FormTextArea";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import DatalistInput from "../../components/DatalistInput";
-import inspectionNotes from "../../utils/inspectionNote";
 import clientApi from "../../services/clientApi";
-import { Inspection } from "../../types";
+import { Inspection, InspectionNote } from "../../types";
 import Loading from "../../components/Loading";
 
 const AddInspectionNotes = () => {
@@ -19,6 +18,9 @@ const AddInspectionNotes = () => {
   const [isAdded, setIsAdded] = useState(false);
   const customNoteRef = useRef<HTMLTextAreaElement | null>(null);
   const [saving, setSaving] = useState(false);
+  const [libraryInspectionNotes, setLibraryInspectionNotes] = useState<
+    string[]
+  >([]);
 
   const navigate = useNavigate();
 
@@ -27,7 +29,7 @@ const AddInspectionNotes = () => {
   const [inspection, setInspection] = useState<Inspection | null>(null);
   useEffect(() => {
     const getInspection = async () => {
-      const response = await clientApi.get(
+      let response = await clientApi.get(
         `/inspections?inspectionId=${params.inspectionId}`
       );
 
@@ -39,6 +41,18 @@ const AddInspectionNotes = () => {
       setInspection(response.data);
       inspectionNotesRef.current =
         (response.data as Inspection).inspectionNotes || [];
+
+      response = await clientApi.get("library-notes");
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
+      }
+
+      const libraryNotes = (response.data as InspectionNote[]).map(
+        (libNote) => libNote.text
+      );
+
+      setLibraryInspectionNotes(libraryNotes);
       setLoading(false);
     };
     getInspection();
@@ -134,11 +148,14 @@ const AddInspectionNotes = () => {
                 fontSize={{ base: "xl", sm: "2xl" }}
                 fontWeight={"medium"}
               >
-                &#35;{inspection?.jobNumber} - {inspection?.jobType}
+                &#35;{inspection?.jobNumber} - {inspection?.category}
               </Heading>
               <Flex direction={"column"} gap={1} px={3} mt={4}>
-                <MiniDetail property="Category" value={inspection?.jobType!} />
-                <MiniDetail property="Customer" value={inspection?.customer!} />
+                <MiniDetail property="Category" value={inspection?.category!} />
+                <MiniDetail
+                  property="Customer"
+                  value={inspection?.customer!.nameOnReport!}
+                />
                 <MiniDetail
                   property="Site Address"
                   value={inspection?.siteAddress!}
@@ -148,7 +165,7 @@ const AddInspectionNotes = () => {
                 <DatalistInput
                   label="You can choose from common notes."
                   name="inspectionNotes"
-                  dataList={inspectionNotes}
+                  dataList={libraryInspectionNotes}
                   ref={commonNoteRef}
                 />
                 <ButtonPrimary

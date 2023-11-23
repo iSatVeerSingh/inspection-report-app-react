@@ -5,12 +5,12 @@ import { LocationIcon, UserIcon } from "../../icons";
 import { useEffect, useState } from "react";
 import Loading from "../../components/Loading";
 import clientApi from "../../services/clientApi";
-import { JobDetails } from "../../types";
+import { Job } from "../../types";
 
 const Jobs = () => {
   const navigate = useNavigate();
 
-  const [jobs, setJobs] = useState<JobDetails[]>([]);
+  const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -19,7 +19,7 @@ const Jobs = () => {
       if (response.status !== 200) {
         return;
       }
-      setJobs(response.data as JobDetails[]);
+      setJobs(response.data as Job[]);
       setLoading(false);
     };
 
@@ -64,10 +64,10 @@ const Jobs = () => {
                         fontWeight={"medium"}
                         color={"rich-black"}
                       >
-                        #{job.jobNumber} - {job.jobType}
+                        #{job.jobNumber} - {job.category}
                       </Text>
                       <Text as={"span"} color={"dark-gray"} fontSize={"lg"}>
-                        {job.date}
+                        {job.startDate}
                       </Text>
                     </Flex>
                     <Flex
@@ -82,7 +82,7 @@ const Jobs = () => {
                         display={"flex"}
                         alignItems={"center"}
                       >
-                        <UserIcon boxSize={5} /> {job.customer}
+                        <UserIcon boxSize={5} /> {job.customer.name}
                       </Text>
                       <Text display={"flex"} alignItems={"center"}>
                         <LocationIcon boxSize={6} /> {job.siteAddress}
@@ -99,7 +99,7 @@ const Jobs = () => {
                         borderRadius={4}
                         color={"rich-black"}
                       >
-                        {job.jobType}
+                        {job.category}
                       </Text>
                       <Text
                         bg={"nav-bg"}

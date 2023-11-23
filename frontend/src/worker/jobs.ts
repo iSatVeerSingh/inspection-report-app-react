@@ -1,5 +1,5 @@
 import { Db } from "../services/clientdb";
-import { JobDetails } from "../types";
+import { Job } from "../types";
 
 export const getAllJobs = async () => {
   try {
@@ -11,7 +11,7 @@ export const getAllJobs = async () => {
   }
 };
 
-export const getJobByJobNumber = async (jobNumber: number) => {
+export const getJobByJobNumber = async (jobNumber: string) => {
   try {
     const job = await Db.jobs.get(jobNumber);
     return job;
@@ -21,13 +21,12 @@ export const getJobByJobNumber = async (jobNumber: number) => {
   }
 };
 
-export const createNewJob = async (jobData: JobDetails) => {
+export const createNewJob = async (jobData: Job) => {
   try {
     const jobNumber = await Db.jobs.add({
       ...jobData,
-      created: new Date(),
       status: "Not started",
-      jobNumber: Number(jobData.jobNumber),
+      jobNumber: jobData.jobNumber,
     });
     return jobNumber;
   } catch (err: any) {

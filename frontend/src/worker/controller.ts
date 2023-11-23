@@ -12,6 +12,8 @@ import {
   deleteInspectionItem,
   getAllInspections,
   getInspectionById,
+  getInspectionNotesByInspection,
+  getLibraryNotes,
   getPdf,
   startNewInspection,
 } from "./inspection";
@@ -30,7 +32,7 @@ export const getJobsController: RouteHandler = async ({ url }) => {
     return getBadRequestResponse();
   }
 
-  const job = await getJobByJobNumber(parseInt(jobNumber));
+  const job = await getJobByJobNumber(jobNumber);
   if (!job) {
     return getNotFoundResponse();
   }
@@ -82,7 +84,7 @@ export const getInspectionsController: RouteHandler = async ({ url }) => {
   if (!inspectionId || inspectionId === "") {
     return getBadRequestResponse();
   }
-  const inspection = await getInspectionById(inspectionId);
+  const inspection = await getInspectionById(parseInt(inspectionId));
   if (!inspection) {
     return getNotFoundResponse();
   }
@@ -95,6 +97,19 @@ export const getLibIndexController = async () => {
     return getBadRequestResponse();
   }
   return getSuccessResponse(libs);
+};
+
+export const getInspectionNotesController: RouteHandler = async ({ url }) => {
+  const inspectionId = url.searchParams.get("inspectionId");
+  if (!inspectionId || inspectionId === "") {
+    return getBadRequestResponse();
+  }
+
+  const inspectionNotes = await getInspectionNotesByInspection(
+    parseInt(inspectionId)
+  );
+
+  return getSuccessResponse(inspectionNotes);
 };
 
 export const addInspectionNotesController: RouteHandler = async ({
@@ -111,7 +126,10 @@ export const addInspectionNotesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
 
-  const inspectionId = await addInspectionNotes(body.inspectionNotes, id);
+  const inspectionId = await addInspectionNotes(
+    body.inspectionNotes,
+    parseInt(id)
+  );
   if (!inspectionId) {
     return getBadRequestResponse();
   }
@@ -229,4 +247,13 @@ export const generateReportController: RouteHandler = async ({
     return getBadRequestResponse();
   }
   return getSuccessResponse(reportData);
+};
+
+export const getLibraryNotesController: RouteHandler = async () => {
+  const libraryNotes = await getLibraryNotes();
+  if (!libraryNotes) {
+    return getBadRequestResponse();
+  }
+
+  return getSuccessResponse(libraryNotes);
 };

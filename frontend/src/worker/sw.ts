@@ -14,9 +14,11 @@ import {
   createJobController,
   deleteInspectionItemsController,
   generateReportController,
+  getInspectionNotesController,
   getInspectionsController,
   getJobsController,
   getLibIndexController,
+  getLibraryNotesController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -57,6 +59,11 @@ registerRoute(
 );
 registerRoute(
   ({ url }) => url.pathname === "/client/inspections/notes",
+  getInspectionNotesController,
+  "GET"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspections/notes",
   addInspectionNotesController,
   "PUT"
 );
@@ -81,6 +88,12 @@ registerRoute(
   ({ url }) => url.pathname === "/client/inspections/generate-report",
   generateReportController,
   "POST"
+);
+
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-notes",
+  getLibraryNotesController,
+  "GET"
 );
 
 let allowlist: undefined | RegExp[];

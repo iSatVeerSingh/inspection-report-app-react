@@ -8,7 +8,7 @@ import { redirect, useNavigate } from "react-router-dom";
 import { Db } from "../services/clientdb";
 import Dexie from "dexie";
 import { inspectionApi } from "../services/api";
-import { LibraryItem } from "../types";
+import { LibraryItem, LibraryItemCategory } from "../types";
 import axios from "axios";
 
 export const initLoader = async () => {
@@ -78,6 +78,53 @@ const Init = () => {
           const progress = Math.floor((i / allItems.length) * 100);
           setProgressBar(progress);
         }
+
+        // setup categories
+        const itemCategoryResponse = await inspectionApi.get(
+          "/item-categories"
+        );
+
+        if (itemCategoryResponse.status !== 200) {
+          setError(true);
+          setInstalling(false);
+          return;
+        }
+
+        const allCategories = itemCategoryResponse.data
+          .data as LibraryItemCategory[];
+
+        await Db.libraryItemCategories.bulkAdd(allCategories);
+
+        // Inspection notes
+
+        statusRef.current!.textContent = "Setting up inspection notes...";
+        const notesResponse = await inspectionApi.get("/inspection-notes");
+        if (notesResponse.status !== 200) {
+          setError(true);
+          setInstalling(false);
+          return;
+        }
+
+        await Db.inspectionNotes.bulkAdd(notesResponse.data.data);
+
+        statusRef.current!.textContent = "Setting up initial jobs...";
+        const jobCategoryResponse = await inspectionApi.get("/job-categories");
+        if (jobCategoryResponse.status !== 200) {
+          setError(true);
+          setInstalling(false);
+          return;
+        }
+
+        await Db.jobCategories.bulkAdd(jobCategoryResponse.data.data);
+
+        const jobsResponse = await inspectionApi.get("/jobs");
+        if (jobsResponse.status !== 200) {
+          setError(true);
+          setInstalling(false);
+          return;
+        }
+
+        Db.jobs.bulkAdd(jobsResponse.data.data);
 
         const templateResponse = await axios.get("/report-template.json");
         if (templateResponse.status === 200) {

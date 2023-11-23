@@ -1,34 +1,26 @@
 import { Db } from "../services/clientdb";
-import {
-  Inspection,
-  InspectionItem,
-  InspectionNote,
-  JobDetails,
-} from "../types";
+import { Inspection, InspectionItem, InspectionNote, Job } from "../types";
 import { generatePdf } from "../utils/pdf";
 import reportType from "../utils/reportType";
 
-export const startNewInspection = async (jobData: JobDetails) => {
+export const startNewInspection = async (jobData: Inspection) => {
   try {
     const trs = await Db.transaction(
       "rw",
-      Db.inspectionReports,
+      Db.inspections,
       Db.jobs,
       async () => {
         const newInspection: Inspection = {
           ...jobData,
-          id: Date.now().toString(36),
-          startedAt: new Date(),
           status: "In progress",
-          category: reportType[jobData.jobType] || reportType.Other,
+          inspectionType: reportType[jobData.category] || reportType.Other,
         };
 
-        const inspectionId = await Db.inspectionReports.add(newInspection);
+        const inspectionId = await Db.inspections.add(newInspection);
         if (inspectionId !== null) {
           const success = await Db.jobs.update(jobData.jobNumber, {
             status: "In progress",
-            inspection: inspectionId,
-          } as Partial<JobDetails>);
+          } as Partial<Job>);
           if (success !== null) {
             return inspectionId;
           }
@@ -61,9 +53,9 @@ export const getAllInspections = async () => {
   }
 };
 
-export const getInspectionById = async (id: string) => {
+export const getInspectionById = async (id: number) => {
   try {
-    const inspection = await Db.inspectionReports.get(id);
+    const inspection = await Db.inspections.get(id);
     return inspection;
   } catch (err) {
     console.log(err);
@@ -71,12 +63,20 @@ export const getInspectionById = async (id: string) => {
   }
 };
 
-export const addInspectionNotes = async (
-  notes: InspectionNote[],
-  id: string
-) => {
+export const getInspectionNotesByInspection = async (id: number) => {
   try {
-    const insId = await Db.inspectionReports.update(id, {
+    const inspection = await Db.inspections.get(id);
+    inspection!.inspectionItems = undefined;
+    return inspection;
+  } catch (err) {
+    console.log(err);
+    return null;
+  }
+};
+
+export const addInspectionNotes = async (notes: string[], id: number) => {
+  try {
+    const insId = await Db.inspections.update(id, {
       inspectionNotes: notes,
     } as Inspection);
     return insId;
@@ -295,6 +295,16 @@ export const getPdf = async (itemsHeights: any[], id: string) => {
 
     return pdfUrl;
   } catch (err) {
+    return null;
+  }
+};
+
+export const getLibraryNotes = async () => {
+  try {
+    const libraryNotes = await Db.inspectionNotes.toArray();
+    return libraryNotes;
+  } catch (err) {
+    console.log(err);
     return null;
   }
 };

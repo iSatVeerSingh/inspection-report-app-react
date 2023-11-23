@@ -27,9 +27,9 @@ const AllAddedNotes = () => {
   const [loading, setLoading] = useState(true);
   const [inspection, setInspection] = useState<Inspection | null>(null);
   useEffect(() => {
-    const getInspection = async () => {
+    const getInspectionAndNotes = async () => {
       const response = await clientApi.get(
-        `/inspections?inspectionId=${params.inspectionId}`
+        `/inspections/notes?inspectionId=${params.inspectionId}`
       );
 
       if (response.status !== 200) {
@@ -40,7 +40,7 @@ const AllAddedNotes = () => {
       setInspection(response.data);
       setLoading(false);
     };
-    getInspection();
+    getInspectionAndNotes();
   }, []);
 
   const deleteNote = (note: string) => {
@@ -97,7 +97,7 @@ const AllAddedNotes = () => {
               fontWeight={"medium"}
               color={"rich-black"}
             >
-              &#35;{inspection?.jobNumber} - {inspection?.jobType}
+              &#35;{inspection?.jobNumber} - {inspection?.category}
             </Heading>
             <Text fontSize={"lg"} color={"dark-gray"}>
               {inspection?.siteAddress}

@@ -2,7 +2,7 @@ import axios from "axios";
 import { UserLogin } from "../types";
 import { UserDB } from "./clientdb";
 
-const BASE_URL = "https://dev.inspectionapp.com/api";
+const BASE_URL = "/api";
 
 const getAccessToken = async () => {
   const user = await UserDB.user.get("user");

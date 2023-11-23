@@ -109,12 +109,18 @@ const JobSummary = () => {
           ) : (
             <>
               <Heading as="h2" fontSize={"2xl"} fontWeight={"semibold"}>
-                &#35;{inspection?.jobNumber} - {inspection?.jobType}
+                &#35;{inspection?.jobNumber} - {inspection?.category}
               </Heading>
               <Flex direction={"column"} gap={1} px={3} mt={4}>
-                <MiniDetail property="Category" value={inspection?.jobType!} />
-                <MiniDetail property="Customer" value={inspection?.customer!} />
-                <MiniDetail property="Date" value={inspection?.date!} />
+                <MiniDetail property="Category" value={inspection?.category!} />
+                <MiniDetail
+                  property="Customer"
+                  value={inspection?.customer!.nameOnReport!}
+                />
+                <MiniDetail
+                  property="Start Date"
+                  value={inspection?.startDate!}
+                />
                 <MiniDetail
                   property="Site Address"
                   value={inspection?.siteAddress!}
