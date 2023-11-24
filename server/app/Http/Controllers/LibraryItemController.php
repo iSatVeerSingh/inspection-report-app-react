@@ -6,6 +6,7 @@ use App\Http\Resources\LibraryItemCollection;
 use App\Http\Resources\LibraryItemResource;
 use App\Models\LibraryItem;
 use Illuminate\Http\Request;
+use Spatie\QueryBuilder\AllowedFilter;
 use Spatie\QueryBuilder\QueryBuilder;
 
 class LibraryItemController extends Controller
@@ -22,7 +23,7 @@ class LibraryItemController extends Controller
         }
 
         $libraryItems = QueryBuilder::for(LibraryItem::class)
-            ->allowedFilters('category')
+            ->allowedFilters(AllowedFilter::exact('category', 'category_id'))
             ->defaultSort('-updated_at')
             ->allowedSorts(['name', 'updated_at'])
             ->paginate();

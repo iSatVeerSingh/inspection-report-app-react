@@ -44,6 +44,6 @@ class LibraryItem extends Model
      */
     public function inspectionItems(): HasMany
     {
-        return $this->hasMany(InspectionItem::class, 'libraryItem');
+        return $this->hasMany(InspectionItem::class, 'library_id');
     }
 }

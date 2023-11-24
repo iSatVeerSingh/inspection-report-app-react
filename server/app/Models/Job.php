@@ -65,7 +65,9 @@ class Job extends Model
      */
     public function category(): BelongsTo
     {
-        return $this->belongsTo(JobCategory::class, 'category_id');
+        return $this->belongsTo(JobCategory::class, 'category_id')->withDefault([
+            'name' => "N/A"
+        ]);
     }
 
     /**
@@ -85,7 +87,9 @@ class Job extends Model
      */
     public function inspector(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'inspector_id');
+        return $this->belongsTo(User::class, 'inspector_id')->withDefault([
+            'name' => 'Not Assigned'
+        ]);
     }
 
     /**
@@ -95,6 +99,6 @@ class Job extends Model
      */
     public function inspectionItems(): HasMany
     {
-        return $this->hasMany(InspectionItem::class, 'job');
+        return $this->hasMany(InspectionItem::class, 'job_id');
     }
 }

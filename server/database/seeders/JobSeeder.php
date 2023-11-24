@@ -50,9 +50,8 @@ class JobSeeder extends Seeder
             $job['jobNumber'] = $serviceJob['generated_job_id'];
             if ($serviceJob['category_uuid'] !== "") {
                 $jobCategory = JobCategory::where('uuid', $serviceJob['category_uuid'])->first();
-                $job['category'] = $jobCategory['id'];
+                $job['category_id'] = $jobCategory['id'];
             }
-            $job['orderedAt'] = new DateTime($serviceJob['work_order_date']);
             $job['siteAddress'] = $serviceJob['job_address'];
             $job['status'] = $serviceJob['status'];
             $job['description'] = $serviceJob['job_description'];
@@ -95,10 +94,10 @@ class JobSeeder extends Seeder
 
                 $customerData->save();
 
-                $job['customer'] = $customerData['id'];
+                $job['customer_id'] = $customerData['id'];
             } else {
                 $customerData = Customer::where('uuid', $companyUuid)->first();
-                $job['customer'] = $customerData['id'];
+                $job['customer_id'] = $customerData['id'];
             }
 
             $acitvityResponse = Http::withBasicAuth($username, $password)->get($serviceUrl . "/jobactivity.json?%24filter=job_uuid%20eq%20'" . $serviceJob['uuid'] . "'");
@@ -114,11 +113,11 @@ class JobSeeder extends Seeder
             if (count($activities) !== 0) {
                 $inspector = User::where('uuid', $activities[0]['staff_uuid'])->first();
                 if ($inspector) {
-                    $job['inspector'] = $inspector['id'];
+                    $job['inspector_id'] = $inspector['id'];
                 }
 
-                $job['startDate'] = new DateTime($activities[0]["start_date"]);
-                $job['endDate'] = new DateTime($activities[0]['end_date']);
+                $job['startsAt'] = new DateTime($activities[0]["start_date"]);
+                $job['endsAt'] = new DateTime($activities[0]['end_date']);
             }
 
             $job->save();

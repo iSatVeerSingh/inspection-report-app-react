@@ -80,7 +80,7 @@ class DatabaseSeeder extends Seeder
             $category = LibraryItemCategory::where('name', $item['category'])->first();
 
             $libItem = new LibraryItem();
-            $libItem['category'] = $category['id'];
+            $libItem['category_id'] = $category['id'];
             $libItem['name'] = $item['name'];
             $libItem['openingParagraph'] = $item['openingParagraph'];
             $libItem['closingParagraph'] = $item['closingParagraph'];
