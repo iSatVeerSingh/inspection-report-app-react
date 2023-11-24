@@ -17,22 +17,22 @@ class Job extends Model
     protected $fillable = [
         'uuid',
         'jobNumber',
-        'category',
-        'orderedAt',
-        'customer',
-        'inspector',
+        'category_id',
+        'customer_id',
+        'inspector_id',
+        'startsAt',
+        'endsAt',
         'siteAddress',
-        'startDate',
-        'endDate',
         'status',
         'completedAt',
-        'description'
+        'description',
+        'inspectionNotes',
+        'recommendation'
     ];
 
     protected $casts = [
-        'orderedAt' => 'datetime',
-        'startDate' => 'datetime',
-        'endDate' => 'datetime',
+        'startsAt' => 'datetime',
+        'endsAt' => 'datetime',
         'completedAt' => 'datetime',
     ];
 
@@ -50,10 +50,22 @@ class Job extends Model
     {
         static::addGlobalScope('inspector', function (Builder $builder) {
             if (Auth::user()['role'] === "Inspector") {
-                $builder->where('inspector', Auth::id());
+                $builder->where('inspector_id', Auth::id());
                 return;
             }
         });
+    }
+
+
+    /**
+     * Get the category that owns the Job
+     * category_id belongs to JobCategory Model
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(JobCategory::class, 'category_id');
     }
 
     /**
@@ -61,9 +73,9 @@ class Job extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function getCustomer(): BelongsTo
+    public function customer(): BelongsTo
     {
-        return $this->belongsTo(Customer::class, 'customer');
+        return $this->belongsTo(Customer::class, 'customer_id');
     }
 
     /**
@@ -71,9 +83,9 @@ class Job extends Model
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    public function getInspector(): BelongsTo
+    public function inspector(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'inspector');
+        return $this->belongsTo(User::class, 'inspector_id');
     }
 
     /**
@@ -84,15 +96,5 @@ class Job extends Model
     public function inspectionItems(): HasMany
     {
         return $this->hasMany(InspectionItem::class, 'job');
-    }
-
-    /**
-     * Get the jobCategory that owns the Job
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function jobCategory(): BelongsTo
-    {
-        return $this->belongsTo(JobCategory::class, 'category');
     }
 }

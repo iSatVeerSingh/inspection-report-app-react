@@ -11,15 +11,17 @@ class InspectionItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        "isCustom",
-        "job",
-        "library",
-        "note",
+        "library_id",
+        "job_id",
+        "previous_job_id",
         "images",
+        "note",
+        "isCustom",
+        "name",
+        "summary",
         "openingParagraph",
         "closingParagraph",
-        "embeddedImage",
-        "previousJob",
+        "embeddedImage"
     ];
 
     protected $casts = [
@@ -28,22 +30,32 @@ class InspectionItem extends Model
     ];
 
     /**
-     * Get the job that owns the InspectionItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function job(): BelongsTo
-    {
-        return $this->belongsTo(Job::class, 'job');
-    }
-
-    /**
      * Get the libraryItem that owns the InspectionItem
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function libraryItem(): BelongsTo
     {
-        return $this->belongsTo(LibraryItem::class, 'libraryItem');
+        return $this->belongsTo(LibraryItem::class, 'library_id');
+    }
+
+    /**
+     * Get the job that owns the InspectionItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function job(): BelongsTo
+    {
+        return $this->belongsTo(Job::class, 'job_id');
+    }
+
+    /**
+     * Get the previousJob that owns the InspectionItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function previousJob(): BelongsTo
+    {
+        return $this->belongsTo(Job::class, 'previous_job_id');
     }
 }

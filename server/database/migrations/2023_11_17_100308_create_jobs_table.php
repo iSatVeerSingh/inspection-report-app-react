@@ -15,16 +15,17 @@ return new class extends Migration
             $table->id();
             $table->uuid('uuid')->unique()->nullable();
             $table->string('jobNumber')->unique();
-            $table->foreignId('category')->nullable()->constrained('job_categories');
-            $table->dateTime('orderedAt');
-            $table->foreignId('customer')->constrained('customers');
-            $table->foreignId('inspector')->nullable()->constrained('users');
+            $table->foreignId('category_id')->nullable()->constrained('job_categories');
+            $table->foreignId('customer_id')->constrained('customers');
+            $table->foreignId('inspector_id')->nullable()->constrained('users');
+            $table->dateTime('startsAt')->nullable();
+            $table->dateTime('endsAt')->nullable();
             $table->string('siteAddress');
-            $table->dateTime('startDate')->nullable();
-            $table->dateTime('endDate')->nullable();
             $table->string('status');
             $table->dateTime('completedAt')->nullable();
-            $table->text('description')->nullable();
+            $table->string('description')->nullable();
+            $table->json('inspectionNotes')->nullable();
+            $table->string('recommendation')->nullable();
             $table->timestamps();
         });
     }

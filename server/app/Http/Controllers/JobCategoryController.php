@@ -2,11 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\JobCategoryCollection;
 use App\Models\JobCategory;
 use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Http;
 
 class JobCategoryController extends Controller
 {
-    
+  public function index(Request $request)
+  {
+    return new JobCategoryCollection(JobCategory::all());
+  }
 }

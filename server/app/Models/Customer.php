@@ -38,6 +38,6 @@ class Customer extends Model
      */
     public function jobs(): HasMany
     {
-        return $this->hasMany(Job::class, 'customer');
+        return $this->hasMany(Job::class, 'customer_id');
     }
 }

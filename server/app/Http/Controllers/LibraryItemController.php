@@ -24,7 +24,7 @@ class LibraryItemController extends Controller
         $libraryItems = QueryBuilder::for(LibraryItem::class)
             ->allowedFilters('category')
             ->defaultSort('-updated_at')
-            ->allowedSorts(['category', 'name', 'updated_at'])
+            ->allowedSorts(['name', 'updated_at'])
             ->paginate();
 
         return new LibraryItemCollection($libraryItems);

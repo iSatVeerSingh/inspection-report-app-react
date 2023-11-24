@@ -13,17 +13,28 @@ class LibraryItem extends Model
     use HasFactory;
 
     protected $fillable = [
-        'category',
+        'category_id',
         'name',
+        'summary',
         'openingParagraph',
         'closingParagraph',
-        'embeddedImage',
-        'summary'
+        'embeddedImage'
     ];
 
     protected function serializeDate(DateTimeInterface $date)
     {
         return $date->format('d-m-Y h:i A');
+    }
+
+
+    /**
+     * Get the category that owns the LibraryItem
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
+     */
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(LibraryItemCategory::class, 'category_id');
     }
 
     /**
@@ -34,15 +45,5 @@ class LibraryItem extends Model
     public function inspectionItems(): HasMany
     {
         return $this->hasMany(InspectionItem::class, 'libraryItem');
-    }
-
-    /**
-     * Get the category that owns the LibraryItem
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
-     */
-    public function itemCategory(): BelongsTo
-    {
-        return $this->belongsTo(LibraryItemCategory::class, 'category');
     }
 }

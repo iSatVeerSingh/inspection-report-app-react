@@ -18,8 +18,8 @@ return new class extends Migration
             $table->string('email')->unique();
             $table->string('phone')->nullable();
             $table->string('password');
-            $table->rememberToken();
             $table->enum('role', ['Inspector', 'Admin', 'Owner'])->default('Inspector');
+            $table->rememberToken();
             $table->timestamps();
         });
     }

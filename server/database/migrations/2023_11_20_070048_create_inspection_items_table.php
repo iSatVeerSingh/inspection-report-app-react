@@ -13,15 +13,17 @@ return new class extends Migration
     {
         Schema::create('inspection_items', function (Blueprint $table) {
             $table->id();
-            $table->boolean('isCustom')->default(false);
-            $table->foreignId('job')->constrained('jobs');
-            $table->foreignId('libraryItem')->nullable()->constrained('library_items');
+            $table->foreignId('library_id')->nullable()->constrained('library_items');
+            $table->foreignId('job_id')->constrained('jobs');
+            $table->foreignId('previous_job_id')->nullable()->constrained('jobs');
+            $table->json('images');
             $table->string('note')->nullable();
-            $table->json('images')->nullable();
+            $table->boolean('isCustom')->default(false);
+            $table->string('name')->nullable();
+            $table->string('summary')->nullable();
             $table->string('openingParagraph')->nullable();
             $table->string('closingParagraph')->nullable();
             $table->text('embeddedImage')->nullable();
-            $table->foreignId('previousJob')->nullable()->constrained('jobs');
             $table->timestamps();
         });
     }
