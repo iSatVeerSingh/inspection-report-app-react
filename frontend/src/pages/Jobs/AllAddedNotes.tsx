@@ -27,9 +27,9 @@ const AllAddedNotes = () => {
   const [loading, setLoading] = useState(true);
   const [inspection, setInspection] = useState<Inspection | null>(null);
   useEffect(() => {
-    const getInspectionAndNotes = async () => {
+    const getInspection = async () => {
       const response = await clientApi.get(
-        `/inspections/notes?inspectionId=${params.inspectionId}`
+        `/inspections?inspectionId=${params.inspectionId}`
       );
 
       if (response.status !== 200) {
@@ -40,7 +40,7 @@ const AllAddedNotes = () => {
       setInspection(response.data);
       setLoading(false);
     };
-    getInspectionAndNotes();
+    getInspection();
   }, []);
 
   const deleteNote = (note: string) => {

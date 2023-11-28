@@ -22,7 +22,7 @@ class LibraryItemCategory extends Model
      */
     public function libraryItems(): HasMany
     {
-        return $this->hasMany(LibraryItem::class, 'category');
+        return $this->hasMany(LibraryItem::class, 'category_id');
     }
 
     protected function serializeDate(DateTimeInterface $date)

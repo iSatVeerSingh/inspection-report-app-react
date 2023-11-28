@@ -63,17 +63,6 @@ export const getInspectionById = async (id: number) => {
   }
 };
 
-export const getInspectionNotesByInspection = async (id: number) => {
-  try {
-    const inspection = await Db.inspections.get(id);
-    inspection!.inspectionItems = undefined;
-    return inspection;
-  } catch (err) {
-    console.log(err);
-    return null;
-  }
-};
-
 export const addInspectionNotes = async (notes: string[], id: number) => {
   try {
     const insId = await Db.inspections.update(id, {

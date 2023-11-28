@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 
+use App\Models\InspectionNote;
 use App\Models\LibraryItem;
 use App\Models\LibraryItemCategory;
 use App\Models\User;
@@ -90,6 +91,16 @@ class DatabaseSeeder extends Seeder
             }
 
             $libItem->save();
+        }
+
+        // add inspection notes
+        $allNotes = Storage::json('inspectionNotes.json');
+
+        foreach($allNotes as $key => $value) {
+            $note = new InspectionNote([
+                'text' => $value,
+            ]);
+            $note->save();
         }
     }
 }

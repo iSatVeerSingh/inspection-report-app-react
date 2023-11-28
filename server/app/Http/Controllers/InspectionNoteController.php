@@ -19,7 +19,6 @@ class InspectionNoteController extends Controller
     {
         //ToDo: Create a rule to validate if category is number
         $validated = $request->validate([
-            'category' => "sometimes|required",
             'text' => "required|max:255"
         ]);
 

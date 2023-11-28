@@ -12,7 +12,6 @@ import {
   deleteInspectionItem,
   getAllInspections,
   getInspectionById,
-  getInspectionNotesByInspection,
   getLibraryNotes,
   getPdf,
   startNewInspection,
@@ -99,19 +98,6 @@ export const getLibIndexController = async () => {
   return getSuccessResponse(libs);
 };
 
-export const getInspectionNotesController: RouteHandler = async ({ url }) => {
-  const inspectionId = url.searchParams.get("inspectionId");
-  if (!inspectionId || inspectionId === "") {
-    return getBadRequestResponse();
-  }
-
-  const inspectionNotes = await getInspectionNotesByInspection(
-    parseInt(inspectionId)
-  );
-
-  return getSuccessResponse(inspectionNotes);
-};
-
 export const addInspectionNotesController: RouteHandler = async ({
   url,
   request,
@@ -126,10 +112,7 @@ export const addInspectionNotesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
 
-  const inspectionId = await addInspectionNotes(
-    body.inspectionNotes,
-    parseInt(id)
-  );
+  const inspectionId = await addInspectionNotes(body.inspectionNotes, parseInt(id));
   if (!inspectionId) {
     return getBadRequestResponse();
   }

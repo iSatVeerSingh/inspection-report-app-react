@@ -35,13 +35,13 @@ class JobCategory extends Model
         return $this->hasMany(Job::class, 'category_id');
     }
 
-    /**
-     * Get all of the inspectionNotes for the JobCategory
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
-     */
-    public function inspectionNotes(): HasMany
-    {
-        return $this->hasMany(InspectionNote::class, 'category');
-    }
+    // /**
+    //  * Get all of the inspectionNotes for the JobCategory
+    //  *
+    //  * @return \Illuminate\Database\Eloquent\Relations\HasMany
+    //  */
+    // public function inspectionNotes(): HasMany
+    // {
+    //     return $this->hasMany(InspectionNote::class, 'category');
+    // }
 }

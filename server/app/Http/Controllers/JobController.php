@@ -13,17 +13,6 @@ class JobController extends Controller
 {
     public function index(Request $request)
     {
-        $jobFilter = QueryBuilder::for(Job::class)
-            ->allowedFilters([
-                AllowedFilter::exact('category', 'category_id'),
-                'status'
-            ])
-            ->defaultSort('-updated_at');
-
-        if (Auth::user()['role'] === "Inspector") {
-            return new JobCollection($jobFilter->get());
-        }
-
-        return new JobCollection($jobFilter->paginate());
+        return new JobCollection(Job::all());
     }
 }

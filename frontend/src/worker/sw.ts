@@ -14,7 +14,6 @@ import {
   createJobController,
   deleteInspectionItemsController,
   generateReportController,
-  getInspectionNotesController,
   getInspectionsController,
   getJobsController,
   getLibIndexController,
@@ -55,11 +54,6 @@ registerRoute(
 registerRoute(
   ({ url }) => url.pathname === "/client/library-index",
   getLibIndexController,
-  "GET"
-);
-registerRoute(
-  ({ url }) => url.pathname === "/client/inspections/notes",
-  getInspectionNotesController,
   "GET"
 );
 registerRoute(

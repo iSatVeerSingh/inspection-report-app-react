@@ -262,7 +262,7 @@ const AddInspectionItems = () => {
       ) : (
         <Box bg="main-bg" border="stroke" borderRadius={5} p="3">
           <Heading as="h2" fontSize={"2xl"} fontWeight={"medium"}>
-            &#35;{inspection?.jobNumber} - {inspection?.jobType}
+            &#35;{inspection?.jobNumber} - {inspection?.category}
           </Heading>
           <Text fontSize={"lg"} color={"dark-gray"}>
             {inspection?.siteAddress}
