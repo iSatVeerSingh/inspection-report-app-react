@@ -1,4 +1,16 @@
-import { extendTheme } from "@chakra-ui/react";
+import { extendTheme, defineStyle, defineStyleConfig } from "@chakra-ui/react";
+
+const simple = defineStyle({
+  background: "none",
+  padding: 0,
+  height: "auto",
+  width: "auto",
+  border: "none",
+});
+
+const iconButtonTheme = defineStyleConfig({
+  variants: { simple },
+});
 
 const theme = extendTheme({
   colors: {
@@ -11,6 +23,7 @@ const theme = extendTheme({
     "nav-link": "#2B3674",
     "dark-gray": "#2E3A59",
     "text-bg": "#F7F7F7",
+    "secondary-bg": "#F3F6F9",
     // "stroke": "#E0E0E0"
   },
   borders: {
@@ -19,6 +32,9 @@ const theme = extendTheme({
   fonts: {
     heading: `'Poppins', sans-serif`,
     body: `'Poppins', sans-serif`,
+  },
+  components: {
+    Button: iconButtonTheme,
   },
 });
 

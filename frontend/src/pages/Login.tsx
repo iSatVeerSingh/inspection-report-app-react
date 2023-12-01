@@ -1,11 +1,4 @@
-import {
-  Box,
-  Center,
-  Heading,
-  VStack,
-  Text,
-  Link,
-} from "@chakra-ui/react";
+import { Box, Center, Heading, VStack, Text } from "@chakra-ui/react";
 import { FormEventHandler, useState } from "react";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
@@ -16,6 +9,13 @@ import { loginUser } from "../services/api";
 import { UserDB } from "../services/clientdb";
 
 const Login = () => {
+  // if ("serviceWorker" in navigator) {
+  //   navigator.serviceWorker.register(
+  //     import.meta.env.MODE === "production" ? "/sw.js" : "/dev-sw.js?dev-sw",
+  //     { type: import.meta.env.MODE === "production" ? "classic" : "module" }
+  //   );
+  // }
+
   const navigate = useNavigate();
 
   const [formErrors, setFormErrors] = useState<Partial<UserLogin> | null>(null);
@@ -50,13 +50,18 @@ const Login = () => {
       return;
     }
 
-    await UserDB.user.clear();
-    await UserDB.user.add({
-      user: "user",
-      ...response.data,
-    });
+    try {
+      await UserDB.user.clear();
+      await UserDB.user.add({
+        user: "user",
+        ...response.data,
+      });
+    } finally {
+      UserDB.close();
+    }
+
     setLoading(false);
-    navigate('/init')
+    navigate("/init");
   };
 
   return (
@@ -100,11 +105,6 @@ const Login = () => {
             </ButtonPrimary>
           </VStack>
         </form>
-        <Box textAlign="center" mt="6">
-          <Link textDecoration="underline" color={"blue"}>
-            Forgot Password
-          </Link>
-        </Box>
       </Box>
     </Center>
   );

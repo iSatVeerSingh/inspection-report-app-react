@@ -3,6 +3,24 @@ export type UserLogin = {
   password: string;
 };
 
+export type UserForm = {
+  name: string;
+  email: string;
+  phone?: string;
+  role: "Inspector" | "Owner" | "Admin";
+  password: string;
+};
+
+export type User = {
+  id: number;
+  name: string;
+  email: string;
+  phone?: string | null;
+  role: "Inspector" | "Owner" | "Admin";
+  created_at?: string;
+  updated_at?: string;
+};
+
 export type Job = {
   id: number;
   jobNumber: string;

@@ -20,7 +20,7 @@ type FormInputProps = SelectProps & {
 };
 
 const FormSelect = (
-  { label, name, placeholder, inputError, required, options, onChange }: FormInputProps,
+  { label, name, placeholder, inputError, required, options, onChange, value }: FormInputProps,
   ref: Ref<HTMLSelectElement>
 ) => {
   return (
@@ -36,6 +36,7 @@ const FormSelect = (
         name={name}
         placeholder={placeholder}
         ref={ref}
+        value={value}
         onChange={onChange}
       >
         {options.map((opt) =>

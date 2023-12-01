@@ -15,6 +15,7 @@ import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
 import InspectionItemLayout from "../Layout/InspectionItemLayout";
 import ReportPreview from "../pages/Jobs/ReportPreview";
+import Users from "../pages/Users/Users";
 
 const router = createBrowserRouter([
   {
@@ -68,6 +69,10 @@ const router = createBrowserRouter([
       {
         path: Routes.REPORT_PREVIEW,
         element: <ReportPreview />,
+      },
+      {
+        path: Routes.USERS,
+        element: <Users />,
       },
     ],
   },
