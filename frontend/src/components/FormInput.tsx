@@ -1,3 +1,5 @@
+"use client";
+
 import {
   FormControl,
   FormControlProps,
@@ -6,58 +8,25 @@ import {
   Input,
   InputProps,
 } from "@chakra-ui/react";
-import React from "react";
-import { UseFormRegister } from "react-hook-form";
+import { Ref, forwardRef } from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
-type FormInputProps = UseFormRegister<any> &
-  FormControlProps &
-  InputProps & {
+type FormInputProps = UseFormRegisterReturn &
+  FormControlProps & InputProps & {
     inputError?: string;
   };
 
-const FormInput = ({
-  id,
-  label,
-  inputError,
-  placeholder,
-  type,
-  ...rest
-}: FormInputProps) => {
+const FormInput = (
+  { label, id, placeholder, inputError, ...inputProps }: FormInputProps,
+  ref: Ref<HTMLInputElement>
+) => {
   return (
     <FormControl isInvalid={!!inputError}>
-      {label && <FormLabel htmlFor={id}>{label}</FormLabel>}
-      <Input id={id} placeholder={placeholder} type={type} {...rest} />
+      {label && <FormLabel htmlFor={id} color="rich-black" fontSize="xl" mb="0">{label}</FormLabel>}
+      <Input id={id} placeholder={placeholder} {...inputProps} ref={ref} borderColor="blue-primary" autoComplete="off" />
       {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}
     </FormControl>
   );
 };
 
-// const FormInput = (
-//   { label, type, name, placeholder, inputError, required, value }: FormInputProps,
-//   ref: React.Ref<HTMLInputElement>
-// ) => {
-//   return (
-//     <FormControl
-//       isInvalid={inputError !== undefined && inputError !== ""}
-//       isRequired={required}
-//     >
-//       {label && (
-//         <FormLabel color="rich-black" fontSize="xl" mb="0">
-//           {label}
-//         </FormLabel>
-//       )}
-//       <Input
-//         type={type}
-//         name={name}
-//         placeholder={placeholder}
-//         borderColor="blue-primary"
-//         autoComplete="off"
-//         value={value}
-//         ref={ref}
-//       />
-//       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
-//     </FormControl>
-//   );
-// };
-
-export default React.forwardRef(FormInput);
+export default forwardRef(FormInput);

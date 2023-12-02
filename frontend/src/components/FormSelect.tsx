@@ -1,57 +1,60 @@
+"use client";
+
 import {
   FormControl,
+  FormControlProps,
   FormErrorMessage,
   FormLabel,
   Select,
   SelectProps,
 } from "@chakra-ui/react";
 import { Ref, forwardRef } from "react";
+import { UseFormRegisterReturn } from "react-hook-form";
 
-type FormInputProps = SelectProps & {
-  label?: string;
-  inputError?: string;
-  required?: boolean;
-  options:
-    | {
-        text: string;
-        value: string;
-      }[]
-    | string[];
-};
+type FormSelectProps = UseFormRegisterReturn &
+  SelectProps &
+  FormControlProps & {
+    inputError?: string;
+    options: string[] | { text: string; value: string }[];
+  };
 
 const FormSelect = (
-  { label, name, placeholder, inputError, required, options, onChange, value }: FormInputProps,
+  {
+    label,
+    id,
+    placeholder,
+    options,
+    inputError,
+    ...selectProps
+  }: FormSelectProps,
   ref: Ref<HTMLSelectElement>
 ) => {
   return (
-    <FormControl isInvalid={inputError !== undefined} isRequired={required}>
+    <FormControl isInvalid={!!inputError}>
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0">
+        <FormLabel htmlFor={id} color="rich-black" fontSize="xl" mb="0">
           {label}
         </FormLabel>
       )}
       <Select
-        borderColor="blue-primary"
-        required={required}
-        name={name}
         placeholder={placeholder}
+        {...selectProps}
         ref={ref}
-        value={value}
-        onChange={onChange}
+        borderColor="blue-primary"
       >
-        {options.map((opt) =>
+        {options.map((opt, index) =>
           typeof opt === "string" ? (
-            <option value={opt} key={opt}>
+            <option value={opt} key={index}>
               {opt}
             </option>
           ) : (
-            <option value={opt.value} key={opt.value}>
+            <option value={opt.value} key={index}>
               {opt.text}
             </option>
           )
         )}
       </Select>
-      {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
+      {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}
     </FormControl>
   );
 };

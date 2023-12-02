@@ -1,22 +1,15 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import PageLayout from "../../Layout/PageLayout";
-import { User, UserForm } from "../../types";
 import { inspectionApi } from "../../services/api";
+import { User, UserForm } from "../../types";
 import Loading from "../../components/Loading";
-import { SubmitHandler, useForm } from "react-hook-form";
 import {
   Box,
-  Button,
   Flex,
-  FormControl,
-  FormErrorMessage,
-  FormLabel,
   Grid,
-  GridItem,
   IconButton,
-  Input,
   Menu,
   MenuButton,
   MenuItem,
@@ -32,68 +25,71 @@ import {
   VStack,
   useDisclosure,
 } from "@chakra-ui/react";
-import { MenuIcon, MoreIcon, UserIcon } from "../../icons";
+import { MoreIcon } from "../../icons";
+import { Form, SubmitHandler, useForm } from "react-hook-form";
 import FormInput from "../../components/FormInput";
-import FormSelect from "../../components/FormSelect";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
+import FormSelect from "../../components/FormSelect";
+
+const roles = ["Inspector", "Admin", "Owner"];
 
 const Users = () => {
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<Partial<User>[]>([]);
+  const [isEditing, setIsEditing] = useState(false);
+
+  const { isOpen, onOpen, onClose } = useDisclosure();
+
   const {
     handleSubmit,
     register,
-    formState: { errors, isSubmitting },
-  } = useForm<UserForm>({
-    defaultValues: {
-      name: "Stver",
-      email: "helo@moto.com",
-    },
-  });
-  const [isEditing, setIsEditing] = useState(false);
+    reset,
+    formState: { errors },
+  } = useForm<UserForm>();
+
+  useEffect(() => {
+    const getAllUsers = async () => {
+      const response = await inspectionApi.get("/users");
+
+      if (response.status !== 200) {
+        setLoading(false);
+        return;
+      }
+
+      setUsers(response.data.data);
+      setLoading(false);
+    };
+
+    getAllUsers();
+  }, []);
+
+  const handleNewUserBtn = () => {
+    setIsEditing(false);
+    reset({
+      name: "",
+      email: "",
+      phone: "",
+      password: "",
+    });
+    onOpen();
+  };
+
+  const handleEditUserBtn = (user: UserForm) => {
+    setIsEditing(true);
+    reset(user);
+    onOpen();
+  };
+
   const onSubmitUserForm: SubmitHandler<UserForm> = (data) => console.log(data);
-
-  // const [loading, setLoading] = useState(true);
-  // const [users, setUsers] = useState<User[]>([]);
-
-  // useEffect(() => {
-  //   const getAllUsers = async () => {
-  //     const response = await inspectionApi.get("/users");
-
-  //     if (response.status !== 200) {
-  //       setLoading(false);
-  //       return;
-  //     }
-
-  //     setUsers(response.data.data);
-  //     setLoading(false);
-  //   };
-
-  //   getAllUsers();
-  // }, []);
-
-  // const { isOpen, onOpen, onClose } = useDisclosure();
 
   return (
     <PageLayout
       title="All Users"
       titleBtn="Create User"
-      // onBtnClick={handleNewUserBtn}
+      onBtnClick={handleNewUserBtn}
     >
-      <form onSubmit={handleSubmit(onSubmitUserForm)}>
-        <FormInput
-          id="name"
-          label="Name"
-          placeholder="Enter name here"
-          inputError={errors.name?.message}
-          {...register("name", { required: true })}
-        />
-
-        <Button type="submit" isLoading={isSubmitting}>
-          Submit
-        </Button>
-      </form>
-
-      {/* {loading ? (
+      {loading ? (
         <Loading />
       ) : (
         <Box
@@ -143,7 +139,9 @@ const Users = () => {
                       icon={<MoreIcon />}
                     />
                     <MenuList>
-                      <MenuItem onClick={() => handleEditUser(user)}>
+                      <MenuItem
+                        onClick={() => handleEditUserBtn(user as UserForm)}
+                      >
                         Edit
                       </MenuItem>
                       <MenuItem>Delete</MenuItem>
@@ -156,26 +154,73 @@ const Users = () => {
             "No users found"
           )}
         </Box>
-      )} */}
+      )}
 
-      {/* <Modal closeOnOverlayClick={false} isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose} closeOnOverlayClick={false}>
         <ModalOverlay />
         <ModalContent>
-          <ModalHeader>{editing ? "Edit User" : "Create New User"}</ModalHeader>
+          <ModalHeader>
+            {isEditing ? "Edit User" : "Create New User"}
+          </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <form onSubmit={handleSubmit(onSubminUserForm)}>
+            <form id="user_form" onSubmit={handleSubmit(onSubmitUserForm)}>
               <VStack>
-
+                <FormInput
+                  label="Name"
+                  id="name"
+                  placeholder="Enter name here"
+                  {...register("name", {
+                    required: !isEditing ? "Name is required" : false,
+                  })}
+                  inputError={errors.name?.message}
+                />
+                <FormInput
+                  label="Email"
+                  id="email"
+                  type="email"
+                  placeholder="Enter email here"
+                  {...register("email", {
+                    required: !isEditing ? "Email is required" : false,
+                  })}
+                  inputError={errors.email?.message}
+                />
+                <FormInput
+                  label="Phone"
+                  id="phone"
+                  placeholder="Enter phone here"
+                  {...register("phone")}
+                  inputError={errors.phone?.message}
+                />
+                <FormSelect
+                  placeholder="Select a role"
+                  id="role"
+                  label="Role"
+                  {...register("role", {
+                    required: !isEditing ? "Please select a role" : false,
+                  })}
+                  options={roles}
+                  inputError={errors.role?.message}
+                />
+                <FormInput
+                  label="Password"
+                  id="password"
+                  placeholder="Enter password here"
+                  {...register("password", {
+                    required: !isEditing ? "Password is required" : false,
+                  })}
+                  inputError={errors.password?.message}
+                />
               </VStack>
-              <ModalFooter pr={0} gap={2}>
-                <ButtonPrimary type="submit">Submit</ButtonPrimary>
-                <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
-              </ModalFooter>
+              <Flex></Flex>
             </form>
           </ModalBody>
+          <ModalFooter gap={3}>
+            <ButtonPrimary type="submit" form="user_form">Submit</ButtonPrimary>
+            <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
+          </ModalFooter>
         </ModalContent>
-      </Modal> */}
+      </Modal>
     </PageLayout>
   );
 };

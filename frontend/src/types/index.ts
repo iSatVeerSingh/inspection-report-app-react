@@ -11,12 +11,8 @@ export type UserForm = {
   password: string;
 };
 
-export type User = {
+export type User = UserForm & {
   id: number;
-  name: string;
-  email: string;
-  phone?: string | null;
-  role: "Inspector" | "Owner" | "Admin";
   created_at?: string;
   updated_at?: string;
 };
