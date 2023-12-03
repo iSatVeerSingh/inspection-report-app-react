@@ -40,3 +40,8 @@ inspectionApi.interceptors.request.use(async (config) => {
   }
   return config;
 });
+
+inspectionApi.interceptors.response.use(
+  (response) => response,
+  (error) => error.response
+);

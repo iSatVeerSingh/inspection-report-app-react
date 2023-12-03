@@ -1,12 +1,19 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import PageLayout from "../../Layout/PageLayout";
 import { inspectionApi } from "../../services/api";
 import { User, UserForm } from "../../types";
 import Loading from "../../components/Loading";
 import {
+  AlertDialog,
+  AlertDialogBody,
+  AlertDialogContent,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogOverlay,
   Box,
+  Button,
   Flex,
   Grid,
   IconButton,
@@ -24,9 +31,10 @@ import {
   Text,
   VStack,
   useDisclosure,
+  useToast,
 } from "@chakra-ui/react";
 import { MoreIcon } from "../../icons";
-import { Form, SubmitHandler, useForm } from "react-hook-form";
+import { SubmitHandler, useForm } from "react-hook-form";
 import FormInput from "../../components/FormInput";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
@@ -38,29 +46,39 @@ const Users = () => {
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<Partial<User>[]>([]);
   const [isEditing, setIsEditing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
 
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenAlert,
+    onOpen: onOpenAlert,
+    onClose: onCloseAlert,
+  } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const deleteUserRef = useRef<any>();
+  const toast = useToast();
 
   const {
     handleSubmit,
     register,
     reset,
-    formState: { errors },
+    formState: { errors, dirtyFields },
   } = useForm<UserForm>();
 
-  useEffect(() => {
-    const getAllUsers = async () => {
-      const response = await inspectionApi.get("/users");
+  const getAllUsers = async () => {
+    setLoading(true);
+    const response = await inspectionApi.get("/users");
 
-      if (response.status !== 200) {
-        setLoading(false);
-        return;
-      }
-
-      setUsers(response.data.data);
+    if (response.status !== 200) {
       setLoading(false);
-    };
+      return;
+    }
 
+    setUsers(response.data.data);
+    setLoading(false);
+  };
+
+  useEffect(() => {
     getAllUsers();
   }, []);
 
@@ -81,7 +99,88 @@ const Users = () => {
     onOpen();
   };
 
-  const onSubmitUserForm: SubmitHandler<UserForm> = (data) => console.log(data);
+  const onSubmitUserForm: SubmitHandler<UserForm> = async (formData: any) => {
+    setSubmitting(true);
+    if (isEditing) {
+      const updatedUser: any = {};
+      for (const key in dirtyFields) {
+        updatedUser[key] = formData[key];
+      }
+      const response = await inspectionApi.put(
+        `/users/${formData["id"]}`,
+        updatedUser
+      );
+      if (response.status !== 200) {
+        toast({
+          title: response.data.message || "Couldn't update the user.",
+          duration: 4000,
+          status: "error",
+        });
+        setSubmitting(false);
+        return;
+      }
+      toast({
+        title: response.data.message,
+        duration: 4000,
+        status: "success",
+      });
+      setIsEditing(false);
+      setSubmitting(false);
+      onClose();
+
+      await getAllUsers();
+    } else {
+      const response = await inspectionApi.post("/users", formData);
+      if (response.status !== 201) {
+        toast({
+          title: response.data.message || "Couldn't create user",
+          duration: 4000,
+          status: "error",
+        });
+        setSubmitting(false);
+        return;
+      }
+      toast({
+        title: "User created successfully",
+        duration: 4000,
+        status: "success",
+      });
+      setSubmitting(false);
+      onClose();
+      await getAllUsers();
+    }
+  };
+
+  const handleDeleteUserBtn = (id: any) => {
+    deleteUserRef.current = id;
+    onOpenAlert();
+  };
+
+  const deleteUser = async () => {
+    if (deleteUserRef.current) {
+      const response = await inspectionApi.delete(
+        `/users/${deleteUserRef.current}`
+      );
+
+      if (response.status < 200 || response.status > 299) {
+        toast({
+          title: response.data.message || "Couldn't delete user",
+          status: "error",
+          duration: 4000,
+        });
+        onCloseAlert();
+        return;
+      }
+
+      toast({
+        title: "User deleted successfully",
+        status: "success",
+        duration: 4000,
+      });
+      await getAllUsers();
+      onCloseAlert();
+    }
+  };
 
   return (
     <PageLayout
@@ -144,7 +243,9 @@ const Users = () => {
                       >
                         Edit
                       </MenuItem>
-                      <MenuItem>Delete</MenuItem>
+                      <MenuItem onClick={() => handleDeleteUserBtn(user.id)}>
+                        Delete
+                      </MenuItem>
                     </MenuList>
                   </Menu>
                 </Grid>
@@ -205,6 +306,7 @@ const Users = () => {
                 <FormInput
                   label="Password"
                   id="password"
+                  type="password"
                   placeholder="Enter password here"
                   {...register("password", {
                     required: !isEditing ? "Password is required" : false,
@@ -216,11 +318,42 @@ const Users = () => {
             </form>
           </ModalBody>
           <ModalFooter gap={3}>
-            <ButtonPrimary type="submit" form="user_form">Submit</ButtonPrimary>
+            <ButtonPrimary
+              type="submit"
+              form="user_form"
+              isLoading={submitting}
+              loadingText="Submitting"
+            >
+              Submit
+            </ButtonPrimary>
             <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
           </ModalFooter>
         </ModalContent>
       </Modal>
+      <AlertDialog
+        isOpen={isOpenAlert}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
+              Delete User
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+            <AlertDialogFooter gap={3}>
+              <Button ref={cancelRef} onClick={onCloseAlert}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={deleteUser}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </PageLayout>
   );
 };

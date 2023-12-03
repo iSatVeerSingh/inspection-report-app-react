@@ -6,6 +6,7 @@ use App\Http\Resources\UserCollection;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
@@ -39,7 +40,7 @@ class UserController extends Controller
     {
         $validated = $request->validate([
             'name' => 'sometimes|required',
-            'email' => 'sometimes|email|required|unique:users,email',
+            'email' => 'sometimes|required|email|unique:users,email',
             'phone' => 'sometimes|required',
             'password' => 'sometimes|required',
             'role' => 'sometimes|in:Inspector,Admin,Owner'
@@ -47,11 +48,16 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return new UserResource($user);
+        return response()->json(['message' => 'User updated successfully']);
     }
 
     public function destroy(Request $request, User $user)
     {
+
+        if (Auth::id() === $user['id']) {
+            return response()->json(['message' => "Can not delete yourself"], 400);
+        }
+
         $user->delete();
         return response()->noContent();
     }
