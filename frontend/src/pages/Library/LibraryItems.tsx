@@ -1,31 +1,28 @@
 "use client";
 
-import { Box, Button, Flex, Grid, Heading, Text } from "@chakra-ui/react";
-import PageLayout from "../../Layout/PageLayout";
 import { useEffect, useState } from "react";
-import { libraryApi } from "../../services/api";
-import { Link } from "react-router-dom";
+import PageLayout from "../../Layout/PageLayout";
+import { inspectionApi } from "../../services/api";
+import { LibraryItem } from "../../types";
 import Loading from "../../components/Loading";
+import { Box, Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
+import { Link } from "react-router-dom";
 
 const LibraryItems = () => {
-  const [allItems, setAllItems] = useState<any[]>([]);
-  const [next, setNext] = useState<string | null>(null);
-  const [prev, setPrev] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
-  const [currentPage, setCurrentPage] = useState(1);
+  const [libraryItems, setLibraryItems] = useState<Partial<LibraryItem>[]>([]);
+  const [paginationLinks, setPaginationLinks] = useState<any>(null);
 
   const getLibraryItems = async (url?: string) => {
-    const apiUrl = url || "https://dev.inspectionapp.com/api/library-items";
-    setLoading(true);
-
-    const response = await libraryApi.get(apiUrl);
-    if(response.status !== 200) {
+    setLoading(true)
+    const response = await inspectionApi.get(url || "/library-items");
+    if (response.status !== 200) {
+      setLoading(false);
       return;
     }
-    setAllItems(response.data.data);
-    setNext(response.data.links.next);
-    setPrev(response.data.links.prev);
-    setCurrentPage(response.data.meta.current_page);
+
+    setLibraryItems(response.data.data);
+    setPaginationLinks(response.data.links);
     setLoading(false);
   };
 
@@ -34,67 +31,65 @@ const LibraryItems = () => {
   }, []);
 
   return (
-    <PageLayout title="All Library Items">
+    <PageLayout title="Library Items">
       {loading ? (
         <Loading />
       ) : (
-        <Box>
-          <Grid gap={2} gridTemplateColumns={{ lg: "1fr 1fr" }}>
-            {allItems.map((item: any) => (
-              <Link key={item.id} to={`./${item.id}`}>
-                <Box
-                  bg="main-bg"
-                  p="2"
-                  borderRadius="md"
-                  border="stroke"
-                  minH={{ lg: "120px" }}
-                >
-                  <Flex alignItems={"center"} justifyContent={"space-between"}>
-                    <Text fontSize="xl">{item?.name}</Text>
-                    <Text
-                      fontSize="md"
-                      bg={"nav-bg"}
-                      px={4}
-                      borderRadius={4}
-                      color={"rich-black"}
-                    >
-                      {item?.category}
-                    </Text>
-                  </Flex>
-                  <Box>
-                    <Text>
-                      Created:-
-                      {new Date(item?.created_at).toLocaleDateString()}
-                    </Text>
-                    <Text color="main-text">
-                      <Text as="span" fontWeight={"bold"}>
-                        Item Summary:-
-                      </Text>{" "}
-                      {item?.summary || "This item has no summary"}
-                    </Text>
-                  </Box>
-                </Box>
-              </Link>
-            ))}
-          </Grid>
-          <Flex justifyContent={"space-between"} mt={3} alignItems={"center"}>
-            <Button
-              isDisabled={!prev}
-              variant={"outline"}
-              onClick={() => getLibraryItems(prev!)}
-            >
-              Prev
-            </Button>
-            <Text>Page: {currentPage}</Text>
-            <Button
-              isDisabled={!next}
-              variant={"outline"}
-              onClick={() => getLibraryItems(next!)}
-            >
-              Next
-            </Button>
-          </Flex>
-        </Box>
+        <>
+          <Box>
+            {libraryItems.length !== 0 ? (
+              <Grid gap={2}>
+                {libraryItems.map((item) => (
+                  <Link key={item.id} to={"./" + item.id}>
+                    <GridItem bg={"main-bg"} p={2} borderRadius={4}>
+                      <Flex
+                        gap={2}
+                        alignItems={"center"}
+                        justifyContent={"space-between"}
+                      >
+                        <Text fontSize={"xl"}>{item.name}</Text>
+                        <Text>Updated At:- {item.updated_at}</Text>
+                      </Flex>
+                      <Text
+                        bg={"app-bg"}
+                        px={2}
+                        borderRadius={3}
+                        w={"min-content"}
+                      >
+                        {item.category}
+                      </Text>
+                      <Text color={"main-text"}>
+                        {item.summary
+                          ? item.summary.length > 230
+                            ? item.summary.slice(0, 230) + "..."
+                            : item.summary
+                          : "No Summary"}
+                      </Text>
+                    </GridItem>
+                  </Link>
+                ))}
+              </Grid>
+            ) : (
+              "No items found"
+            )}
+          </Box>
+          {paginationLinks && (
+            <Flex mt={3} justifyContent={"space-between"}>
+              <Button
+                isDisabled={!paginationLinks.prev}
+                onClick={() => getLibraryItems(paginationLinks.prev)}
+              >
+                Prev
+              </Button>
+              <Button
+                isDisabled={!paginationLinks.next}
+                onClick={() => getLibraryItems(paginationLinks.next)}
+              >
+                Next
+              </Button>
+            </Flex>
+          )}
+        </>
       )}
     </PageLayout>
   );

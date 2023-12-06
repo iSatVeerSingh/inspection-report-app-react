@@ -177,8 +177,8 @@ const Users = () => {
         status: "success",
         duration: 4000,
       });
-      await getAllUsers();
       onCloseAlert();
+      await getAllUsers();
     }
   };
 

@@ -40,7 +40,8 @@ export type Customer = {
 
 export type LibraryItem = {
   id: number;
-  category: number;
+  category_id?: number;
+  category: string;
   name: string;
   openingParagraph: string;
   closingParagraph: string;

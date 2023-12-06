@@ -1,3 +1,6 @@
+export const USERS = '/users';
+export const LIBRARY_ITEMS = "/library-items"
+export const LIBRARY_ITEM_VIEW = LIBRARY_ITEMS + "/:itemId"
 export const ROOT = "/";
 export const JOBS = "/jobs";
 export const JOBS_DETAILS = "/jobs/:jobNumber";
@@ -9,7 +12,5 @@ export const ALL_ADDED_NOTES = JOB_SUMMARY + "/all-notes";
 export const ALL_ADDED_ITEMS = JOB_SUMMARY + "/all-items";
 export const ITEM_PREVIEW = ALL_ADDED_ITEMS + "/:itemId";
 export const REPORT_PREVIEW  = JOB_SUMMARY + "/preview";
-export const LIBRARY_ITEMS = "/library-items"
-export const LIBRARY_ITEM_VIEW_EDIT = LIBRARY_ITEMS + "/:itemId"
+// export const LIBRARY_ITEM_VIEW_EDIT = LIBRARY_ITEMS + "/:itemId"
 export const NEW_LIBRARY_ITEM = LIBRARY_ITEMS + "/new"
-export const USERS = '/users'

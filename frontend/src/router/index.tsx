@@ -16,6 +16,8 @@ import ItemPreview from "../pages/Jobs/ItemPreview";
 import InspectionItemLayout from "../Layout/InspectionItemLayout";
 import ReportPreview from "../pages/Jobs/ReportPreview";
 import Users from "../pages/Users/Users";
+import LibraryItems from "../pages/Library/LibraryItems";
+import LibraryItem from "../pages/Library/LibraryItem";
 
 const router = createBrowserRouter([
   {
@@ -73,6 +75,14 @@ const router = createBrowserRouter([
       {
         path: Routes.USERS,
         element: <Users />,
+      },
+      {
+        path: Routes.LIBRARY_ITEMS,
+        element: <LibraryItems />,
+      },
+      {
+        path: Routes.LIBRARY_ITEM_VIEW,
+        element: <LibraryItem />,
       },
     ],
   },
