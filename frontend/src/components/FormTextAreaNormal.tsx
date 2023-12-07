@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormControlProps,
   FormErrorMessage,
   FormLabel,
   InputProps,
@@ -7,27 +8,26 @@ import {
 } from "@chakra-ui/react";
 import React, { Ref } from "react";
 
-type FormInputProps = InputProps & {
-  label?: string;
-  inputError?: string;
-  required?: boolean;
-};
+type FormInputProps = InputProps &
+  FormControlProps & {
+    inputError?: string;
+  };
 
-const FormTextArea = (
-  { label, name, placeholder, inputError, required }: FormInputProps,
+const FormTextAreaNormal = (
+  { label, name, placeholder, inputError, id }: FormInputProps,
   ref: Ref<HTMLTextAreaElement>
 ) => {
   return (
-    <FormControl isInvalid={inputError !== undefined} isRequired={required}>
+    <FormControl isInvalid={!!inputError}>
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0">
+        <FormLabel color="rich-black" fontSize="xl" htmlFor={id} mb="0">
           {label}
         </FormLabel>
       )}
       <Textarea
         name={name}
+        id={id}
         placeholder={placeholder}
-        required={required}
         borderColor="blue-primary"
         ref={ref}
       />
@@ -36,4 +36,4 @@ const FormTextArea = (
   );
 };
 
-export default React.forwardRef(FormTextArea);
+export default React.forwardRef(FormTextAreaNormal);

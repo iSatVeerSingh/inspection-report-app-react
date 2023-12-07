@@ -4,6 +4,7 @@ import "../styles/libraryEditor.css";
 import {
   Box,
   Flex,
+  FormControl,
   FormErrorMessage,
   FormLabel,
   IconButton,
@@ -18,6 +19,7 @@ import { ContentEditable } from "@lexical/react/LexicalContentEditable";
 import LexicalErrorBoundary from "@lexical/react/LexicalErrorBoundary";
 import { useLexicalComposerContext } from "@lexical/react/LexicalComposerContext";
 import { ClearEditorPlugin } from "@lexical/react/LexicalClearEditorPlugin";
+import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import {
   $getSelection,
   $isRangeSelection,
@@ -32,12 +34,11 @@ import {
   StrikethroughIcon,
   UnderlineIcon,
 } from "../icons";
-import React, {
+import {
+  forwardRef,
   useCallback,
   useEffect,
   useImperativeHandle,
-  forwardRef,
-  useRef,
   useState,
 } from "react";
 
@@ -107,25 +108,26 @@ const ToolbarPlugin = () => {
 };
 
 type EditorProps = {
-  initialState?: any;
   label?: string;
   inputError?: string;
+  editorState?: any;
+  setEditorState: (state: any) => void;
 };
 
-const CustomClearCommand = forwardRef((_props, ref) => {
-  const [editor] = useLexicalComposerContext();
+// const CustomClearCommand = forwardRef((_props, ref) => {
+//   const [editor] = useLexicalComposerContext();
 
-  useImperativeHandle(ref, ()=> ({
-    clearEditor() {
-      editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-    }
-  }))
+//   useImperativeHandle(ref, () => ({
+//     clearEditor() {
+//       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
+//     },
+//   }));
 
-  return null
-});
+//   return null;
+// });
 
 const RichEditor = (
-  { initialState, label, inputError }: EditorProps,
+  { editorState, setEditorState, label, inputError }: EditorProps,
   ref: any
 ) => {
   const editorConfig: InitialConfigType = {
@@ -142,18 +144,16 @@ const RichEditor = (
     onError: (error: Error) => {
       console.log(error);
     },
-    editorState: initialState,
+    editorState: editorState,
   };
-
-  const editorRef = ref || useRef({});
 
   const onChange = (state: EditorState) => {
     const jsonState = state.toJSON();
-    editorRef!.current.state = jsonState;
+    setEditorState(jsonState);
   };
 
   return (
-    <Box bg={"main-bg"}>
+    <FormControl bg={"main-bg"} isInvalid={!!inputError}>
       {label && (
         <FormLabel color="rich-black" fontSize="xl" mb="0">
           {label}
@@ -181,11 +181,11 @@ const RichEditor = (
         </Box>
         <OnChangePlugin onChange={onChange} />
         <ClearEditorPlugin />
-        <CustomClearCommand ref={editorRef} />
+        <EditorRefPlugin editorRef={ref} />
       </LexicalComposer>
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
-    </Box>
+    </FormControl>
   );
 };
 
-export default React.forwardRef(RichEditor);
+export default forwardRef(RichEditor);

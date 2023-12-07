@@ -18,6 +18,7 @@ import ReportPreview from "../pages/Jobs/ReportPreview";
 import Users from "../pages/Users/Users";
 import LibraryItems from "../pages/Library/LibraryItems";
 import LibraryItem from "../pages/Library/LibraryItem";
+import NewLibraryItem from "../pages/Library/NewLibraryItem";
 
 const router = createBrowserRouter([
   {
@@ -50,10 +51,10 @@ const router = createBrowserRouter([
         path: Routes.ALL_ADDED_NOTES,
         element: <AllAddedNotes />,
       },
-      {
-        path: Routes.ADD_INSPECTION_ITEMS,
-        element: <AddInspectionItems />,
-      },
+      // {
+      //   path: Routes.ADD_INSPECTION_ITEMS,
+      //   element: <AddInspectionItems />,
+      // },
       {
         path: Routes.ALL_ADDED_ITEMS,
         element: <InspectionItemLayout />,
@@ -83,6 +84,10 @@ const router = createBrowserRouter([
       {
         path: Routes.LIBRARY_ITEM_VIEW,
         element: <LibraryItem />,
+      },
+      {
+        path: Routes.NEW_LIBRARY_ITEM,
+        element: <NewLibraryItem />,
       },
     ],
   },

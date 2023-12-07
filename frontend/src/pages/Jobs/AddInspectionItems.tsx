@@ -15,7 +15,7 @@ import PageLayout from "../../Layout/PageLayout";
 import FormInput from "../../components/FormInput";
 import FormSelect from "../../components/FormSelect";
 import FileInput from "../../components/FileInput";
-import FormTextArea from "../../components/FormTextArea";
+import FormTextArea from "../../components/FormTextAreaNormal";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import {

@@ -2,7 +2,7 @@ import { Box, Flex, Heading, Text, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
-import FormTextArea from "../../components/FormTextArea";
+import FormTextArea from "../../components/FormTextAreaNormal";
 import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
 import DatalistInput from "../../components/DatalistInput";

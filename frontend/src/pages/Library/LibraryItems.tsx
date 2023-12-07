@@ -6,15 +6,17 @@ import { inspectionApi } from "../../services/api";
 import { LibraryItem } from "../../types";
 import Loading from "../../components/Loading";
 import { Box, Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 
 const LibraryItems = () => {
   const [loading, setLoading] = useState(true);
   const [libraryItems, setLibraryItems] = useState<Partial<LibraryItem>[]>([]);
   const [paginationLinks, setPaginationLinks] = useState<any>(null);
 
+  const navigate = useNavigate();
+
   const getLibraryItems = async (url?: string) => {
-    setLoading(true)
+    setLoading(true);
     const response = await inspectionApi.get(url || "/library-items");
     if (response.status !== 200) {
       setLoading(false);
@@ -31,7 +33,11 @@ const LibraryItems = () => {
   }, []);
 
   return (
-    <PageLayout title="Library Items">
+    <PageLayout
+      title="Library Items"
+      titleBtn="New Item"
+      onBtnClick={() => navigate("./new")}
+    >
       {loading ? (
         <Loading />
       ) : (
@@ -54,7 +60,7 @@ const LibraryItems = () => {
                         bg={"app-bg"}
                         px={2}
                         borderRadius={3}
-                        w={"min-content"}
+                        w={"max-content"}
                       >
                         {item.category}
                       </Text>

@@ -1,5 +1,6 @@
 import {
   FormControl,
+  FormControlProps,
   FormErrorMessage,
   FormLabel,
   Input,
@@ -8,30 +9,20 @@ import {
 } from "@chakra-ui/react";
 import React from "react";
 
-type FileInputProps = InputProps & {
-  label?: string;
-  inputError?: string;
-  required?: boolean;
-  multiple?: boolean;
-  subLabel?: string;
-};
+type FileInputProps = InputProps &
+  FormControlProps & {
+    inputError?: string;
+    subLabel?: string;
+  };
 
-const FileInput = (
-  {
-    label,
-    name,
-    placeholder,
-    inputError,
-    required,
-    multiple,
-    subLabel,
-  }: FileInputProps,
+const FileInputNormal = (
+  { label, name, placeholder,id, inputError, multiple, subLabel, accept }: FileInputProps,
   ref: React.Ref<HTMLInputElement>
 ) => {
   return (
-    <FormControl isInvalid={inputError !== undefined} isRequired={required}>
+    <FormControl isInvalid={!!inputError}>
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0">
+        <FormLabel color="rich-black" fontSize="xl" mb="0" htmlFor={id}>
           {label}
           {subLabel && (
             <Text as="span" color={"main-text"} fontSize={"sm"} ml={3}>
@@ -42,13 +33,14 @@ const FileInput = (
       )}
       <Input
         type="file"
+        id={id}
         name={name}
         placeholder={placeholder}
-        required={required}
         borderColor="blue-primary"
         px={0}
         multiple={multiple}
         cursor={"pointer"}
+        accept={accept}
         ref={ref}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
@@ -56,4 +48,4 @@ const FileInput = (
   );
 };
 
-export default React.forwardRef(FileInput);
+export default React.forwardRef(FileInputNormal);

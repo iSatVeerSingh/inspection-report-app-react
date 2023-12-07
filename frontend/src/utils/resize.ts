@@ -1,43 +1,34 @@
-export const getResizedBase64Images = async (images: File[]) => {
+export const getResizedImagesBase64Main = async (imageFiles: File[]) => {
   const resizedImages = [];
-  const imagesPromises = [];
-  for (let i = 0; i < images.length; i++) {
-    const imagefile = images[i];
-    const bitmap = await createImageBitmap(imagefile);
-    if (bitmap.width > 300 || bitmap.height > 300) {
-      const resize = getResizedImage(bitmap);
-      resizedImages.push(resize);
+  const base64Promises = [];
+
+  for (let i = 0; i < imageFiles.length; i++) {
+    const bitmap = await createImageBitmap(imageFiles[i]);
+    if (bitmap.width > 400 || bitmap.height > 400) {
+      const maxwidth = 400;
+      const scaleSize = maxwidth / bitmap.width;
+      const maxheight = bitmap.height * scaleSize;
+
+      const canvas = document.createElement("canvas");
+      canvas.width = maxwidth;
+      canvas.height = maxheight;
+
+      const ctx = canvas.getContext("2d")!;
+      ctx.imageSmoothingEnabled = true;
+      ctx.imageSmoothingQuality = "high";
+      ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
+
+      const base64Str = ctx.canvas.toDataURL("image/jpeg", 0.9);
+      resizedImages.push(base64Str);
     } else {
-      const imagePromise = getBase64(imagefile);
-      imagesPromises.push(imagePromise);
+      base64Promises.push(getBase64String(imageFiles[i]));
     }
   }
 
-  return [...resizedImages, ...(await Promise.all(imagesPromises))];
+  return [...resizedImages, await Promise.all(base64Promises)];
 };
 
-const getResizedImage = (bitmap: ImageBitmap) => {
-  const { width, height } = bitmap;
-
-  const maxwidth = 300;
-  const scaleSize = maxwidth / width;
-  const maxheight = height * scaleSize;
-
-  const canvas = document.createElement("canvas");
-  canvas.width = maxwidth;
-  canvas.height = maxheight;
-
-  const ctx = canvas.getContext("2d");
-  ctx!.imageSmoothingEnabled = true;
-  ctx!.imageSmoothingQuality = "high";
-  ctx!.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
-
-  const imgStr = ctx?.canvas.toDataURL("image/jpeg", 0.9);
-
-  return imgStr;
-};
-
-const getBase64 = async (imgBlob: Blob | File) => {
+const getBase64String = async (imgBlob: Blob | File) => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(imgBlob);

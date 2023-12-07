@@ -18,7 +18,7 @@ import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate, useParams } from "react-router-dom";
-import FormTextArea from "../../components/FormTextArea";
+import FormTextArea from "../../components/FormTextAreaNormal";
 import { useEffect, useRef, useState } from "react";
 import clientApi from "../../services/clientApi";
 import { Inspection } from "../../types";

@@ -115,11 +115,16 @@ const LibraryItem = () => {
             </Box>
           </Flex>
           {libraryItem?.embeddedImage && (
-            <Image
-              src={libraryItem.embeddedImage}
-              maxW={"400px"}
-              maxH={"400px"}
-            />
+            <Flex gap={1} mb={2} flexDir={"column"}>
+              <Text fontSize={"lg"} minW={"150px"}>
+                Embedded Image
+              </Text>
+              <Image
+                src={libraryItem.embeddedImage}
+                maxW={"400px"}
+                maxH={"400px"}
+              />
+            </Flex>
           )}
           <Flex gap={1} mb={2} flexDir={"column"}>
             <Text fontSize={"lg"} minW={"150px"}>

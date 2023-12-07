@@ -2,7 +2,7 @@ import { Box, Grid, Flex, GridItem, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import FormInput from "../../components/FormInput";
 import FormSelect from "../../components/FormSelect";
-import FormTextArea from "../../components/FormTextArea";
+import FormTextArea from "../../components/FormTextAreaNormal";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import { useNavigate } from "react-router-dom";

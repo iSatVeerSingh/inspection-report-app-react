@@ -79,6 +79,7 @@ export const getParagraphDataFromEditor = (
 ) => {
   const completeParagraph: any[] = [];
   if (
+    !editorState ||
     editorState.root === undefined ||
     editorState.root.children === undefined
   ) {
