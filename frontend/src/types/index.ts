@@ -45,7 +45,7 @@ export type LibraryItem = {
   name: string;
   openingParagraph: string;
   closingParagraph: string;
-  embeddedImage?: string;
+  embeddedImage?: string | null;
   summary?: string;
   created_at?: string;
   updated_at?: string;

@@ -23,7 +23,6 @@ import { EditorRefPlugin } from "@lexical/react/LexicalEditorRefPlugin";
 import {
   $getSelection,
   $isRangeSelection,
-  CLEAR_EDITOR_COMMAND,
   EditorState,
   FORMAT_TEXT_COMMAND,
 } from "lexical";
@@ -34,13 +33,7 @@ import {
   StrikethroughIcon,
   UnderlineIcon,
 } from "../icons";
-import {
-  forwardRef,
-  useCallback,
-  useEffect,
-  useImperativeHandle,
-  useState,
-} from "react";
+import { forwardRef, useCallback, useEffect, useState } from "react";
 
 const ToolbarPlugin = () => {
   const [editor] = useLexicalComposerContext();
@@ -114,18 +107,6 @@ type EditorProps = {
   setEditorState: (state: any) => void;
 };
 
-// const CustomClearCommand = forwardRef((_props, ref) => {
-//   const [editor] = useLexicalComposerContext();
-
-//   useImperativeHandle(ref, () => ({
-//     clearEditor() {
-//       editor.dispatchCommand(CLEAR_EDITOR_COMMAND, undefined);
-//     },
-//   }));
-
-//   return null;
-// });
-
 const RichEditor = (
   { editorState, setEditorState, label, inputError }: EditorProps,
   ref: any
@@ -153,7 +134,10 @@ const RichEditor = (
   };
 
   return (
-    <FormControl bg={"main-bg"} isInvalid={!!inputError}>
+    <FormControl
+      bg={"main-bg"}
+      isInvalid={inputError !== undefined && inputError !== ""}
+    >
       {label && (
         <FormLabel color="rich-black" fontSize="xl" mb="0">
           {label}

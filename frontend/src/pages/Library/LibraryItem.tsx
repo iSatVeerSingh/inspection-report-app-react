@@ -8,6 +8,7 @@ import { inspectionApi } from "../../services/api";
 import { LibraryItem as LibraryItemType } from "../../types";
 import Loading from "../../components/Loading";
 import { getItemPargarph } from "../../utils/itemParagraph";
+import LibraryItemForm from "../../components/LibraryItemForm";
 
 const ParagraphText = ({ paragraph }: { paragraph: string }) => {
   const parsedText = getItemPargarph(paragraph);
@@ -45,6 +46,7 @@ const ParagraphText = ({ paragraph }: { paragraph: string }) => {
 
 const LibraryItem = () => {
   const [loading, setLoading] = useState(true);
+  const [isEditing, setIsEditing] = useState(false);
   const { itemId } = useParams();
   const [libraryItem, setLibraryItem] = useState<LibraryItemType | null>(null);
 
@@ -64,77 +66,90 @@ const LibraryItem = () => {
   }, []);
 
   return (
-    <PageLayout title="Library Item">
+    <PageLayout
+      title="Library Item"
+      titleBtn="Edit"
+      onBtnClick={() => setIsEditing(true)}
+    >
       {loading ? (
         <Loading />
       ) : (
-        <Box border={"stroke"} bg={"main-bg"} borderRadius={4} p={3}>
-          <Flex gap={3} alignItems={"center"} mb={2}>
-            <Text fontSize={"lg"} minW={"150px"}>
-              Name
-            </Text>
-            <Text bg={"app-bg"} px={2} borderRadius={3}>
-              {libraryItem?.name}
-            </Text>
-          </Flex>
-          <Flex gap={3} alignItems={"center"} mb={2}>
-            <Text fontSize={"lg"} minW={"150px"}>
-              Category
-            </Text>
-            <Text bg={"app-bg"} px={2} borderRadius={3}>
-              {libraryItem?.category}
-            </Text>
-          </Flex>
-          <Flex gap={3} alignItems={"center"} mb={2}>
-            <Text fontSize={"lg"} minW={"150px"}>
-              Updated At
-            </Text>
-            <Text bg={"app-bg"} px={2} borderRadius={3}>
-              {libraryItem?.updated_at}
-            </Text>
-          </Flex>
+        <>
+          {isEditing ? (
+            <LibraryItemForm
+              isEditing={isEditing}
+              libraryItem={libraryItem as LibraryItemType}
+            />
+          ) : (
+            <Box border={"stroke"} bg={"main-bg"} borderRadius={4} p={3}>
+              <Flex gap={3} alignItems={"center"} mb={2}>
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Name
+                </Text>
+                <Text bg={"app-bg"} px={2} borderRadius={3}>
+                  {libraryItem?.name}
+                </Text>
+              </Flex>
+              <Flex gap={3} alignItems={"center"} mb={2}>
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Category
+                </Text>
+                <Text bg={"app-bg"} px={2} borderRadius={3}>
+                  {libraryItem?.category}
+                </Text>
+              </Flex>
+              <Flex gap={3} alignItems={"center"} mb={2}>
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Updated At
+                </Text>
+                <Text bg={"app-bg"} px={2} borderRadius={3}>
+                  {libraryItem?.updated_at}
+                </Text>
+              </Flex>
 
-          <Flex
-            gap={libraryItem?.summary ? 1 : 3}
-            mb={2}
-            flexDir={libraryItem?.summary ? "column" : "row"}
-          >
-            <Text fontSize={"lg"} minW={"150px"}>
-              Summary
-            </Text>
-            <Text bg={"app-bg"} px={2} borderRadius={3}>
-              {libraryItem?.summary ? libraryItem.summary : "N/A"}
-            </Text>
-          </Flex>
-          <Flex gap={1} mb={2} flexDir={"column"}>
-            <Text fontSize={"lg"} minW={"150px"}>
-              Opening Paragraph
-            </Text>
-            <Box bg={"app-bg"} px={2} borderRadius={3}>
-              <ParagraphText paragraph={libraryItem?.openingParagraph!} />
+              <Flex
+                gap={libraryItem?.summary ? 1 : 3}
+                mb={2}
+                flexDir={libraryItem?.summary ? "column" : "row"}
+              >
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Summary
+                </Text>
+                <Text bg={"app-bg"} px={2} borderRadius={3}>
+                  {libraryItem?.summary ? libraryItem.summary : "N/A"}
+                </Text>
+              </Flex>
+              <Flex gap={1} mb={2} flexDir={"column"}>
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Opening Paragraph
+                </Text>
+                <Box bg={"app-bg"} px={2} borderRadius={3}>
+                  <ParagraphText paragraph={libraryItem?.openingParagraph!} />
+                </Box>
+              </Flex>
+              {libraryItem?.embeddedImage && (
+                <Flex gap={1} mb={2} flexDir={"column"}>
+                  <Text fontSize={"lg"} minW={"150px"}>
+                    Embedded Image
+                  </Text>
+                  <Image
+                    src={libraryItem.embeddedImage}
+                    maxW={"400px"}
+                    maxH={"400px"}
+                  />
+                </Flex>
+              )}
+              <Flex gap={1} mb={2} flexDir={"column"}>
+                <Text fontSize={"lg"} minW={"150px"}>
+                  Closing Paragraph
+                </Text>
+                <Box bg={"app-bg"} px={2} borderRadius={3}>
+                  <ParagraphText paragraph={libraryItem?.closingParagraph!} />
+                </Box>
+              </Flex>
             </Box>
-          </Flex>
-          {libraryItem?.embeddedImage && (
-            <Flex gap={1} mb={2} flexDir={"column"}>
-              <Text fontSize={"lg"} minW={"150px"}>
-                Embedded Image
-              </Text>
-              <Image
-                src={libraryItem.embeddedImage}
-                maxW={"400px"}
-                maxH={"400px"}
-              />
-            </Flex>
           )}
-          <Flex gap={1} mb={2} flexDir={"column"}>
-            <Text fontSize={"lg"} minW={"150px"}>
-              Closing Paragraph
-            </Text>
-            <Box bg={"app-bg"} px={2} borderRadius={3}>
-              <ParagraphText paragraph={libraryItem?.closingParagraph!} />
-            </Box>
-          </Flex>
-        </Box>
+        </>
       )}
     </PageLayout>
   );
