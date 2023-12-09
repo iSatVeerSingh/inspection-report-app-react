@@ -7,7 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Gate;
 use Symfony\Component\HttpFoundation\Response;
 
-class EnsureUserIsOwner
+class EnsureUserIsOwnerOrAdmin
 {
     /**
      * Handle an incoming request.
@@ -16,7 +16,7 @@ class EnsureUserIsOwner
      */
     public function handle(Request $request, Closure $next): Response
     {
-        Gate::authorize('is-owner');
+        Gate::authorize('is-owner-or-admin');
         return $next($request);
     }
 }

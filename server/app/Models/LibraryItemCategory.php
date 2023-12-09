@@ -12,8 +12,13 @@ class LibraryItemCategory extends Model
     use HasFactory;
 
     protected $fillable = [
-        "name"
+        'name',
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('d-m-Y h:i A');
+    }
 
     /**
      * Get all of the libraryItems for the LibraryItemCategory
@@ -23,10 +28,5 @@ class LibraryItemCategory extends Model
     public function libraryItems(): HasMany
     {
         return $this->hasMany(LibraryItem::class, 'category_id');
-    }
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('d-m-Y h:i A');
     }
 }

@@ -6,29 +6,18 @@ use App\Http\Resources\LibraryItemCollection;
 use App\Http\Resources\LibraryItemResource;
 use App\Models\LibraryItem;
 use Illuminate\Http\Request;
-use Spatie\QueryBuilder\AllowedFilter;
-use Spatie\QueryBuilder\QueryBuilder;
+use Illuminate\Http\Response;
 
 class LibraryItemController extends Controller
 {
     public function index(Request $request)
     {
-        if ($request->query('install') === 'true') {
-            $allItems = new LibraryItemCollection(LibraryItem::all());
-            $jsonData = $allItems->toJson();
-
-            $contentLength = strlen($jsonData);
-
-            return response($jsonData)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
-        }
-
-        $libraryItems = QueryBuilder::for(LibraryItem::class)
-            ->allowedFilters(AllowedFilter::exact('category', 'category_id'))
-            ->defaultSort('-updated_at')
-            ->allowedSorts(['name', 'updated_at'])
-            ->paginate();
-
-        return new LibraryItemCollection($libraryItems);
+        return new LibraryItemCollection(
+            LibraryItem::select('id', 'name', 'category_id', 'summary', 'created_at', 'updated_at')
+                ->orderByDesc('updated_at')
+                ->simplePaginate()
+                ->withPath('/library-items')
+        );
     }
 
     public function show(Request $request, LibraryItem $libraryItem)
@@ -39,38 +28,39 @@ class LibraryItemController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category' => 'required|max:255',
+            'category_id' => 'required',
             'name' => 'required|max:255',
+            'summary' => 'required',
             'openingParagraph' => 'required',
             'closingParagraph' => 'required',
-            'embeddedImage' => 'sometimes|required',
-            'summary' => 'sometimes|required'
+            'embeddedImage' => 'sometimes|required'
         ]);
 
         $libraryItem = new LibraryItem($validated);
         $libraryItem->save();
 
-        return new LibraryItemResource($libraryItem);
+        return response()->json(['message' => 'Library Item created successfully'], Response::HTTP_CREATED);
     }
 
     public function update(Request $request, LibraryItem $libraryItem)
     {
         $validated = $request->validate([
-            'category' => 'sometimes|required|max:255',
-            'name' => 'sometimes|required',
+            'category_id' => 'sometimes:required',
+            'name' => 'sometimes|required|max:255',
+            'summary' => 'sometimes|required',
             'openingParagraph' => 'sometimes|required',
             'closingParagraph' => 'sometimes|required',
-            'embeddedImage' => 'sometimes|required',
-            'summary' => 'sometimes|required'
+            'embeddedImage' => 'sometimes'
         ]);
 
         $libraryItem->update($validated);
         return new LibraryItemResource($libraryItem);
     }
 
-    public function destroy(Request $request, LibraryItem $libraryItem)
+    public function install(Request $request)
     {
-        $libraryItem->delete();
-        return response()->noContent();
+        $allItems = LibraryItem::all()->toJson();
+        $contentLength = strlen($allItems);
+        return response($allItems)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }
 }

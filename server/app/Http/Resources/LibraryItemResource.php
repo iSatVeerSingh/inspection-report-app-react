@@ -14,6 +14,8 @@ class LibraryItemResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
-        return parent::toArray($request);
+        $data = parent::toArray($request);
+        $data['category'] = $this->category['name'];
+        return $data;
     }
 }

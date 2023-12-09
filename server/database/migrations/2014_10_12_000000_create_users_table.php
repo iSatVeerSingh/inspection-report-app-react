@@ -16,9 +16,9 @@ return new class extends Migration
             $table->uuid('uuid')->unique()->nullable();
             $table->string('name');
             $table->string('email')->unique();
-            $table->string('phone')->nullable();
-            $table->string('password');
+            $table->string('phone')->unique()->nullable();
             $table->enum('role', ['Inspector', 'Admin', 'Owner'])->default('Inspector');
+            $table->string('password');
             $table->rememberToken();
             $table->timestamps();
         });

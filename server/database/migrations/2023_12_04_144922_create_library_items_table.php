@@ -13,12 +13,12 @@ return new class extends Migration
     {
         Schema::create('library_items', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("category_id")->constrained('library_item_categories');
-            $table->string("name");
-            $table->text("summary")->nullable();
-            $table->text("openingParagraph");
-            $table->text("closingParagraph");
-            $table->longText("embeddedImage")->nullable();
+            $table->foreignId('category_id')->constrained('library_item_categories');
+            $table->string('name');
+            $table->string('summary')->nullable();
+            $table->text('openingParagraph');
+            $table->text('closingParagraph');
+            $table->longText('embeddedImage')->nullable();
             $table->timestamps();
         });
     }

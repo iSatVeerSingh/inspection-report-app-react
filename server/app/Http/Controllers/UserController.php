@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\UserCollection;
-use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
@@ -15,50 +15,43 @@ class UserController extends Controller
         return new UserCollection(User::paginate());
     }
 
-    public function show(Request $request, User $user)
-    {
-        return new UserResource($user);
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'phone' => 'required|max:15',
-            'password' => 'required',
-            'role' => 'required|in:Inspector,Admin,Owner'
+            'phone' => 'sometimes|required|max:15',
+            'role' => 'required|in:Inspector,Admin,Owner',
+            'password' => 'required'
         ]);
 
         $user = new User($validated);
         $user->save();
 
-        return new UserResource($user);
+        return response()->json(['message' => 'User created successfully'], Response::HTTP_CREATED);
     }
 
     public function update(Request $request, User $user)
     {
         $validated = $request->validate([
-            'name' => 'sometimes|required',
-            'email' => 'sometimes|required|email|unique:users,email',
-            'phone' => 'sometimes|required',
-            'password' => 'sometimes|required',
-            'role' => 'sometimes|in:Inspector,Admin,Owner'
+            'name' => 'sometimes|required|max:255',
+            'email' => 'sometimes|required|email|max:255|unique:users,email',
+            'phone' => 'sometimes',
+            'role' => 'sometimes|in:Inspector,Admin,Owner',
+            'password' => 'sometimes|required'
         ]);
 
         $user->update($validated);
-
         return response()->json(['message' => 'User updated successfully']);
     }
 
     public function destroy(Request $request, User $user)
     {
-
         if (Auth::id() === $user['id']) {
-            return response()->json(['message' => "Can not delete yourself"], 400);
+            return response()->json(['message' => 'Can not delete yourself'], Response::HTTP_BAD_REQUEST);
         }
 
         $user->delete();
-        return response()->noContent();
+        return response()->json(['message' => 'User deleted successfully']);
     }
 }

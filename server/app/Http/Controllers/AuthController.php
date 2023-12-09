@@ -13,22 +13,22 @@ class AuthController extends Controller
     {
         $validated = $request->validate([
             'email' => 'required|email',
-            'password' => 'required',
+            'password' => 'required'
         ]);
 
-        if (!Auth::attempt($validated)) {
+        if (Auth::attempt($validated)) {
+            $user = User::where('email', $validated['email'])->first();
+            $user->tokens()->delete();
+
             return response()->json([
-                'message' => 'Invalid Credentials',
-            ], Response::HTTP_UNAUTHORIZED);
+                'access_token' => $user->createToken('api_token')->plainTextToken,
+                'token_type' => 'Bearer',
+                'role' => $user['role']
+            ]);
         }
 
-        $user = User::where('email', $validated['email'])->first();
-        $user->tokens()->delete();
-
         return response()->json([
-            'access_token' => $user->createToken('api_token')->plainTextToken,
-            'token_type' => 'Bearer',
-            'role' => $user['role']
-        ]);
+            'message' => 'Invalid Credentials',
+        ], Response::HTTP_UNAUTHORIZED);
     }
 }
