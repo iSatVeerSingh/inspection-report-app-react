@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\InspectionNoteController;
 use App\Http\Controllers\LibraryItemCategoryController;
 use App\Http\Controllers\LibraryItemController;
 use App\Http\Controllers\UserController;
@@ -26,6 +27,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::apiResource('/users', UserController::class)->except(['show'])->middleware(EnsureUserIsOwner::class);
     Route::apiResource('/library-item-categories', LibraryItemCategoryController::class)->except(['show'])->middleware(EnsureUserIsOwnerOrAdmin::class);
     Route::apiResource('/library-items', LibraryItemController::class)->middleware(EnsureUserIsOwnerOrAdmin::class);
+    Route::apiResource('/inspection-notes', InspectionNoteController::class)->except(['show'])->middleware(EnsureUserIsOwnerOrAdmin::class);
     Route::get('/install-items', [LibraryItemController::class, 'install']);
     Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
+    Route::get('/install-inspection-notes', [InspectionNoteController::class, 'install']);
 });
