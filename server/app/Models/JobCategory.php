@@ -20,11 +20,6 @@ class JobCategory extends Model
         'uuid'
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('d-m-Y h:i A');
-    }
-
     /**
      * Get all of the jobs for the JobCategory
      *

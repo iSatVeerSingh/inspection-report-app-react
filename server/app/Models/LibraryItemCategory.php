@@ -15,11 +15,6 @@ class LibraryItemCategory extends Model
         'name',
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('d-m-Y h:i A');
-    }
-
     /**
      * Get all of the libraryItems for the LibraryItemCategory
      *

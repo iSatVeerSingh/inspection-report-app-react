@@ -35,11 +35,6 @@ class Job extends Model
         'completedAt' => 'datetime',
     ];
 
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('d-m-Y h:i A');
-    }
-
     /**
      * Perform any actions required after the model boots.
      *

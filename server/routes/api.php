@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\InspectionNoteController;
+use App\Http\Controllers\JobController;
 use App\Http\Controllers\LibraryItemCategoryController;
 use App\Http\Controllers\LibraryItemController;
 use App\Http\Controllers\UserController;
@@ -31,4 +32,5 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/install-items', [LibraryItemController::class, 'install']);
     Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
     Route::get('/install-inspection-notes', [InspectionNoteController::class, 'install']);
+    Route::get('/install-jobs', [JobController::class, 'install']);
 });

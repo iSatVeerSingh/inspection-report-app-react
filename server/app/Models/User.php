@@ -47,12 +47,6 @@ class User extends Authenticatable
     protected $casts = [
         'password' => 'hashed',
     ];
-
-    protected function serializeDate(DateTimeInterface $date)
-    {
-        return $date->format('d-m-Y h:i A');
-    }
-
     /**
      * Get all of the jobs for the User
      *
