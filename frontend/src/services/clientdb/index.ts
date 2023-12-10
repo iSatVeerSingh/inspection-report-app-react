@@ -2,7 +2,7 @@ import Dexie, { Table } from "dexie";
 import {
   Inspection,
   InspectionNote,
-  JobCategory,
+  // JobCategory,
   Job,
   LibraryItem,
   LibraryItemCategory,
@@ -11,7 +11,7 @@ import {
 export class InspectionDatabase extends Dexie {
   libraryItems!: Table<LibraryItem>;
   libraryItemCategories!: Table<LibraryItemCategory>;
-  jobCategories!: Table<JobCategory>;
+  // jobCategories!: Table<JobCategory>;
   inspectionNotes!: Table<InspectionNote>;
   inspections!: Table<Inspection>;
   jobs!: Table<Job>;
@@ -21,13 +21,13 @@ export class InspectionDatabase extends Dexie {
   constructor() {
     super("inspection-db");
     this.version(1).stores({
-      libraryItems: "++id, category, name, updated_at", // Primary key and indexed props
+      libraryItems: "++id, category_id, name, updated_at", // Primary key and indexed props
       libraryItemCategories: "++id, name",
-      jobCategories: "++id, name",
+      // jobCategories: "++id, name",
       inspectionNotes: "++id, category",
       inspections: "++id, jobNumber, category, date, startDate",
       jobs: "++jobNumber, id, category, startDate",
-      libraryIndex: "++id, item, category",
+      libraryIndex: "++id",
       template: "++id",
     });
   }

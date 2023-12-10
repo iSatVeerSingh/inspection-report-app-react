@@ -18,6 +18,12 @@ import {
   getJobsController,
   getLibIndexController,
   getLibraryNotesController,
+  initInspectionNotesController,
+  initJobsController,
+  initLibraryItemCategoriesController,
+  initLibraryItemsController,
+  initStatusController,
+  initUserController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -26,6 +32,39 @@ declare let self: ServiceWorkerGlobalScope;
 precacheAndRoute(self.__WB_MANIFEST);
 // clean old assets
 cleanupOutdatedCaches();
+
+//Init route
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-status",
+  initStatusController,
+  "GET"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-user",
+  initUserController,
+  "POST"
+);
+
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-library-items",
+  initLibraryItemsController,
+  "POST"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-library-item-categories",
+  initLibraryItemCategoriesController,
+  "POST"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-inspection-notes",
+  initInspectionNotesController,
+  "POST"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-jobs",
+  initJobsController,
+  "POST"
+);
 
 // Jobs routes
 

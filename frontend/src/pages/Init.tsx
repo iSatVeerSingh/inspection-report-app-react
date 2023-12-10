@@ -1,30 +1,28 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
+import { useRef, useState } from "react";
 import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { redirect, useNavigate } from "react-router-dom";
-import { Db } from "../services/clientdb";
-import Dexie from "dexie";
 import { inspectionApi } from "../services/api";
-import { LibraryItem, LibraryItemCategory } from "../types";
-import axios from "axios";
+import clientApi from "../services/clientApi";
 
 export const initLoader = async () => {
-  try {
-    const isExists = await Dexie.exists("inspection-db");
-    if (isExists) {
-      const count = await Db.libraryItems.count();
-      if (count !== 0) {
-        return redirect("/jobs");
-      }
-      return null;
-    }
-    return null;
-  } catch (err) {
+  const user = localStorage.getItem("user");
+  if (!user) {
     return redirect("/login");
   }
+
+  const response = await clientApi.get("/init-status");
+  if (response.status !== 200) {
+    return redirect("/login");
+  }
+
+  if (response.data.message === "Done") {
+    return redirect("/jobs");
+  }
+  return null;
 };
 
 const Init = () => {
@@ -34,118 +32,119 @@ const Init = () => {
   const [progressBar, setProgressBar] = useState(0);
   const [installing, setInstalling] = useState(false);
   const [installed, setInstalled] = useState(false);
-  const [error, setError] = useState(false);
+  const [error, setError] = useState<any>(null);
 
   const handleInstall: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
     setInstalling(true);
-  };
 
-  useEffect(() => {
-    const installApp = async () => {
-      statusRef.current!.textContent = "Fetching library items...";
-      try {
-        const response = await inspectionApi.get(
-          "/library-items?install=true",
-          {
-            onDownloadProgress: (e) => {
-              const progress = Math.floor(e.progress! * 100);
-              setProgressBar(progress);
-            },
-          }
-        );
-
-        if (response.status !== 200) {
-          setError(true);
-          setInstalling(false);
-          return;
-        }
-
-        const allItems = response.data as LibraryItem[];
-
-        statusRef.current!.textContent = "Setting up local database...";
-        for (let i = 0; i < allItems.length; i++) {
-          const item = allItems[i];
-
-          await Db.libraryItems.add(item);
-
-          await Db.libraryIndex.add({
-            id: item.id,
-            category: item.category,
-            name: item.name,
-          });
-
-          const progress = Math.floor((i / allItems.length) * 100);
-          setProgressBar(progress);
-        }
-
-        // setup categories
-        const itemCategoryResponse = await inspectionApi.get(
-          "/item-categories"
-        );
-
-        if (itemCategoryResponse.status !== 200) {
-          setError(true);
-          setInstalling(false);
-          return;
-        }
-
-        const allCategories = itemCategoryResponse.data
-          .data as LibraryItemCategory[];
-
-        await Db.libraryItemCategories.bulkAdd(allCategories);
-
-        // Inspection notes
-
-        statusRef.current!.textContent = "Setting up inspection notes...";
-        const notesResponse = await inspectionApi.get("/inspection-notes");
-        if (notesResponse.status !== 200) {
-          setError(true);
-          setInstalling(false);
-          return;
-        }
-
-        await Db.inspectionNotes.bulkAdd(notesResponse.data.data);
-
-        statusRef.current!.textContent = "Setting up initial jobs...";
-        const jobCategoryResponse = await inspectionApi.get("/job-categories");
-        if (jobCategoryResponse.status !== 200) {
-          setError(true);
-          setInstalling(false);
-          return;
-        }
-
-        await Db.jobCategories.bulkAdd(jobCategoryResponse.data.data);
-
-        const jobsResponse = await inspectionApi.get("/jobs");
-        if (jobsResponse.status !== 200) {
-          setError(true);
-          setInstalling(false);
-          return;
-        }
-
-        Db.jobs.bulkAdd(jobsResponse.data.data);
-
-        const templateResponse = await axios.get("/report-template.json");
-        if (templateResponse.status === 200) {
-          await Db.template.add({
-            ...templateResponse.data,
-            id: "defaultTemplate",
-          });
-        }
-
-        setInstalled(true);
-        setInstalling(false);
-      } catch (err) {
-        setError(true);
-        setInstalling(false);
-      }
-    };
-
-    if (installing) {
-      installApp();
+    const storage = navigator.storage;
+    if (storage) {
+      await storage.persist();
     }
-  }, [installing]);
+
+    const user = localStorage.getItem("user");
+    if (user) {
+      const userResponse = await clientApi.post("/init-user", user);
+      if (userResponse.status !== 200) {
+        navigate("/login");
+        return;
+      }
+    } else {
+      navigate("/login");
+    }
+
+    statusRef.current!.textContent = "Fetching Library items...";
+    const libraryItemResponse = await inspectionApi.get("/install-items", {
+      onDownloadProgress: (e) => {
+        const progress = Math.floor(e.progress! * 100);
+        setProgressBar(progress);
+      },
+    });
+
+    if (libraryItemResponse.status !== 200) {
+      setError(libraryItemResponse.data.message);
+      setInstalling(false);
+      return;
+    }
+
+    statusRef.current!.textContent = "Setting up database for library items...";
+
+    const initLibraryResponse = await clientApi.post(
+      "/init-library-items",
+      libraryItemResponse.data
+    );
+    if (initLibraryResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const libItemCategoryResponse = await inspectionApi.get(
+      "/install-item-categories",
+      {
+        onDownloadProgress: (e) => {
+          const progress = Math.floor(e.progress! * 100);
+          setProgressBar(progress);
+        },
+      }
+    );
+    if (libItemCategoryResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const initLibCategory = await clientApi.post(
+      "/init-library-item-categories",
+      libItemCategoryResponse.data
+    );
+    if (initLibCategory.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    statusRef.current!.textContent =
+      "Setting up database for inspection notes...";
+
+    const libInspectionNotesResponse = await inspectionApi.get(
+      "/install-inspection-notes",
+      {
+        onDownloadProgress: (e) => {
+          const progress = Math.floor(e.progress! * 100);
+          setProgressBar(progress);
+        },
+      }
+    );
+    if (libInspectionNotesResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+
+    const initInspectionnotes = await clientApi.post(
+      "/init-inspection-notes",
+      libInspectionNotesResponse.data
+    );
+    if (initInspectionnotes.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    statusRef.current!.textContent = "Setting up database for jobs...";
+    const jobsResponse = await inspectionApi.get("/install-jobs");
+    if (jobsResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const initjobs = await clientApi.post("/init-jobs", jobsResponse.data);
+    if (initjobs.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    setInstalled(true);
+    setInstalling(false);
+  };
 
   const handleGoto = () => {
     navigate("/jobs");

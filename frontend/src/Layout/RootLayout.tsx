@@ -14,7 +14,6 @@ import {
   useNavigate,
 } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import { UserDB } from "../services/clientdb";
 import { GlobalContext } from "../services/context";
 import OfflineModal from "../components/OfflineModal";
 import Sidebar from "./Sidebar";
@@ -23,11 +22,11 @@ import { MenuIcon } from "../icons";
 
 export const rootLoader = async () => {
   try {
-    const user = await UserDB.user.get("user");
+    const user = localStorage.getItem("user");
     if (!user) {
       return redirect("/login");
     }
-    return user;
+    return JSON.parse(user);
   } catch (err) {
     return redirect("/login");
   }

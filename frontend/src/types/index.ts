@@ -20,15 +20,17 @@ export type User = UserForm & {
 export type Job = {
   id: number;
   jobNumber: string;
+  category_id: number;
   category: string;
-  orderedAt?: string;
   customer: Customer;
   siteAddress: string;
-  startDate: string;
-  endDate: string;
-  status: "In progress" | "Not started" | "Completed";
-  completedAt?: string | Date;
-  description?: string;
+  startsAt: string;
+  endsAt: string;
+  status: string;
+  completedAt: string | null;
+  description: string;
+  inspector: string;
+  inspector_id: number;
 };
 
 export type Customer = {
@@ -63,7 +65,7 @@ export type JobCategory = LibraryItemCategory;
 
 export type InspectionNote = {
   id: number;
-  category: number;
+  // category: number;
   text: string;
   created_at?: string;
   updated_at?: string;

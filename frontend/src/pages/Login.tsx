@@ -1,67 +1,68 @@
-import { Box, Center, Heading, VStack, Text } from "@chakra-ui/react";
-import { FormEventHandler, useState } from "react";
+import { Box, Center, Heading, VStack, Text, useToast } from "@chakra-ui/react";
+import { useState } from "react";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { useNavigate } from "react-router-dom";
 import { UserLogin } from "../types";
-import { validateLogin } from "../utils/validation";
 import { loginUser } from "../services/api";
-import { UserDB } from "../services/clientdb";
+import { useForm } from "react-hook-form";
 
 const Login = () => {
-  // if ("serviceWorker" in navigator) {
-  //   navigator.serviceWorker.register(
-  //     import.meta.env.MODE === "production" ? "/sw.js" : "/dev-sw.js?dev-sw",
-  //     { type: import.meta.env.MODE === "production" ? "classic" : "module" }
-  //   );
-  // }
-
   const navigate = useNavigate();
-
-  const [formErrors, setFormErrors] = useState<Partial<UserLogin> | null>(null);
   const [loading, setLoading] = useState(false);
+  const toast = useToast();
 
-  const handleLogin: FormEventHandler<HTMLFormElement> = async (e) => {
-    e.preventDefault();
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+  } = useForm<UserLogin>();
 
-    const formData = new FormData(e.target as HTMLFormElement);
-
-    const loginData: UserLogin = {
-      email: formData.get("email")?.toString().trim() || "",
-      password: formData.get("password")?.toString().trim() || "",
-    };
-
-    const isInvalid = validateLogin(loginData);
-    if (isInvalid !== null) {
-      setFormErrors(isInvalid);
-      return;
-    }
-
-    setFormErrors(null);
+  const onFormSubmit = async (formData: any) => {
     setLoading(true);
 
-    const response = await loginUser(loginData);
+    const response = await loginUser(formData);
     if (response.status !== 200) {
-      setFormErrors({
-        email: response.data.message,
-        password: response.data.message,
+      toast({
+        title: "Invalid credentials",
+        status: "error",
+        duration: 4000,
       });
       setLoading(false);
       return;
     }
 
-    try {
-      await UserDB.user.clear();
-      await UserDB.user.add({
-        user: "user",
-        ...response.data,
-      });
-    } finally {
-      UserDB.close();
-    }
+    const user = response.data;
+    localStorage.setItem("user", JSON.stringify(user));
 
-    setLoading(false);
-    navigate("/init");
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker
+        .register(
+          import.meta.env.MODE === "production"
+            ? "/sw.js"
+            : "/dev-sw.js?dev-sw",
+          { type: import.meta.env.MODE === "production" ? "classic" : "module" }
+        )
+        .then((registration) => {
+          let serviceWorker;
+          if (registration.installing) {
+            serviceWorker = registration.installing;
+          } else if (registration.waiting) {
+            serviceWorker = registration.waiting;
+          } else if (registration.active) {
+            serviceWorker = registration.active;
+          }
+          if (serviceWorker) {
+            serviceWorker.addEventListener("statechange", (e) => {
+              if ((e.currentTarget as ServiceWorker).state === "activated") {
+                console.log("aciiiii");
+                setLoading(false);
+                navigate("/init");
+              }
+            });
+          }
+        });
+    }
   };
 
   return (
@@ -79,21 +80,25 @@ const Login = () => {
           <Heading color="rich-black">Welcome &#128075;</Heading>
           <Text color="main-text">Let's do some inspections</Text>
         </Box>
-        <form onSubmit={handleLogin}>
+        <form onSubmit={handleSubmit(onFormSubmit)}>
           <VStack mt="10" maxW="lg" mx="auto" spacing="4">
             <FormInput
+              id="email"
               type="email"
-              name="email"
               placeholder="Email"
-              required
-              inputError={formErrors?.email}
+              inputError={errors.email?.message}
+              {...register("email", {
+                required: "Email is required",
+              })}
             />
             <FormInput
               type="password"
-              name="password"
+              id="password"
               placeholder="Password"
-              required
-              inputError={formErrors?.password}
+              inputError={errors.password?.message}
+              {...register("password", {
+                required: "Password is required",
+              })}
             />
             <ButtonPrimary
               type="submit"

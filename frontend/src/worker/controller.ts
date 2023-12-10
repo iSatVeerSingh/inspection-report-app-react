@@ -16,6 +16,119 @@ import {
   getPdf,
   startNewInspection,
 } from "./inspection";
+import Dexie from "dexie";
+import { Db, UserDB } from "../services/clientdb";
+import { LibraryItem } from "../types";
+
+// check init status
+export const initStatusController: RouteHandler = async () => {
+  try {
+    const isExists = await Dexie.exists("inspection-db");
+    if (!isExists) {
+      return getSuccessResponse({ message: "Not Started" });
+    }
+    const count = await Db.libraryItems.count();
+    if (count === 0) {
+      return getSuccessResponse({ message: "Pending" });
+    }
+    return getSuccessResponse({ message: "Done" });
+  } catch (err) {
+    return getSuccessResponse({ message: "Not Started" });
+  }
+};
+
+// init user database
+export const initUserController: RouteHandler = async ({ request }) => {
+  const userData = await request.json();
+
+  if (!userData) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    await UserDB.user.clear();
+    const user = await UserDB.user.add({ user: "user", ...userData });
+    if (!user) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "User added to indexeddb" });
+  } catch (err) {
+    console.log(err);
+    return getBadRequestResponse();
+  }
+};
+
+// init library items
+export const initLibraryItemsController: RouteHandler = async ({ request }) => {
+  const allItems = (await request.json()) as LibraryItem[];
+  if (!allItems) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    await Db.libraryItems.bulkAdd(allItems);
+    const libIndexitems = allItems.map((item) => ({
+      id: item.id,
+      category_id: item.category_id,
+      name: item.name,
+    }));
+
+    await Db.libraryIndex.bulkAdd(libIndexitems);
+    return getSuccessResponse({ message: "Items added successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
+// init library item categories
+export const initLibraryItemCategoriesController: RouteHandler = async ({
+  request,
+}) => {
+  const allCategories = await request.json();
+  if (!allCategories) {
+    return getBadRequestResponse();
+  }
+  try {
+    await Db.libraryItemCategories.bulkAdd(allCategories);
+    return getSuccessResponse({ message: "Categories added successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
+// init library inspection notes
+export const initInspectionNotesController: RouteHandler = async ({
+  request,
+}) => {
+  const allInspectionNotes = await request.json();
+  if (!allInspectionNotes) {
+    return getBadRequestResponse();
+  }
+  try {
+    await Db.inspectionNotes.bulkAdd(allInspectionNotes);
+    return getSuccessResponse({
+      message: "Inspection notes added successfully",
+    });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
+// init jobs
+export const initJobsController: RouteHandler = async ({ request }) => {
+  const jobs = await request.json();
+  if (!jobs) {
+    return getBadRequestResponse();
+  }
+  try {
+    await Db.jobs.bulkAdd(jobs);
+    return getSuccessResponse({
+      message: "Jobs added successfully added successfully",
+    });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
 
 export const getJobsController: RouteHandler = async ({ url }) => {
   if (url.searchParams.size === 0) {
@@ -112,7 +225,10 @@ export const addInspectionNotesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
 
-  const inspectionId = await addInspectionNotes(body.inspectionNotes, parseInt(id));
+  const inspectionId = await addInspectionNotes(
+    body.inspectionNotes,
+    parseInt(id)
+  );
   if (!inspectionId) {
     return getBadRequestResponse();
   }
