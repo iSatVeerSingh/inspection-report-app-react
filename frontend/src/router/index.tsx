@@ -30,6 +30,7 @@ const router = createBrowserRouter([
       {
         path: Routes.JOBS,
         element: <Jobs />,
+        // loader: jobsLoader,
       },
       {
         path: Routes.NEW_JOB,

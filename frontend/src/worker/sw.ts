@@ -15,10 +15,12 @@ import {
   deleteInspectionItemsController,
   generateReportController,
   getInspectionsController,
+  getJobCategoriesController,
   getJobsController,
   getLibIndexController,
   getLibraryNotesController,
   initInspectionNotesController,
+  initJobCategoriesController,
   initJobsController,
   initLibraryItemCategoriesController,
   initLibraryItemsController,
@@ -64,6 +66,18 @@ registerRoute(
   ({ url }) => url.pathname === "/client/init-jobs",
   initJobsController,
   "POST"
+);
+registerRoute(
+  ({ url }) => url.pathname === "/client/init-job-categories",
+  initJobCategoriesController,
+  "POST"
+);
+
+// Job categories
+registerRoute(
+  ({ url }) => url.pathname === "/client/job-categories",
+  getJobCategoriesController,
+  "GET"
 );
 
 // Jobs routes

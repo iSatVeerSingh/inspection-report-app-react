@@ -142,6 +142,24 @@ const Init = () => {
       setInstalling(false);
       return;
     }
+    const jobCategoriesResponse = await inspectionApi.get(
+      "/install-job-categories"
+    );
+    if (jobCategoriesResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const initJobCategories = await clientApi.post(
+      "/init-job-categories",
+      jobCategoriesResponse.data
+    );
+    if (initJobCategories.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+
     setInstalled(true);
     setInstalling(false);
   };

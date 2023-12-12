@@ -4,7 +4,7 @@ import {
   getAllJobs,
   getJobByJobNumber,
   getLibIndex,
-} from "./jobs";
+} from "./jobService";
 import {
   addInspectionItem,
   addInspectionNotes,
@@ -130,26 +130,74 @@ export const initJobsController: RouteHandler = async ({ request }) => {
   }
 };
 
-export const getJobsController: RouteHandler = async ({ url }) => {
-  if (url.searchParams.size === 0) {
-    const jobs = await getAllJobs();
-    if (!jobs) {
-      return getBadRequestResponse("Something went wrong");
-    }
-    return getSuccessResponse(jobs);
-  }
-
-  const jobNumber = url.searchParams.get("jobNumber");
-  if (!jobNumber || jobNumber === "") {
+// init jobCategories
+export const initJobCategoriesController: RouteHandler = async ({
+  request,
+}) => {
+  const jobCategories = await request.json();
+  if (!jobCategories) {
     return getBadRequestResponse();
   }
-
-  const job = await getJobByJobNumber(jobNumber);
-  if (!job) {
-    return getNotFoundResponse();
+  try {
+    await Db.jobCategories.bulkAdd(jobCategories);
+    return getSuccessResponse({ message: "Job Categories added successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
   }
+};
 
-  return getSuccessResponse(job);
+// Get Job categories
+export const getJobCategoriesController: RouteHandler = async () => {
+  try {
+    const jobCategories = await Db.jobCategories.toArray();
+    return getSuccessResponse(jobCategories);
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
+//get jobs
+export const getJobsController: RouteHandler = async ({ url }) => {
+  try {
+    const jobNumber = url.searchParams.get("jobNumber");
+    if (jobNumber) {
+      const job = await Db.jobs.get(jobNumber);
+      if (!job) {
+        return getSuccessResponse(null);
+      }
+      return getSuccessResponse(job);
+    }
+
+    const query = url.searchParams;
+    const page = query.get("page");
+    const status = query.get("status");
+    const category = query.get("category");
+    const startsAt = query.get("startsAt");
+
+    const dbQuery = {
+      status: status || "Work Order",
+      ...(category ? { category } : {}),
+      ...(startsAt ? { startsAt } : {}),
+    };
+
+    const perPage = 6;
+    const pageNumber = Number(page);
+    const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
+    const jobsCollection = Db.jobs.where(dbQuery);
+    const total = await jobsCollection.count();
+    const totalPages =
+      total % perPage === 0 ? total / perPage : Math.floor(total / perPage) + 1;
+
+    const jobs = await jobsCollection.offset(skip).limit(perPage).toArray();
+    return getSuccessResponse({
+      data: jobs,
+      pages: totalPages,
+      currentPage: pageNumber === 0 ? 1 : pageNumber,
+    });
+  } catch (err) {
+    console.log(err);
+    return getBadRequestResponse(err);
+  }
 };
 
 export const createJobController: RouteHandler = async ({ request }) => {
@@ -316,7 +364,7 @@ const getNotFoundResponse = () => {
   );
 };
 
-const getBadRequestResponse = (message?: string) => {
+const getBadRequestResponse = (message?: any) => {
   return new Response(
     JSON.stringify({
       message: message || "Invalid request",

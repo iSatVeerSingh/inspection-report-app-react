@@ -25,9 +25,9 @@ export type Job = {
   customer: Customer;
   siteAddress: string;
   startsAt: string;
-  endsAt: string;
+  startTime: string;
   status: string;
-  completedAt: string | null;
+  completedAt: Date | string | null;
   description: string;
   inspector: string;
   inspector_id: number;
@@ -56,12 +56,12 @@ export type LibraryItem = {
 export type LibraryItemCategory = {
   id: number;
   name: string;
-  itemsCount: number;
+  itemsCount?: number;
   created_at?: string;
   updated_at?: string;
 };
 
-export type JobCategory = LibraryItemCategory;
+export type JobCategory = Omit<LibraryItemCategory, "itemsCount">;
 
 export type InspectionNote = {
   id: number;

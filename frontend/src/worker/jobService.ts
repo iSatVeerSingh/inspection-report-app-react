@@ -3,8 +3,9 @@ import { Job } from "../types";
 
 export const getAllJobs = async () => {
   try {
-    const allJobs = await Db.jobs.toArray();
-    return allJobs;
+    const allJobs = await Db.jobs.where('status').notEqual('');
+    console.log(allJobs);
+    // return allJobs;
   } catch (err) {
     console.log(err);
     return null;
