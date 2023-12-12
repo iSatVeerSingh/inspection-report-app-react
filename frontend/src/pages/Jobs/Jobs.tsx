@@ -63,7 +63,7 @@ const Jobs = () => {
   };
 
   return (
-    <PageLayout title="All Jobs">
+    <PageLayout title="All Jobs" isRoot>
       <Flex
         direction={{ base: "column", lg: "row" }}
         alignItems={{ base: "start", lg: "center" }}
