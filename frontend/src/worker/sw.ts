@@ -26,6 +26,7 @@ import {
   initLibraryItemsController,
   initStatusController,
   initUserController,
+  startInspectionController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -94,11 +95,19 @@ registerRoute(
   "POST"
 );
 
+// Inspection route
+// Start new inspection
 registerRoute(
-  ({ url }) => url.pathname === "/client/inspections/new",
-  createInspectionController,
-  "POST"
+  ({ url }) => url.pathname === "/client/jobs",
+  startInspectionController,
+  "PUT"
 );
+
+// registerRoute(
+//   ({ url }) => url.pathname === "/client/inspections",
+//   createInspectionController,
+//   "POST"
+// );
 registerRoute(
   ({ url }) => url.pathname === "/client/inspections",
   getInspectionsController,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Link } from "react-router-dom";
+import { Link, useSearchParams } from "react-router-dom";
 import PageLayout from "../../Layout/PageLayout";
 import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
@@ -8,7 +8,7 @@ import FilterSelect from "../../components/FilterSelect";
 import clientApi from "../../services/clientApi";
 import FilterInput from "../../components/FilterInput";
 import ButtonOutline from "../../components/ButtonOutline";
-import { Job } from "../../types";
+import { Job, JobStatus } from "../../types";
 import { LocationIcon, UserIcon } from "../../icons";
 
 type Filter = {
@@ -19,7 +19,7 @@ type Filter = {
 };
 
 const Jobs = () => {
-  const [filter, setFilter] = useState<Filter>({ status: "Work Order" });
+  const [searchParams, setSearchParams] = useSearchParams();
   const [jobCategories, setJobCategories] = useState<string[]>([]);
   const [jobs, setJobs] = useState<Job[]>([]);
   const [pages, setPages] = useState<{ pages: number; currentPage: number }>();
@@ -27,7 +27,10 @@ const Jobs = () => {
   const updateSearch = (key: keyof Filter, value: string) => {
     if (value && value !== "") {
       console.log(key, value);
-      setFilter((prev) => ({ ...prev, [key]: value }));
+      setSearchParams((prev) => ({
+        ...Object.fromEntries(prev),
+        [key]: value,
+      }));
     }
   };
 
@@ -42,11 +45,9 @@ const Jobs = () => {
 
   useEffect(() => {
     (async () => {
-      console.log("useEFfect run now");
-      const searchParams = new URLSearchParams(filter);
-      const response = await clientApi.get(
-        searchParams.size === 0 ? "/jobs" : "/jobs?" + searchParams.toString()
-      );
+      const searchUrl =
+        searchParams.size === 0 ? "/jobs" : "/jobs?" + searchParams.toString();
+      const response = await clientApi.get(searchUrl);
       if (response.status !== 200) {
         return;
       }
@@ -56,10 +57,10 @@ const Jobs = () => {
         currentPage: response.data.currentPage,
       });
     })();
-  }, [filter.status, filter.category, filter.startsAt, filter.page]);
+  }, [searchParams]);
 
   const clearFilter = () => {
-    setFilter({ status: "Work Order" });
+    setSearchParams({});
   };
 
   return (
@@ -71,23 +72,23 @@ const Jobs = () => {
       >
         <Flex gap={3}>
           <FilterSelect
-            value={filter.status}
+            value={searchParams.get("status") || JobStatus.WORK_ORDER}
             options={[
-              "Work Order",
-              "In Progress",
-              "Not Submitted",
-              "Completed",
+              JobStatus.WORK_ORDER,
+              JobStatus.IN_PROGRESS,
+              JobStatus.NOT_SUBMITTED,
+              JobStatus.COMPLETED,
             ]}
             onChange={(e) => updateSearch("status", e.target.value)}
           />
           <FilterSelect
             options={jobCategories}
-            value={filter.category || ""}
+            value={searchParams.get("category") || ""}
             placeholder="Select a category"
             onChange={(e) => updateSearch("category", e.target.value)}
           />
           <FilterInput
-            value={filter.startsAt || ""}
+            value={searchParams.get("startsAt") || ""}
             onChange={(e) => updateSearch("startsAt", e.target.value)}
             type="date"
           />

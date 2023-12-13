@@ -26,12 +26,21 @@ export type Job = {
   siteAddress: string;
   startsAt: string;
   startTime: string;
-  status: string;
+  status: JobStatus;
   completedAt: Date | string | null;
   description: string;
   inspector: string;
   inspector_id: number;
+  inspectionNotes?: string[];
+  recommendation?: string;
 };
+
+export enum JobStatus {
+  WORK_ORDER = "Work Order",
+  IN_PROGRESS = "In Progress",
+  NOT_SUBMITTED = "Not Submitted",
+  COMPLETED = "Completed",
+}
 
 export type Customer = {
   nameOnReport: string;
@@ -72,13 +81,13 @@ export type InspectionNote = {
 };
 
 export type InspectionItem = Partial<LibraryItem> & {
+  id: number;
+  job_id: number;
+  library_item_id: number | null;
+  isPreviousItem?: boolean;
+  images?: string[] | null;
+  note?: string | null;
   isCustom?: boolean;
-  job: number;
-  libraryItem?: number;
-  note?: string;
-  images: string[];
-  previousJob?: number;
-  pageBreak?: boolean;
 };
 
 export type Inspection = Job & {

@@ -1,10 +1,5 @@
 import { RouteHandler } from "workbox-core";
-import {
-  createNewJob,
-  getAllJobs,
-  getJobByJobNumber,
-  getLibIndex,
-} from "./jobService";
+import { createNewJob, getLibIndex } from "./jobService";
 import {
   addInspectionItem,
   addInspectionNotes,
@@ -18,7 +13,7 @@ import {
 } from "./inspection";
 import Dexie from "dexie";
 import { Db, UserDB } from "../services/clientdb";
-import { LibraryItem } from "../types";
+import { Job, JobStatus, LibraryItem } from "../types";
 
 // check init status
 export const initStatusController: RouteHandler = async () => {
@@ -216,11 +211,32 @@ export const createJobController: RouteHandler = async ({ request }) => {
   return getSuccessResponse(jobNumber, 201);
 };
 
+// Start new inspection
+export const startInspectionController: RouteHandler = async ({ url }) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const isUpdated = await Db.jobs.update(jobNumber, {
+      status: JobStatus.IN_PROGRESS,
+    } as Partial<Job>);
+    if (isUpdated === 0) {
+      return getBadRequestResponse("Job Not Found");
+    }
+    return getSuccessResponse({ message: "Job updated successfully" });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
 export const createInspectionController: RouteHandler = async ({ request }) => {
   const body = await request.json();
   if (!body) {
     return getBadRequestResponse();
   }
+
   const inspectionId: any = await startNewInspection(body);
   if (inspectionId.error === "DuplicateKey") {
     return getBadRequestResponse("Inspection already started for this job");
