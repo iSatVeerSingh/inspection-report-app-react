@@ -20,7 +20,6 @@ class Job extends Model
         'customer_id',
         'inspector_id',
         'startsAt',
-        'endsAt',
         'siteAddress',
         'status',
         'completedAt',
@@ -31,7 +30,6 @@ class Job extends Model
 
     protected $casts = [
         'startsAt' => 'datetime',
-        'endsAt' => 'datetime',
         'completedAt' => 'datetime',
     ];
 

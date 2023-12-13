@@ -29,8 +29,8 @@ class JobResource extends JsonResource
                 "phone" => $customer["phone"]
             ],
             "siteAddress" => $this['siteAddress'],
-            "startsAt" => $this['startsAt'],
-            "endsAt" => $this['endsAt'],
+            "startsAt" => $this['startsAt']->format('Y-m-d'),
+            "startTime" => $this['startsAt']->format('h:i A'),
             "status" => $this['status'],
             "completedAt" => $this['completedAt'] === null ? null : $this['completedAt'],
             "description" => $this["description"],

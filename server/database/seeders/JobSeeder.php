@@ -9,7 +9,9 @@ use App\Models\User;
 use DateTime;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Date;
 use Illuminate\Support\Facades\Http;
+use Ramsey\Uuid\Type\Time;
 
 class JobSeeder extends Seeder
 {
@@ -123,9 +125,7 @@ class JobSeeder extends Seeder
                 if ($inspector) {
                     $job['inspector_id'] = $inspector['id'];
                 }
-
                 $job['startsAt'] = new DateTime($activities[0]["start_date"]);
-                $job['endsAt'] = new DateTime($activities[0]['end_date']);
             }
 
             $job->save();

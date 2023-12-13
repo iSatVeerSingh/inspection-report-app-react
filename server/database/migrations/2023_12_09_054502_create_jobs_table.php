@@ -19,7 +19,6 @@ return new class extends Migration
             $table->foreignId('customer_id')->constrained('customers');
             $table->foreignId('inspector_id')->nullable()->constrained('users');
             $table->dateTime('startsAt')->nullable();
-            $table->dateTime('endsAt')->nullable();
             $table->string('siteAddress');
             $table->string('status');
             $table->dateTime('completedAt')->nullable();
