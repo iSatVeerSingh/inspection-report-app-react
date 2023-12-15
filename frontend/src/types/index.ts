@@ -85,16 +85,14 @@ export type InspectionItem = Partial<LibraryItem> & {
   job_id: number;
   library_item_id: number | null;
   isPreviousItem?: boolean;
+  previous_job_id?: number;
   images?: string[] | null;
   note?: string | null;
   isCustom?: boolean;
 };
 
 export type Inspection = Job & {
-  inspectionType?: string;
-  inspectionNotes?: string[];
   inspectionItems?: InspectionItem[];
-  recommendation?: string;
 };
 
 export type Paragraph = {

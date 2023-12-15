@@ -16,6 +16,7 @@ import {
   generateReportController,
   getInspectionsController,
   getJobCategoriesController,
+  getJobInspectionSummaryController,
   getJobsController,
   getLibIndexController,
   getLibraryNotesController,
@@ -101,6 +102,13 @@ registerRoute(
   ({ url }) => url.pathname === "/client/jobs",
   startInspectionController,
   "PUT"
+);
+
+// get inspection job summary
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection",
+  getJobInspectionSummaryController,
+  "GET"
 );
 
 // registerRoute(

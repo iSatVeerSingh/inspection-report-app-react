@@ -13,7 +13,7 @@ import {
 } from "./inspection";
 import Dexie from "dexie";
 import { Db, UserDB } from "../services/clientdb";
-import { Job, JobStatus, LibraryItem } from "../types";
+import { Inspection, Job, JobStatus, LibraryItem } from "../types";
 
 // check init status
 export const initStatusController: RouteHandler = async () => {
@@ -231,20 +231,40 @@ export const startInspectionController: RouteHandler = async ({ url }) => {
   }
 };
 
-export const createInspectionController: RouteHandler = async ({ request }) => {
-  const body = await request.json();
-  if (!body) {
+// Get Job / Inspection Summary
+export const getJobInspectionSummaryController: RouteHandler = async ({
+  url,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
     return getBadRequestResponse();
   }
 
-  const inspectionId: any = await startNewInspection(body);
-  if (inspectionId.error === "DuplicateKey") {
-    return getBadRequestResponse("Inspection already started for this job");
+  try {
+    const trs = await Db.transaction(
+      "rw",
+      Db.jobs,
+      Db.inspectionItems,
+      async () => {
+        const job = await Db.jobs.get(jobNumber);
+        if (!job) {
+          return getBadRequestResponse("No Job Found");
+        }
+        const inspectionItems = await Db.inspectionItems
+          .where("job_id")
+          .equals(job.id)
+          .toArray();
+        return {
+          ...job,
+          inspectionItems,
+        } as Inspection;
+      }
+    );
+
+    return getSuccessResponse(trs);
+  } catch (err) {
+    return getBadRequestResponse(err);
   }
-  if (!inspectionId) {
-    return getBadRequestResponse();
-  }
-  return getSuccessResponse(inspectionId, 201);
 };
 
 export const getInspectionsController: RouteHandler = async ({ url }) => {
