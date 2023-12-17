@@ -1,4 +1,5 @@
 export const USERS = "/users";
+export const LIBRARY_ITEM_CATEGORIES = "/library-item-categories"
 export const LIBRARY_ITEMS = "/library-items";
 export const LIBRARY_ITEM_VIEW = LIBRARY_ITEMS + "/:itemId";
 export const NEW_LIBRARY_ITEM = LIBRARY_ITEMS + "/new";

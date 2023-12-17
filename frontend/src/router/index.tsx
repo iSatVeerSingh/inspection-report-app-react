@@ -20,6 +20,7 @@ import LibraryItems from "../pages/Library/LibraryItems";
 import LibraryItem from "../pages/Library/LibraryItem";
 import NewLibraryItem from "../pages/Library/NewLibraryItem";
 import ErrorNotFound from "../pages/ErrorNotFound";
+import LibraryItemCategories from "../pages/Library/LibraryItemCategories";
 
 const router = createBrowserRouter([
   {
@@ -78,6 +79,10 @@ const router = createBrowserRouter([
       {
         path: Routes.USERS,
         element: <Users />,
+      },
+      {
+        path: Routes.LIBRARY_ITEM_CATEGORIES,
+        element: <LibraryItemCategories />
       },
       {
         path: Routes.LIBRARY_ITEMS,

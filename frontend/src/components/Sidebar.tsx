@@ -5,7 +5,6 @@ import {
   Text,
   VStack,
   Link as ChakraLink,
-  Button,
   IconButton,
   Menu,
   MenuButton,
@@ -72,7 +71,7 @@ const Sidebar = () => {
               <item.icon boxSize={7} />
               <Text as="span">{item.name}</Text>
             </ChakraLink>
-            {item.subItems && user.role === item.subItems.access && (
+            {item.subItems && user.role !== "Inspector" && (
               <Menu>
                 <MenuButton
                   as={IconButton}

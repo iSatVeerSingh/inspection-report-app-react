@@ -6,10 +6,12 @@ import {
   SettingsIcon,
   UsersIcon,
 } from "../icons";
+import * as Routes from "./paths";
+
 
 export default [
   {
-    path: "/jobs",
+    path: Routes.JOBS,
     name: "Jobs",
     icon: JobIcon,
     access: "Any",
@@ -21,7 +23,7 @@ export default [
     access: "Any",
   },
   {
-    path: "/library-items",
+    path: Routes.LIBRARY_ITEMS,
     name: "Library Items",
     icon: ItemsIcon,
     access: "Any",
@@ -29,7 +31,7 @@ export default [
       access: "Owner",
       items: [
         {
-          path: "/library-items-categories",
+          path: Routes.LIBRARY_ITEM_CATEGORIES,
           name: "Categories",
         },
       ],
