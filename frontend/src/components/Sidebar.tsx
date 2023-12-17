@@ -5,10 +5,17 @@ import {
   Text,
   VStack,
   Link as ChakraLink,
+  Button,
+  IconButton,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
 } from "@chakra-ui/react";
-import { Link as ReactRouterLink, useLocation } from "react-router-dom";
+import { Link, Link as ReactRouterLink, useLocation } from "react-router-dom";
 import menuItems from "../router/menuItems";
 import { useGlobalContext } from "../context/globalContext";
+import { ChevronDown } from "../icons";
 
 const Sidebar = () => {
   const location = useLocation();
@@ -34,17 +41,11 @@ const Sidebar = () => {
       </Flex>
       <VStack justify={"stretch"} mt={4}>
         {menuLinks.map((item, index) => (
-          <ChakraLink
-            to={item.path}
+          <Flex
             key={index}
-            fontSize={"xl"}
-            px={2}
-            py={2}
-            borderRadius={"lg"}
-            as={ReactRouterLink}
-            gap={2}
-            display={"flex"}
             alignItems={"center"}
+            fontSize={"xl"}
+            borderRadius={"lg"}
             bg={
               item.path === "/" + currentSectionPath
                 ? "nav-bg"
@@ -54,13 +55,51 @@ const Sidebar = () => {
               item.path === "/" + currentSectionPath ? "white" : "text-big"
             }
             w="full"
-            _hover={{
-              textDecoration: "none",
-            }}
           >
-            <item.icon boxSize={7} />
-            <Text as="span">{item.name}</Text>
-          </ChakraLink>
+            <ChakraLink
+              flexGrow={1}
+              px={2}
+              py={2}
+              to={item.path}
+              gap={2}
+              as={ReactRouterLink}
+              display={"flex"}
+              alignItems={"center"}
+              _hover={{
+                textDecoration: "none",
+              }}
+            >
+              <item.icon boxSize={7} />
+              <Text as="span">{item.name}</Text>
+            </ChakraLink>
+            {item.subItems && user.role === item.subItems.access && (
+              <Menu>
+                <MenuButton
+                  as={IconButton}
+                  icon={<ChevronDown />}
+                  backgroundColor={"transparent"}
+                  color={
+                    item.path === "/" + currentSectionPath
+                      ? "white"
+                      : "text-big"
+                  }
+                  _active={{
+                    backgroundColor: "transparent",
+                  }}
+                  _hover={{
+                    color: "black",
+                  }}
+                />
+                <MenuList color={"text-big"} boxShadow={"2xl"}>
+                  {item.subItems.items.map((subItem) => (
+                    <MenuItem>
+                      <Link to={subItem.path}>{subItem.name}</Link>
+                    </MenuItem>
+                  ))}
+                </MenuList>
+              </Menu>
+            )}
+          </Flex>
         ))}
       </VStack>
     </Box>
