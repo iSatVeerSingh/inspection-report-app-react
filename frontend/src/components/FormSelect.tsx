@@ -32,7 +32,7 @@ const FormSelect = (
   return (
     <FormControl isInvalid={!!inputError}>
       {label && (
-        <FormLabel htmlFor={id} color="rich-black" fontSize="xl" mb="0">
+        <FormLabel htmlFor={id} color={"text-big"} fontSize={"xl"} mb={0}>
           {label}
         </FormLabel>
       )}
@@ -40,7 +40,13 @@ const FormSelect = (
         placeholder={placeholder}
         {...selectProps}
         ref={ref}
-        borderColor="blue-primary"
+        bg={"card-bg-secondary"}
+        height={"12"}
+        borderRadius={"lg"}
+        shadow={"xs"}
+        _placeholder={{
+          color: "text-secondary",
+        }}
       >
         {options.map((opt, index) =>
           typeof opt === "string" ? (

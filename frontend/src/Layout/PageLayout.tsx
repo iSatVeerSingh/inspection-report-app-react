@@ -29,16 +29,17 @@ const PageLayout = ({
     <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
       <Flex
         alignItems={"center"}
-        px={4}
-        bg="main-bg"
-        borderBottom={"stroke"}
+        px={3}
+        bg="card-bg"
+        shadow={"xs"}
         justifyContent={"space-between"}
-        // pl={isMobile ? "60px" : "auto"}
+        // // pl={isMobile ? "60px" : "auto"}
       >
         <Heading
           fontWeight={"semibold"}
-          fontSize={{ base: "xl", sm: "2xl" }}
-          color="rich-black"
+          fontSize={"2xl"}
+          // fontSize={{ base: "xl", sm: "2xl" }}
+          color="text-big"
           flexGrow={1}
         >
           {!isRoot && (

@@ -31,7 +31,7 @@ const FormInput = (
         ref={ref}
         bg={"card-bg-secondary"}
         height={"12"}
-        borderRadius={"xl"}
+        borderRadius={"lg"}
         shadow={"xs"}
         _placeholder={{
           color: "text-secondary"

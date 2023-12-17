@@ -71,7 +71,7 @@ const Login = () => {
         bg="card-bg"
         px={5}
         py={5}
-        borderRadius="xl"
+        borderRadius="lg"
         shadow="xs"
         w="100%"
         maxW="2xl"

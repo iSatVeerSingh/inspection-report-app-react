@@ -39,10 +39,19 @@ import FormInput from "../../components/FormInput";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 import FormSelect from "../../components/FormSelect";
+import { useGlobalContext } from "../../context/globalContext";
+import { useNavigate } from "react-router-dom";
 
 const roles = ["Inspector", "Admin", "Owner"];
 
 const Users = () => {
+  const navigate = useNavigate();
+  const {user} = useGlobalContext();
+  if(user.role !== "Owner") {
+    navigate('/jobs')
+    return;
+  }
+
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<Partial<User>[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -184,6 +193,7 @@ const Users = () => {
 
   return (
     <PageLayout
+      isRoot
       title="All Users"
       titleBtn="Create User"
       onBtnClick={handleNewUserBtn}
@@ -192,9 +202,9 @@ const Users = () => {
         <Loading />
       ) : (
         <Box
-          border={"stroke"}
-          bg={"main-bg"}
-          borderRadius={5}
+          bg={"card-bg"}
+          shadow={"xs"}
+          borderRadius={"lg"}
           overflow={"hidden"}
         >
           {users.length !== 0 ? (
@@ -205,6 +215,7 @@ const Users = () => {
                 bg={"nav-bg"}
                 gridTemplateColumns={"auto 350px 130px 100px 60px"}
                 gap={3}
+                color={"white"}
                 fontWeight={"semibold"}
               >
                 <Text flexGrow={1}>Name</Text>
@@ -218,11 +229,12 @@ const Users = () => {
                   key={user.id}
                   px={2}
                   py={3}
+                  alignItems={"center"}
                   gridTemplateColumns={"auto 350px 130px 100px 60px"}
                   gap={3}
-                  borderBottom={"stroke"}
                   _hover={{
-                    backgroundColor: "secondary-bg",
+                    backgroundColor: "card-bg-secondary",
+                    boxShadow: "xs"
                   }}
                 >
                   <Text fontSize={"lg"} fontWeight={"medium"} flexGrow={1}>
