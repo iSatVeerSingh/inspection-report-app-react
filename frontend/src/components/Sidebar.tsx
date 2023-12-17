@@ -90,8 +90,8 @@ const Sidebar = () => {
                   }}
                 />
                 <MenuList color={"text-big"} boxShadow={"2xl"}>
-                  {item.subItems.items.map((subItem) => (
-                    <MenuItem>
+                  {item.subItems.items.map((subItem, index) => (
+                    <MenuItem key={index} >
                       <Link to={subItem.path}>{subItem.name}</Link>
                     </MenuItem>
                   ))}

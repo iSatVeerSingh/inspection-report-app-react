@@ -326,7 +326,6 @@ const Users = () => {
                   inputError={errors.password?.message}
                 />
               </VStack>
-              <Flex></Flex>
             </form>
           </ModalBody>
           <ModalFooter gap={3}>
