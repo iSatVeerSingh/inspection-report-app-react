@@ -7,6 +7,7 @@ export default extendTheme({
     "card-bg-secondary": "#F4F7FE",
     "text-big": "#120f43",
     "text-small": "#4A5568",
-    "text-secondary": "#8F9BBA"
+    "text-secondary": "#8F9BBA",
+    "nav-bg": "#4B49AC"
   },
 });

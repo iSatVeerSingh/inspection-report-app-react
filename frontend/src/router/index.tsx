@@ -1,5 +1,5 @@
 import { createBrowserRouter } from "react-router-dom";
-import RootLayout, { rootLoader } from "../Layout/RootLayout";
+import Dashboard, { dashboardLoader } from "../Layout/Dashboard";
 import Jobs from "../pages/Jobs/Jobs";
 import * as Routes from "./paths";
 import Init, { initLoader } from "../pages/Init";
@@ -19,13 +19,15 @@ import Users from "../pages/Users/Users";
 import LibraryItems from "../pages/Library/LibraryItems";
 import LibraryItem from "../pages/Library/LibraryItem";
 import NewLibraryItem from "../pages/Library/NewLibraryItem";
+import ErrorNotFound from "../pages/ErrorNotFound";
 
 const router = createBrowserRouter([
   {
     id: "root",
     path: Routes.ROOT,
-    loader: rootLoader,
-    element: <RootLayout />,
+    loader: dashboardLoader,
+    element: <Dashboard />,
+    errorElement: <ErrorNotFound />,
     children: [
       {
         path: Routes.JOBS,

@@ -10,7 +10,6 @@ import {
   addInspectionItemsController,
   addInspectionNotesController,
   addRecommendationController,
-  createInspectionController,
   createJobController,
   deleteInspectionItemsController,
   generateReportController,

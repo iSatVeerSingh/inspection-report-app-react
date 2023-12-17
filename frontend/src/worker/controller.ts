@@ -9,7 +9,6 @@ import {
   getInspectionById,
   getLibraryNotes,
   getPdf,
-  startNewInspection,
 } from "./inspection";
 import Dexie from "dexie";
 import { Db, UserDB } from "../services/clientdb";

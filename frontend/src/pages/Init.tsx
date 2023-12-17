@@ -14,14 +14,14 @@ export const initLoader = async () => {
     return redirect("/login");
   }
 
-  const response = await clientApi.get("/init-status");
-  if (response.status !== 200) {
-    return redirect("/login");
-  }
+  // const response = await clientApi.get("/init-status");
+  // if (response.status !== 200) {
+  //   return redirect("/login");
+  // }
 
-  if (response.data.message === "Done") {
-    return redirect("/jobs");
-  }
+  // if (response.data.message === "Done") {
+  //   return redirect("/jobs");
+  // }
   return null;
 };
 
@@ -34,9 +34,9 @@ const Init = () => {
   const [installed, setInstalled] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const handleInstall: MouseEventHandler<HTMLButtonElement> = async (e) => {
+  const handleSetupApplication: MouseEventHandler<HTMLButtonElement> = async (e) => {
     e.preventDefault();
-    setInstalling(true);
+    // setInstalling(true);
 
     const storage = navigator.storage;
     if (storage) {
@@ -54,133 +54,136 @@ const Init = () => {
       navigate("/login");
     }
 
-    statusRef.current!.textContent = "Fetching Library items...";
-    const libraryItemResponse = await inspectionApi.get("/install-items", {
-      onDownloadProgress: (e) => {
-        const progress = Math.floor(e.progress! * 100);
-        setProgressBar(progress);
-      },
-    });
+    navigate("/")
+    return
 
-    if (libraryItemResponse.status !== 200) {
-      setError(libraryItemResponse.data.message);
-      setInstalling(false);
-      return;
-    }
+    // statusRef.current!.textContent = "Fetching Library items...";
+    // const libraryItemResponse = await inspectionApi.get("/install-items", {
+    //   onDownloadProgress: (e) => {
+    //     const progress = Math.floor(e.progress! * 100);
+    //     setProgressBar(progress);
+    //   },
+    // });
 
-    statusRef.current!.textContent = "Setting up database for library items...";
+    // if (libraryItemResponse.status !== 200) {
+    //   setError(libraryItemResponse.data.message);
+    //   setInstalling(false);
+    //   return;
+    // }
 
-    const initLibraryResponse = await clientApi.post(
-      "/init-library-items",
-      libraryItemResponse.data
-    );
-    if (initLibraryResponse.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    const libItemCategoryResponse = await inspectionApi.get(
-      "/install-item-categories",
-      {
-        onDownloadProgress: (e) => {
-          const progress = Math.floor(e.progress! * 100);
-          setProgressBar(progress);
-        },
-      }
-    );
-    if (libItemCategoryResponse.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    const initLibCategory = await clientApi.post(
-      "/init-library-item-categories",
-      libItemCategoryResponse.data
-    );
-    if (initLibCategory.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    statusRef.current!.textContent =
-      "Setting up database for inspection notes...";
+    // statusRef.current!.textContent = "Setting up database for library items...";
 
-    const libInspectionNotesResponse = await inspectionApi.get(
-      "/install-inspection-notes",
-      {
-        onDownloadProgress: (e) => {
-          const progress = Math.floor(e.progress! * 100);
-          setProgressBar(progress);
-        },
-      }
-    );
-    if (libInspectionNotesResponse.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
+    // const initLibraryResponse = await clientApi.post(
+    //   "/init-library-items",
+    //   libraryItemResponse.data
+    // );
+    // if (initLibraryResponse.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // const libItemCategoryResponse = await inspectionApi.get(
+    //   "/install-item-categories",
+    //   {
+    //     onDownloadProgress: (e) => {
+    //       const progress = Math.floor(e.progress! * 100);
+    //       setProgressBar(progress);
+    //     },
+    //   }
+    // );
+    // if (libItemCategoryResponse.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // const initLibCategory = await clientApi.post(
+    //   "/init-library-item-categories",
+    //   libItemCategoryResponse.data
+    // );
+    // if (initLibCategory.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // statusRef.current!.textContent =
+    //   "Setting up database for inspection notes...";
 
-    const initInspectionnotes = await clientApi.post(
-      "/init-inspection-notes",
-      libInspectionNotesResponse.data
-    );
-    if (initInspectionnotes.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    statusRef.current!.textContent = "Setting up database for jobs...";
-    const jobsResponse = await inspectionApi.get("/install-jobs");
-    if (jobsResponse.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    const initjobs = await clientApi.post("/init-jobs", jobsResponse.data);
-    if (initjobs.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    const jobCategoriesResponse = await inspectionApi.get(
-      "/install-job-categories"
-    );
-    if (jobCategoriesResponse.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
-    const initJobCategories = await clientApi.post(
-      "/init-job-categories",
-      jobCategoriesResponse.data
-    );
-    if (initJobCategories.status !== 200) {
-      setError("Something went wrong");
-      setInstalling(false);
-      return;
-    }
+    // const libInspectionNotesResponse = await inspectionApi.get(
+    //   "/install-inspection-notes",
+    //   {
+    //     onDownloadProgress: (e) => {
+    //       const progress = Math.floor(e.progress! * 100);
+    //       setProgressBar(progress);
+    //     },
+    //   }
+    // );
+    // if (libInspectionNotesResponse.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
 
-    setInstalled(true);
-    setInstalling(false);
+    // const initInspectionnotes = await clientApi.post(
+    //   "/init-inspection-notes",
+    //   libInspectionNotesResponse.data
+    // );
+    // if (initInspectionnotes.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // statusRef.current!.textContent = "Setting up database for jobs...";
+    // const jobsResponse = await inspectionApi.get("/install-jobs");
+    // if (jobsResponse.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // const initjobs = await clientApi.post("/init-jobs", jobsResponse.data);
+    // if (initjobs.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // const jobCategoriesResponse = await inspectionApi.get(
+    //   "/install-job-categories"
+    // );
+    // if (jobCategoriesResponse.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+    // const initJobCategories = await clientApi.post(
+    //   "/init-job-categories",
+    //   jobCategoriesResponse.data
+    // );
+    // if (initJobCategories.status !== 200) {
+    //   setError("Something went wrong");
+    //   setInstalling(false);
+    //   return;
+    // }
+
+    // setInstalled(true);
+    // setInstalling(false);
   };
 
-  const handleGoto = () => {
-    navigate("/jobs");
-  };
+  // const handleGoto = () => {
+  //   navigate("/jobs");
+  // };
 
   return (
     <Center bg="app-bg" h="100vh" px={4}>
       <Box
-        bg="main-bg"
-        px={3}
+        bg="card-bg"
+        px={5}
         py={5}
-        border="stroke"
-        borderRadius="base"
+        borderRadius="xl"
+        shadow={"xs"}
         w="100%"
         maxW="2xl"
-        textAlign={"center"}
       >
-        {!installing && !installed && !error && (
+        <ButtonPrimary w="full" onClick={handleSetupApplication}>Setup Application</ButtonPrimary>
+        {/* {!installing && !installed && !error && (
           <Box textAlign="center">
             <Heading color="rich-black">Important!</Heading>
             <Text color="main-text">
@@ -213,7 +216,7 @@ const Init = () => {
           <Box>
             <Text color={"red"}>Something Went Wront</Text>
           </Box>
-        )}
+        )} */}
       </Box>
     </Center>
   );
