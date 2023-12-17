@@ -6,17 +6,7 @@ type ButtonPrimaryProps = ButtonProps & {
 };
 
 const ButtonPrimary = ({ children, ...btnProps }: ButtonPrimaryProps) => {
-  return (
-    <Button
-      bg="blue-primary"
-      color="white"
-      colorScheme="messenger"
-      size={{ base: "sm", md: "md" }}
-      {...btnProps}
-    >
-      {children}
-    </Button>
-  );
+  return <Button colorScheme="messenger" size={"lg"} borderRadius={"xl"} {...btnProps}>{children}</Button>;
 };
 
 export default ButtonPrimary;

@@ -66,23 +66,26 @@ const Login = () => {
   };
 
   return (
-    <Center bg="app-bg" h="100vh" px={4}>
+    <Center bg="app-bg" h="100vh">
       <Box
-        bg="main-bg"
-        px={3}
+        bg="card-bg"
+        px={5}
         py={5}
-        border="stroke"
-        borderRadius="base"
+        borderRadius="xl"
+        shadow="xs"
         w="100%"
         maxW="2xl"
       >
         <Box textAlign="center">
-          <Heading color="rich-black">Welcome &#128075;</Heading>
-          <Text color="main-text">Let's do some inspections</Text>
+          <Text fontSize={"xl"} color={"text-small"} mb={2}>
+            Inspection Report App By Correct Inspections
+          </Text>
+          <Heading color="text-big">Welcome &#128075;</Heading>
         </Box>
         <form onSubmit={handleSubmit(onFormSubmit)}>
           <VStack mt="10" maxW="lg" mx="auto" spacing="4">
             <FormInput
+              label="Email"
               id="email"
               type="email"
               placeholder="Email"
@@ -92,6 +95,7 @@ const Login = () => {
               })}
             />
             <FormInput
+              label="Password"
               type="password"
               id="password"
               placeholder="Password"

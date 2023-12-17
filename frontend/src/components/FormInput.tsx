@@ -12,7 +12,8 @@ import { Ref, forwardRef } from "react";
 import { UseFormRegisterReturn } from "react-hook-form";
 
 type FormInputProps = UseFormRegisterReturn &
-  FormControlProps & InputProps & {
+  FormControlProps &
+  InputProps & {
     inputError?: string;
   };
 
@@ -21,9 +22,22 @@ const FormInput = (
   ref: Ref<HTMLInputElement>
 ) => {
   return (
-    <FormControl isInvalid={!!inputError}>
-      {label && <FormLabel htmlFor={id} color="rich-black" fontSize="xl" mb="0">{label}</FormLabel>}
-      <Input id={id} placeholder={placeholder} {...inputProps} ref={ref} borderColor="blue-primary" autoComplete="off" />
+    <FormControl isInvalid={inputError !== undefined && inputError !== ""}>
+      {label && <FormLabel htmlFor={id} color={"text-big"} fontSize={"xl"} mb={0}>{label}</FormLabel>}
+      <Input
+        id={id}
+        placeholder={placeholder}
+        {...inputProps}
+        ref={ref}
+        bg={"card-bg-secondary"}
+        height={"12"}
+        borderRadius={"xl"}
+        shadow={"xs"}
+        _placeholder={{
+          color: "text-secondary"
+        }}
+        autoComplete="off"
+      />
       {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}
     </FormControl>
   );
