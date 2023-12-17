@@ -60,6 +60,8 @@ export const initLibraryItemsController: RouteHandler = async ({ request }) => {
   }
 
   try {
+    await Db.libraryItems.clear();
+    await Db.libraryIndex.clear();
     await Db.libraryItems.bulkAdd(allItems);
     const libIndexitems = allItems.map((item) => ({
       id: item.id,

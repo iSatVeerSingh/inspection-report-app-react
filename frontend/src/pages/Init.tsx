@@ -1,7 +1,17 @@
 "use client";
 
 import { useRef, useState } from "react";
-import { Box, Center, Heading, Progress, Text } from "@chakra-ui/react";
+import {
+  Alert,
+  AlertDescription,
+  AlertIcon,
+  AlertTitle,
+  Box,
+  Center,
+  Heading,
+  Progress,
+  Text,
+} from "@chakra-ui/react";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { MouseEventHandler } from "react";
 import { redirect, useNavigate } from "react-router-dom";
@@ -27,16 +37,20 @@ export const initLoader = async () => {
 
 const Init = () => {
   const navigate = useNavigate();
+  const [progress, setProgress] = useState(0);
+  const [installing, setInstalling] = useState(false);
+
   const statusRef = useRef<HTMLDivElement | null>(null);
 
-  const [progressBar, setProgressBar] = useState(0);
-  const [installing, setInstalling] = useState(false);
+  const [statusText, setStatusText] = useState("");
   const [installed, setInstalled] = useState(false);
   const [error, setError] = useState<any>(null);
 
-  const handleSetupApplication: MouseEventHandler<HTMLButtonElement> = async (e) => {
+  const handleSetupApplication: MouseEventHandler<HTMLButtonElement> = async (
+    e
+  ) => {
     e.preventDefault();
-    // setInstalling(true);
+    setInstalling(true);
 
     const storage = navigator.storage;
     if (storage) {
@@ -54,34 +68,34 @@ const Init = () => {
       navigate("/login");
     }
 
-    navigate("/")
-    return
+    setStatusText("Fetching library items");
+    const libraryItemResponse = await inspectionApi.get("/install-items", {
+      onDownloadProgress: (e) => {
+        const downloadprogress = Math.floor(e.progress! * 100);
+        setProgress(downloadprogress);
+      },
+    });
 
-    // statusRef.current!.textContent = "Fetching Library items...";
-    // const libraryItemResponse = await inspectionApi.get("/install-items", {
-    //   onDownloadProgress: (e) => {
-    //     const progress = Math.floor(e.progress! * 100);
-    //     setProgressBar(progress);
-    //   },
-    // });
+    if (libraryItemResponse.status !== 200) {
+      setError(libraryItemResponse.data.message);
+      setInstalling(false);
+      return;
+    }
 
-    // if (libraryItemResponse.status !== 200) {
-    //   setError(libraryItemResponse.data.message);
-    //   setInstalling(false);
-    //   return;
-    // }
+    setStatusText("Setting up offline database for library items");
 
-    // statusRef.current!.textContent = "Setting up database for library items...";
+    const initLibraryResponse = await clientApi.post(
+      "/init-library-items",
+      libraryItemResponse.data
+    );
+    if (initLibraryResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
 
-    // const initLibraryResponse = await clientApi.post(
-    //   "/init-library-items",
-    //   libraryItemResponse.data
-    // );
-    // if (initLibraryResponse.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
+    navigate("/");
+    return;
     // const libItemCategoryResponse = await inspectionApi.get(
     //   "/install-item-categories",
     //   {
@@ -182,7 +196,40 @@ const Init = () => {
         w="100%"
         maxW="2xl"
       >
-        <ButtonPrimary w="full" onClick={handleSetupApplication}>Setup Application</ButtonPrimary>
+        <Alert
+          status="info"
+          variant="subtle"
+          flexDirection="column"
+          alignItems="center"
+          justifyContent="center"
+          textAlign="center"
+          borderRadius={"lg"}
+          mb={3}
+        >
+          <AlertIcon boxSize="40px" mr={0} />
+          <AlertTitle mt={4} mb={1} fontSize="2xl">
+            Important
+          </AlertTitle>
+          <AlertDescription maxWidth="sm">
+            This is a Progressive web app, which means this app works as an
+            offline website. So if you delete or clear browsing data/history,
+            the data of this app will be deleted. So be carefull before clearing
+            browsing data.
+          </AlertDescription>
+        </Alert>
+
+        {!installing ? (
+          <ButtonPrimary w="full" onClick={handleSetupApplication}>
+            Setup Application
+          </ButtonPrimary>
+        ) : (
+          <Box textAlign={"center"}>
+            <Text fontSize={"lg"} color={"text-small"}>
+              Fetching libary items
+            </Text>
+            <Progress value={progress} mt={2} borderRadius={"lg"} />
+          </Box>
+        )}
         {/* {!installing && !installed && !error && (
           <Box textAlign="center">
             <Heading color="rich-black">Important!</Heading>
