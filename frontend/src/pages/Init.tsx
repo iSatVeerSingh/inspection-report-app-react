@@ -68,6 +68,23 @@ const Init = () => {
       navigate("/login");
     }
 
+    setStatusText("Fetching all categories");
+    const libItemCategoryResponse = await inspectionApi.get(
+      "/install-item-categories",
+      {
+        onDownloadProgress: (e) => {
+          const downloadprogress = Math.floor(e.progress! * 100);
+          setProgress(downloadprogress);
+        },
+      }
+    );
+
+    if (libItemCategoryResponse.status !== 200) {
+      setError(libItemCategoryResponse.data.message);
+      setInstalling(false);
+      return;
+    }
+
     setStatusText("Fetching library items");
     const libraryItemResponse = await inspectionApi.get("/install-items", {
       onDownloadProgress: (e) => {
@@ -78,6 +95,16 @@ const Init = () => {
 
     if (libraryItemResponse.status !== 200) {
       setError(libraryItemResponse.data.message);
+      setInstalling(false);
+      return;
+    }
+
+    const initLibCategory = await clientApi.post(
+      "/init-library-item-categories",
+      libItemCategoryResponse.data
+    );
+    if (initLibCategory.status !== 200) {
+      setError("Something went wrong");
       setInstalling(false);
       return;
     }

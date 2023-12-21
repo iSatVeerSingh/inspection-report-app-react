@@ -18,6 +18,8 @@ import {
   getJobInspectionSummaryController,
   getJobsController,
   getLibIndexController,
+  getLibraryItemCategoriesController,
+  getLibraryItemsController,
   getLibraryNotesController,
   initInspectionNotesController,
   initJobCategoriesController,
@@ -72,6 +74,20 @@ registerRoute(
   ({ url }) => url.pathname === "/client/init-job-categories",
   initJobCategoriesController,
   "POST"
+);
+
+// Get Library Item Category
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-item-categories",
+  getLibraryItemCategoriesController,
+  "GET"
+);
+
+// Get Library teims
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-items",
+  getLibraryItemsController,
+  "GET"
 );
 
 // Job categories

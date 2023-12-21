@@ -85,6 +85,7 @@ export const initLibraryItemCategoriesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
   try {
+    await Db.libraryItemCategories.clear();
     await Db.libraryItemCategories.bulkAdd(allCategories);
     return getSuccessResponse({ message: "Categories added successfully" });
   } catch (err) {
@@ -142,13 +143,72 @@ export const initJobCategoriesController: RouteHandler = async ({
   }
 };
 
+// Get Library Items Categories
+export const getLibraryItemCategoriesController: RouteHandler = async () => {
+  try {
+    const categories = await Db.libraryItemCategories.toArray();
+    return getSuccessResponse(categories);
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
+// Get Library items
+export const getLibraryItemsController: RouteHandler = async ({ url }) => {
+  try {
+    const category = url.searchParams.get("category");
+    const updated_at = url.searchParams.get("updated_at");
+    const page = url.searchParams.get("page");
+
+    const perPage = 25;
+    const pageNumber = Number(page);
+    const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
+
+    if (category || updated_at) {
+      const category_id = Number(category);
+      const dbQuery = {
+        ...(category_id && category_id !== 0 ? { category_id } : {}),
+        ...(updated_at ? { updated_at } : {}),
+      };
+
+      const itemsCollection = Db.libraryItems.where(dbQuery);
+      const total = await itemsCollection.count();
+      const totalPages =
+        total % perPage === 0
+          ? total / perPage
+          : Math.floor(total / perPage) + 1;
+      const items = await itemsCollection.offset(skip).limit(perPage).toArray();
+      return getSuccessResponse({
+        data: items,
+        pages: totalPages,
+        currentPage: pageNumber === 0 ? 1 : pageNumber,
+      });
+    } else {
+      const itemsCollection = Db.libraryItems.orderBy("updated_at").reverse();
+      const total = await itemsCollection.count();
+      const totalPages =
+        total % perPage === 0
+          ? total / perPage
+          : Math.floor(total / perPage) + 1;
+      const items = await itemsCollection.offset(skip).limit(perPage).toArray();
+      return getSuccessResponse({
+        data: items,
+        pages: totalPages,
+        currentPage: pageNumber === 0 ? 1 : pageNumber,
+      });
+    }
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
 // Get Job categories
 export const getJobCategoriesController: RouteHandler = async () => {
   try {
     const jobCategories = await Db.jobCategories.toArray();
     return getSuccessResponse(jobCategories);
   } catch (err) {
-    return getBadRequestResponse();
+    return getBadRequestResponse(err);
   }
 };
 

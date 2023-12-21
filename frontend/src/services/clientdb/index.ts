@@ -22,12 +22,14 @@ export class InspectionDatabase extends Dexie {
     super("inspection-db");
     this.version(1).stores({
       libraryItemCategories: "++id, name",
-      libraryItems: "++id, category_id, name, updated_at", // Primary key and indexed props
+      // libraryItems: "++id, category_id, name, updated_at", // Primary key and indexed props
+      libraryItems: "++id, [category_id+updated_at], category_id, updated_at",
       libraryIndex: "++id",
       inspectionNotes: "++id, category",
       jobCategories: "++id",
       jobs: "++jobNumber, id, [status+category+startsAt], [status+category], [status+startsAt], [category+startsAt]",
-      inspectionItems: "++id, job_id, library_item_id, isCustom, [job_id+isPreviousItem]",
+      inspectionItems:
+        "++id, job_id, library_item_id, isCustom, [job_id+isPreviousItem]",
       // template: "++id",
     });
   }
