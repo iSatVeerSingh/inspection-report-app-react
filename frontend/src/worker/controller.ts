@@ -244,20 +244,30 @@ export const updateLibraryItemsController: RouteHandler = async ({
     return getBadRequestResponse();
   }
 
-  const body = await request.json();
+  try {
+    const body = await request.json();
+    const response = await inspectionApi(
+      `/api/library-items/${id}`,
+      "PUT",
+      JSON.stringify(body)
+    );
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
 
-  const user = await UserDB.user.get("user");
-  console.log(user);
-  const response = await fetch(`/api/library-items/${id}`, {
-    body: JSON.stringify(body),
-    method: "PUT",
-    headers: {
-      Accept: "application/json",
-      Authorization: `Bearer ${user.access_token}`,
-    },
-  });
-  const data = await response.json();
-  console.log(data);
+    const updated = await Db.libraryItems.update(
+      Number(id),
+      response.data.data
+    );
+    if (updated === 0) {
+      return getBadRequestResponse("Something went wrong");
+    }
+    return getSuccessResponse({
+      message: "Item updated successfully successfully",
+    });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
 };
 
 // Get Job categories

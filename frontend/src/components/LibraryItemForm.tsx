@@ -28,9 +28,14 @@ import { getResizedImagesBase64Main } from "../utils/resize";
 type LibraryItemFormProps = {
   isEditing?: boolean;
   libraryItem?: LibraryItem;
+  setIsEditing?: (state: any) => void;
 };
 
-const LibraryItemForm = ({ isEditing, libraryItem }: LibraryItemFormProps) => {
+const LibraryItemForm = ({
+  isEditing,
+  libraryItem,
+  setIsEditing,
+}: LibraryItemFormProps) => {
   const [categories, setCategories] = useState<{ text: string; value: any }[]>(
     []
   );
@@ -131,10 +136,31 @@ const LibraryItemForm = ({ isEditing, libraryItem }: LibraryItemFormProps) => {
     }
 
     setSaving(true);
-    console.log(libItemData);
 
     if (isEditing) {
-      console.log("editing");
+      const response = await clientApi.put(
+        `/library-items?id=${libraryItem?.id}`,
+        libItemData
+      );
+      if (response.status !== 200) {
+        toast({
+          title: response.data.message || "Couln't update item",
+          status: "error",
+          duration: 4000,
+        });
+        setSaving(false);
+        return;
+      }
+
+      toast({
+        title: response.data.message || "Item updated successfully",
+        status: "success",
+        duration: 4000,
+      });
+      setSaving(false);
+      if (typeof setIsEditing === "function") {
+        setIsEditing(false);
+      }
     } else {
       const response = await clientApi.post("/library-items", libItemData);
       if (response.status !== 201) {
