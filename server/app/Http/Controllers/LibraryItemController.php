@@ -42,6 +42,12 @@ class LibraryItemController extends Controller
         return new LibraryItemResource($libraryItem);
     }
 
+    public function destroy(Request $request, LibraryItem $libraryItem)
+    {
+        $libraryItem->delete();
+        return response()->json(['message' => "Item deleted successfully"]);
+    }
+
     public function install(Request $request)
     {
 
