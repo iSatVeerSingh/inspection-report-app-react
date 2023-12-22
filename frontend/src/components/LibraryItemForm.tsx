@@ -24,6 +24,7 @@ import {
   parsedDataToEditorState,
 } from "../utils/editorData";
 import { getResizedImagesBase64Main } from "../utils/resize";
+import { useNavigate } from "react-router-dom";
 
 type LibraryItemFormProps = {
   isEditing?: boolean;
@@ -36,6 +37,7 @@ const LibraryItemForm = ({
   libraryItem,
   setIsEditing,
 }: LibraryItemFormProps) => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<{ text: string; value: any }[]>(
     []
   );
@@ -196,65 +198,17 @@ const LibraryItemForm = ({
       CLEAR_EDITOR_COMMAND,
       undefined
     );
-
-    // if (isEditing) {
-    //   const response = await inspectionApi.put(
-    //     `/library-items/${libraryItem?.id}`,
-    //     libItemData
-    //   );
-    //   if (response.status !== 200) {
-    //     toast({
-    //       title: "Couldn't update the item.",
-    //       duration: 4000,
-    //       status: "error",
-    //     });
-    //     setSaving(false);
-    //     return;
-    //   }
-
-    //   toast({
-    //     title: "Library item successfully updated",
-    //     duration: 4000,
-    //     status: "success",
-    //   });
-    //   navigate(-1);
-    // } else {
-    //   const response = await inspectionApi.post("/library-items", libItemData);
-    //   if (response.status !== 201) {
-    //     toast({
-    //       title: "Couldn't create library item",
-    //       duration: 4000,
-    //       status: "error",
-    //     });
-    //     setSaving(false);
-    //     return;
-    //   }
-
-    //   toast({
-    //     title: "Library item created successfully",
-    //     duration: 4000,
-    //     status: "success",
-    //   });
-
-    //   reset({
-    //     name: "",
-    //     category: "",
-    //     summary: "",
-    //     embeddedImage: "",
-    //   });
-
-    //   openingParagraphEditorRef.current?.dispatchCommand(
-    //     CLEAR_EDITOR_COMMAND,
-    //     undefined
-    //   );
-    //   closingParagraphEditorRef.current?.dispatchCommand(
-    //     CLEAR_EDITOR_COMMAND,
-    //     undefined
-    //   );
-    //   setSaving(false);
-    // }
   };
 
+  const handleCancel = () => {
+    if (isEditing) {
+      if (typeof setIsEditing === "function") {
+        setIsEditing(false);
+      }
+    } else {
+      navigate(-1);
+    }
+  };
   return (
     <Box bg={"card-bg"} p={3} borderRadius={"xl"} shadow={"xs"}>
       <form onSubmit={handleSubmit(onSubmitItemForm)}>
@@ -330,7 +284,7 @@ const LibraryItemForm = ({
           <ButtonPrimary type="submit" isLoading={saving} loadingText="Saving">
             Submit
           </ButtonPrimary>
-          <ButtonOutline>Cancel</ButtonOutline>
+          <ButtonOutline onClick={handleCancel}>Cancel</ButtonOutline>
         </Flex>
       </form>
     </Box>

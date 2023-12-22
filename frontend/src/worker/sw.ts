@@ -13,6 +13,7 @@ import {
   createJobController,
   createLibraryItemsController,
   deleteInspectionItemsController,
+  deleteLibraryItemController,
   generateReportController,
   getInspectionsController,
   getJobCategoriesController,
@@ -104,6 +105,13 @@ registerRoute(
   ({ url }) => url.pathname === "/client/library-items",
   updateLibraryItemsController,
   "PUT"
+);
+
+// Delete Library Items
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-items",
+  deleteLibraryItemController,
+  "DELETE"
 );
 
 // Job categories

@@ -263,7 +263,29 @@ export const updateLibraryItemsController: RouteHandler = async ({
       return getBadRequestResponse("Something went wrong");
     }
     return getSuccessResponse({
-      message: "Item updated successfully successfully",
+      message: "Item updated successfully",
+    });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Delete Library items
+export const deleteLibraryItemController: RouteHandler = async ({ url }) => {
+  const id = url.searchParams.get("id");
+  if (!id) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const response = await inspectionApi(`/api/library-items/${id}`, "DELETE");
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
+
+    await Db.libraryItems.delete(Number(id));
+    return getSuccessResponse({
+      message: "Item Deleted successfully",
     });
   } catch (err) {
     return getBadRequestResponse(err);
