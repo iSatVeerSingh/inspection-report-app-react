@@ -35,8 +35,10 @@ import FormInput from "../../components/FormInput";
 import { SubmitHandler, useForm } from "react-hook-form";
 import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
+import { useGlobalContext } from "../../context/globalContext";
 
 const LibraryItemCategories = () => {
+  const { user } = useGlobalContext();
   const [loading, setLoading] = useState(true);
   const [categories, setCategories] = useState<LibraryItemCategory[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -183,6 +185,10 @@ const LibraryItemCategories = () => {
       await getAllCategories();
     }
   };
+
+  if (user.role === "Inspector") {
+    return null;
+  }
 
   return (
     <PageLayout

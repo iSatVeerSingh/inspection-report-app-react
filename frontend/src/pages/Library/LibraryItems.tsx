@@ -7,6 +7,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FilterSelect from "../../components/FilterSelect";
 import ButtonOutline from "../../components/ButtonOutline";
 import FilterInput from "../../components/FilterInput";
+import { useGlobalContext } from "../../context/globalContext";
 
 type Filter = {
   category?: string;
@@ -15,6 +16,7 @@ type Filter = {
 };
 
 const LibraryItems = () => {
+  const { user } = useGlobalContext();
   const navigate = useNavigate();
   const [categories, setCategories] = useState<{ text: string; value: any }[]>(
     []
@@ -71,7 +73,7 @@ const LibraryItems = () => {
     <PageLayout
       title="Library items"
       isRoot
-      titleBtn="New Library Item"
+      titleBtn={user.role !== "Inspector" ? "New Library Item" : undefined}
       onBtnClick={() => navigate("./new")}
     >
       <Flex

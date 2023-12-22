@@ -21,6 +21,7 @@ import { LibraryItem as LibraryItemType } from "../../types";
 import { getItemPargarph } from "../../utils/itemParagraph";
 import LibraryItemForm from "../../components/LibraryItemForm";
 import ButtonPrimary from "../../components/ButtonPrimary";
+import { useGlobalContext } from "../../context/globalContext";
 
 const ParagraphText = ({ paragraph }: { paragraph: string }) => {
   const parsedText = getItemPargarph(paragraph);
@@ -57,6 +58,8 @@ const ParagraphText = ({ paragraph }: { paragraph: string }) => {
 };
 
 const LibraryItem = () => {
+  const { user } = useGlobalContext();
+
   const navigate = useNavigate();
   const { isOpen, onOpen, onClose } = useDisclosure();
   const cancelRef = useRef<HTMLButtonElement>(null);
@@ -103,7 +106,7 @@ const LibraryItem = () => {
     <PageLayout title="Library Item">
       {!loading && (
         <Box>
-          {isEditing ? (
+          {isEditing && user.role !== "Inspector" ? (
             <LibraryItemForm
               isEditing={isEditing}
               setIsEditing={setIsEditing}
@@ -192,14 +195,20 @@ const LibraryItem = () => {
                   </Box>
                 </Flex>
               </Flex>
-              <Flex mt={2} justifyContent={"space-between"}>
-                <Button colorScheme="red" variant={"outline"} onClick={onOpen}>
-                  Delete
-                </Button>
-                <ButtonPrimary onClick={() => setIsEditing(true)}>
-                  Edit
-                </ButtonPrimary>
-              </Flex>
+              {user.role !== "Inspector" && (
+                <Flex mt={2} justifyContent={"space-between"}>
+                  <Button
+                    colorScheme="red"
+                    variant={"outline"}
+                    onClick={onOpen}
+                  >
+                    Delete
+                  </Button>
+                  <ButtonPrimary onClick={() => setIsEditing(true)}>
+                    Edit
+                  </ButtonPrimary>
+                </Flex>
+              )}
             </>
           )}
         </Box>
