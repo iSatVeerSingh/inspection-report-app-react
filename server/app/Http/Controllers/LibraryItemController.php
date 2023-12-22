@@ -10,56 +10,42 @@ use Illuminate\Http\Response;
 
 class LibraryItemController extends Controller
 {
-    public function index(Request $request)
-    {
-        return new LibraryItemCollection(
-            LibraryItem::select('id', 'name', 'category_id', 'summary', 'created_at', 'updated_at')
-                ->orderByDesc('updated_at')
-                ->simplePaginate()
-                ->withPath('/library-items')
-        );
-    }
-
-    public function show(Request $request, LibraryItem $libraryItem)
-    {
-        return new LibraryItemResource($libraryItem);
-    }
-
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'category_id' => 'required',
-            'name' => 'required|max:255',
-            'summary' => 'required',
+            'category_id' => 'required|exists:library_item_categories,id',
+            'name' => "required|max:255",
+            'summary' => 'sometimes',
+            'embeddedImage' => 'sometimes',
             'openingParagraph' => 'required',
-            'closingParagraph' => 'required',
-            'embeddedImage' => 'sometimes|required'
+            'closingParagraph' => 'required'
         ]);
 
         $libraryItem = new LibraryItem($validated);
         $libraryItem->save();
-
-        return response()->json(['message' => 'Library Item created successfully'], Response::HTTP_CREATED);
+        return new LibraryItemResource($libraryItem);
     }
 
     public function update(Request $request, LibraryItem $libraryItem)
     {
         $validated = $request->validate([
-            'category_id' => 'sometimes:required',
-            'name' => 'sometimes|required|max:255',
-            'summary' => 'sometimes|required',
-            'openingParagraph' => 'sometimes|required',
-            'closingParagraph' => 'sometimes|required',
-            'embeddedImage' => 'sometimes'
+            'category_id' => 'sometimes|exists:library_item_categories,id',
+            'name' => "sometimes|max:255",
+            'summary' => 'sometimes',
+            'embeddedImage' => 'sometimes',
+            'openingParagraph' => 'sometimes',
+            'closingParagraph' => 'sometimes'
         ]);
 
         $libraryItem->update($validated);
+
         return new LibraryItemResource($libraryItem);
     }
 
     public function install(Request $request)
     {
-        $allItems = LibraryItem::all()->toJson();
+
+        $allItems = (new LibraryItemCollection(LibraryItem::all()))->toJson();
         $contentLength = strlen($allItems);
         return response($allItems)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }

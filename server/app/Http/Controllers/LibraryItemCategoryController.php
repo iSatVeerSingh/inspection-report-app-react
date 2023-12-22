@@ -10,7 +10,7 @@ class LibraryItemCategoryController extends Controller
 {
     public function index(Request $request)
     {
-        return response()->json(['data' => LibraryItemCategory::withCount(['libraryItems as itemsCount'])->get()]);
+        return response()->json(['data' => LibraryItemCategory::withCount(['libraryItems as itemsCount'])->orderBy('updated_at', 'desc')->get()]);
     }
 
     public function store(Request $request)
@@ -37,6 +37,11 @@ class LibraryItemCategoryController extends Controller
 
     public function destroy(Request $request, LibraryItemCategory $libraryItemCategory)
     {
+        $itemcount = $libraryItemCategory->libraryItems()->count();
+        if ($itemcount !== 0) {
+            return response()->json(['message' => "Category is not empty"], Response::HTTP_BAD_REQUEST);
+        }
+
         $libraryItemCategory->delete();
         return response()->json(['message' => 'Category deleted successfully']);
     }

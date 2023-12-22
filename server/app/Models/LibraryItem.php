@@ -19,6 +19,11 @@ class LibraryItem extends Model
         'closingParagraph',
         'embeddedImage'
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
     /**
      * Get the category that owns the LibraryItem
      *
