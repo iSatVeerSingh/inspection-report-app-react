@@ -4,8 +4,8 @@ export const getResizedImagesBase64Main = async (imageFiles: File[]) => {
 
   for (let i = 0; i < imageFiles.length; i++) {
     const bitmap = await createImageBitmap(imageFiles[i]);
-    if (bitmap.width > 400 || bitmap.height > 400) {
-      const maxwidth = 400;
+    if (bitmap.width > 300 || bitmap.height > 300) {
+      const maxwidth = 300;
       const scaleSize = maxwidth / bitmap.width;
       const maxheight = bitmap.height * scaleSize;
 
@@ -18,7 +18,7 @@ export const getResizedImagesBase64Main = async (imageFiles: File[]) => {
       ctx.imageSmoothingQuality = "high";
       ctx.drawImage(bitmap, 0, 0, canvas.width, canvas.height);
 
-      const base64Str = ctx.canvas.toDataURL("image/jpeg", 0.9);
+      const base64Str = ctx.canvas.toDataURL("image/jpeg", 1);
       resizedImages.push(base64Str);
     } else {
       base64Promises.push(getBase64String(imageFiles[i]));

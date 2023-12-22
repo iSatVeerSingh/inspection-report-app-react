@@ -246,6 +246,9 @@ export const getParsedDataFromEditorState = (
 };
 
 export const parsedDataToEditorState = (dataString: string) => {
+  if (!dataString) {
+    return "";
+  }
   const allParagraphs = JSON.parse(dataString) as { text: TextChild[] }[];
 
   const editorState: SerializedEditorState = {

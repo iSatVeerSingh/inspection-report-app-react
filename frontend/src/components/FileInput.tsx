@@ -33,7 +33,7 @@ const FileInputNormal = (
   return (
     <FormControl isInvalid={!!inputError}>
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0" htmlFor={id}>
+        <FormLabel color="text-big" fontSize="xl" mb="0" htmlFor={id}>
           {label}
           {subLabel && (
             <Text as="span" color={"main-text"} fontSize={"sm"} ml={3}>
@@ -46,7 +46,12 @@ const FileInputNormal = (
         type="file"
         id={id}
         placeholder={placeholder}
-        borderColor="blue-primary"
+        bg={"card-bg-secondary"}
+        height={"12"}
+        borderRadius={"lg"}
+        shadow={"xs"}
+        border={"1px"}
+        borderColor={"gray.400"}
         px={0}
         multiple={multiple}
         cursor={"pointer"}

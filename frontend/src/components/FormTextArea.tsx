@@ -33,7 +33,15 @@ const FormTextArea = (
         placeholder={placeholder}
         {...inputProps}
         ref={ref}
-        borderColor="blue-primary"
+        bg={"card-bg-secondary"}
+        height={"12"}
+        borderRadius={"lg"}
+        border={"1px"}
+        borderColor={"gray.400"}
+        shadow={"xs"}
+        _placeholder={{
+          color: "text-secondary",
+        }}
         autoComplete="off"
       />
       {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}

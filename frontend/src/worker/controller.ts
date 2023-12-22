@@ -13,6 +13,7 @@ import {
 import Dexie from "dexie";
 import { Db, UserDB } from "../services/clientdb";
 import { Inspection, Job, JobStatus, LibraryItem } from "../types";
+import { inspectionApi } from "./serverapi";
 
 // check init status
 export const initStatusController: RouteHandler = async () => {
@@ -156,6 +157,12 @@ export const getLibraryItemCategoriesController: RouteHandler = async () => {
 // Get Library items
 export const getLibraryItemsController: RouteHandler = async ({ url }) => {
   try {
+    const id = url.searchParams.get("id");
+    if (id) {
+      const item = await Db.libraryItems.get(Number(id));
+      return getSuccessResponse(item);
+    }
+
     const category = url.searchParams.get("category");
     const updated_at = url.searchParams.get("updated_at");
     const page = url.searchParams.get("page");
@@ -200,6 +207,57 @@ export const getLibraryItemsController: RouteHandler = async ({ url }) => {
   } catch (err) {
     return getBadRequestResponse(err);
   }
+};
+
+// Create Library items
+export const createLibraryItemsController: RouteHandler = async ({
+  request,
+}) => {
+  try {
+    const body = await request.json();
+    const response = await inspectionApi(
+      "/api/library-items",
+      "POST",
+      JSON.stringify(body)
+    );
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
+
+    const itemAdded = await Db.libraryItems.add(response.data.data);
+    if (!itemAdded) {
+      return getBadRequestResponse("Something went wrong");
+    }
+    return getSuccessResponse({ message: "Item created successfully" }, 201);
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Update Library items
+export const updateLibraryItemsController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const id = url.searchParams.get("id");
+  if (!id) {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+
+  const user = await UserDB.user.get("user");
+  console.log(user);
+  const response = await fetch(`/api/library-items/${id}`, {
+    body: JSON.stringify(body),
+    method: "PUT",
+    headers: {
+      Accept: "application/json",
+      Authorization: `Bearer ${user.access_token}`,
+    },
+  });
+  const data = await response.json();
+  console.log(data);
 };
 
 // Get Job categories

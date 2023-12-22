@@ -11,6 +11,7 @@ import {
   addInspectionNotesController,
   addRecommendationController,
   createJobController,
+  createLibraryItemsController,
   deleteInspectionItemsController,
   generateReportController,
   getInspectionsController,
@@ -29,6 +30,7 @@ import {
   initStatusController,
   initUserController,
   startInspectionController,
+  updateLibraryItemsController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -83,11 +85,25 @@ registerRoute(
   "GET"
 );
 
-// Get Library teims
+// Get Library items
 registerRoute(
   ({ url }) => url.pathname === "/client/library-items",
   getLibraryItemsController,
   "GET"
+);
+
+// Create library items
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-items",
+  createLibraryItemsController,
+  "POST"
+);
+
+// Update Library Items
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-items",
+  updateLibraryItemsController,
+  "PUT"
 );
 
 // Job categories

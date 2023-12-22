@@ -3,7 +3,7 @@ import PageLayout from "../../Layout/PageLayout";
 import clientApi from "../../services/clientApi";
 import { LibraryItem, LibraryItemCategory } from "../../types";
 import { Box, Button, Flex, Grid, GridItem, Text } from "@chakra-ui/react";
-import { Link, useSearchParams } from "react-router-dom";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import FilterSelect from "../../components/FilterSelect";
 import ButtonOutline from "../../components/ButtonOutline";
 import FilterInput from "../../components/FilterInput";
@@ -15,6 +15,7 @@ type Filter = {
 };
 
 const LibraryItems = () => {
+  const navigate = useNavigate();
   const [categories, setCategories] = useState<{ text: string; value: any }[]>(
     []
   );
@@ -67,12 +68,18 @@ const LibraryItems = () => {
   };
 
   return (
-    <PageLayout title="Library items" isRoot>
+    <PageLayout
+      title="Library items"
+      isRoot
+      titleBtn="New Library Item"
+      onBtnClick={() => navigate("./new")}
+    >
       <Flex
         direction={{ base: "column", lg: "row" }}
         alignItems={{ base: "start", lg: "center" }}
         gap={2}
       >
+        <Text fontSize={"xl"}>Filter</Text>
         <Flex gap={3}>
           <FilterSelect
             options={categories}

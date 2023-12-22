@@ -14,7 +14,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 type FormSelectProps = UseFormRegisterReturn &
   SelectProps &
   FormControlProps & {
-    inputError?: string;
+    inputError?: any;
     options: string[] | { text: string; value: string }[];
   };
 
@@ -44,6 +44,8 @@ const FormSelect = (
         height={"12"}
         borderRadius={"lg"}
         shadow={"xs"}
+        border={"1px"}
+        borderColor={"gray.400"}
         _placeholder={{
           color: "text-secondary",
         }}

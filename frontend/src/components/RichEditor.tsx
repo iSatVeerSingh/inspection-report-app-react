@@ -134,21 +134,21 @@ const RichEditor = (
   };
 
   return (
-    <FormControl
-      bg={"main-bg"}
-      isInvalid={inputError !== undefined && inputError !== ""}
-    >
+    <FormControl isInvalid={inputError !== undefined && inputError !== ""}>
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0">
+        <FormLabel color="text-big" fontSize="xl" mb="0">
           {label}
         </FormLabel>
       )}
       <LexicalComposer initialConfig={editorConfig}>
         <Box
-          borderColor="blue-primary"
-          borderWidth="1px"
-          borderRadius="md"
+          borderRadius={"xl"}
+          bg={"card-bg-secondary"}
           overflow={"hidden"}
+          shadow={"xs"}
+          border={"1px"}
+          borderColor={"gray.400"}
+          fontSize={"sm"}
         >
           <ToolbarPlugin />
           <Box position="relative">

@@ -14,7 +14,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 type FormInputProps = UseFormRegisterReturn &
   FormControlProps &
   InputProps & {
-    inputError?: string;
+    inputError?: any;
   };
 
 const FormInput = (
@@ -23,7 +23,11 @@ const FormInput = (
 ) => {
   return (
     <FormControl isInvalid={inputError !== undefined && inputError !== ""}>
-      {label && <FormLabel htmlFor={id} color={"text-big"} fontSize={"xl"} mb={0}>{label}</FormLabel>}
+      {label && (
+        <FormLabel htmlFor={id} color={"text-big"} fontSize={"xl"} mb={0}>
+          {label}
+        </FormLabel>
+      )}
       <Input
         id={id}
         placeholder={placeholder}
@@ -33,8 +37,10 @@ const FormInput = (
         height={"12"}
         borderRadius={"lg"}
         shadow={"xs"}
+        border={"1px"}
+        borderColor={"gray.400"}
         _placeholder={{
-          color: "text-secondary"
+          color: "text-secondary",
         }}
         autoComplete="off"
       />
