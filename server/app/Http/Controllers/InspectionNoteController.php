@@ -23,14 +23,14 @@ class InspectionNoteController extends Controller
         return $insepctionNote;
     }
 
-    public function update(Request $request, InspectionNote $insepctionNote)
+    public function update(Request $request, InspectionNote $inspectionNote)
     {
         $validated = $request->validate([
-            'text' => 'required',
+            'text' => 'required'
         ]);
 
-        $insepctionNote->update($validated);
-        return $insepctionNote;
+        $inspectionNote->update($validated);
+        return $inspectionNote;
     }
 
     public function destroy(Request $request, InspectionNote $inspectionNote)

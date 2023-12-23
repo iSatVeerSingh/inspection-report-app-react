@@ -13,4 +13,9 @@ class InspectionNote extends Model
     protected $fillable = [
         'text'
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 }
