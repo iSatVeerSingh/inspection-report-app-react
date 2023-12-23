@@ -15,16 +15,22 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
+  AlertDialog,
+  AlertDialogOverlay,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogBody,
+  AlertDialogFooter,
+  Button,
   useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import PageLayout from "../Layout/PageLayout";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { InspectionNote } from "../types";
 import clientApi from "../services/clientApi";
 import { MoreIcon } from "../icons";
 import Loading from "../components/Loading";
-import FormInput from "../components/FormInput";
 import { useForm } from "react-hook-form";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonOutline from "../components/ButtonOutline";
@@ -35,6 +41,13 @@ const InspectionNotes = () => {
   const [notes, setNotes] = useState<InspectionNote[]>([]);
   const [isEditing, setIsEditing] = useState(false);
   const { isOpen, onOpen, onClose } = useDisclosure();
+  const {
+    isOpen: isOpenAlert,
+    onOpen: onOpenAlert,
+    onClose: onCloseAlert,
+  } = useDisclosure();
+  const cancelRef = useRef<HTMLButtonElement>(null);
+  const deleteNoteRef = useRef<any>();
   const toast = useToast();
   const {
     register,
@@ -113,6 +126,33 @@ const InspectionNotes = () => {
     await getNotes();
   };
 
+  const handleDeleteNoteBtn = (id: any) => {
+    deleteNoteRef.current = id;
+    onOpenAlert();
+  };
+
+  const deleteNote = async () => {
+    const response = await clientApi.delete(
+      `/inspection-notes?id=${deleteNoteRef.current}`
+    );
+    if (response.status !== 200) {
+      toast({
+        title: response.data.message || "Couldn't delete note",
+        duration: 4000,
+        status: "error",
+      });
+      return;
+    }
+    toast({
+      title: response.data.message || "Note delete successfully",
+      duration: 4000,
+      status: "success",
+    });
+
+    onCloseAlert();
+    await getNotes();
+  };
+
   return (
     <PageLayout
       title="Inspection Notes"
@@ -155,7 +195,9 @@ const InspectionNotes = () => {
                       <MenuItem onClick={() => handleEditBtn(note)}>
                         Edit
                       </MenuItem>
-                      <MenuItem>Delete</MenuItem>
+                      <MenuItem onClick={() => handleDeleteNoteBtn(note.id)}>
+                        Delete
+                      </MenuItem>
                     </MenuList>
                   </Menu>
                 </Flex>
@@ -196,6 +238,31 @@ const InspectionNotes = () => {
           </ModalFooter>
         </ModalContent>
       </Modal>
+
+      <AlertDialog
+        isOpen={isOpenAlert}
+        leastDestructiveRef={cancelRef}
+        onClose={onClose}
+      >
+        <AlertDialogOverlay>
+          <AlertDialogContent>
+            <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
+              Delete Inspection Note
+            </AlertDialogHeader>
+            <AlertDialogBody>
+              Are you sure? You can't undo this action afterwards.
+            </AlertDialogBody>
+            <AlertDialogFooter gap={3}>
+              <Button ref={cancelRef} onClick={onCloseAlert}>
+                Cancel
+              </Button>
+              <Button colorScheme="red" onClick={deleteNote}>
+                Delete
+              </Button>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialogOverlay>
+      </AlertDialog>
     </PageLayout>
   );
 };

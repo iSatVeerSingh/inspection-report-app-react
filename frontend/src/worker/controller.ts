@@ -293,7 +293,7 @@ export const deleteLibraryItemController: RouteHandler = async ({ url }) => {
   }
 };
 // Get Inspection Notes
-export const getInspectionNotesController: RouteHandler = async ({ url }) => {
+export const getInspectionNotesController: RouteHandler = async () => {
   try {
     const notes = await Db.inspectionNotes.toArray();
     return getSuccessResponse(notes);
@@ -354,6 +354,31 @@ export const editInspectionNotesController: RouteHandler = async ({
       return getBadRequestResponse();
     }
     return getSuccessResponse({ message: "Item updated successfully" });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Delete inspection notes
+export const deleteInspectionNotesController: RouteHandler = async ({
+  url,
+}) => {
+  const id = url.searchParams.get("id");
+  if (!id) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const response = await inspectionApi(
+      `/api/inspection-notes/${id}`,
+      "DELETE"
+    );
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
+
+    await Db.inspectionNotes.delete(Number(id));
+    return getSuccessResponse({ message: "Item deleted successfully" });
   } catch (err) {
     return getBadRequestResponse(err);
   }

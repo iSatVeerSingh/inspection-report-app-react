@@ -14,7 +14,6 @@ import {
   AlertDialogOverlay,
   Box,
   Button,
-  Flex,
   Grid,
   IconButton,
   Menu,
@@ -46,9 +45,9 @@ const roles = ["Inspector", "Admin", "Owner"];
 
 const Users = () => {
   const navigate = useNavigate();
-  const {user} = useGlobalContext();
-  if(user.role !== "Owner") {
-    navigate('/jobs')
+  const { user } = useGlobalContext();
+  if (user.role !== "Owner") {
+    navigate("/jobs");
     return;
   }
 
@@ -234,7 +233,7 @@ const Users = () => {
                   gap={3}
                   _hover={{
                     backgroundColor: "card-bg-secondary",
-                    boxShadow: "xs"
+                    boxShadow: "xs",
                   }}
                 >
                   <Text fontSize={"lg"} fontWeight={"medium"} flexGrow={1}>

@@ -14,6 +14,7 @@ import {
   createJobController,
   createLibraryItemsController,
   deleteInspectionItemsController,
+  deleteInspectionNotesController,
   deleteLibraryItemController,
   editInspectionNotesController,
   generateReportController,
@@ -142,6 +143,13 @@ registerRoute(
   ({ url }) => url.pathname === "/client/inspection-notes",
   editInspectionNotesController,
   "PUT"
+);
+
+// delete inspection items
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection-notes",
+  deleteInspectionNotesController,
+  "DELETE"
 );
 
 // Job categories
