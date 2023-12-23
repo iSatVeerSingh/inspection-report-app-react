@@ -327,6 +327,38 @@ export const createInspectionNotesController: RouteHandler = async ({
   }
 };
 
+// edit inspection item
+export const editInspectionNotesController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const id = url.searchParams.get("id");
+  if (!id) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const body = await request.json();
+
+    const response = await inspectionApi(
+      `/api/inspection-notes/${id}`,
+      "PUT",
+      JSON.stringify(body)
+    );
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
+
+    const updated = await Db.inspectionNotes.update(Number(id), response.data);
+    if (updated === 0) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Item updated successfully" });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
 // Get Job categories
 export const getJobCategoriesController: RouteHandler = async () => {
   try {

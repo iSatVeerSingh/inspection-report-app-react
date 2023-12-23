@@ -47,6 +47,7 @@ const InspectionNotes = () => {
     setLoading(true);
     const response = await clientApi.get("/inspection-notes");
     if (response.status !== 200) {
+      setLoading(false);
       return;
     }
     setNotes(response.data);
@@ -70,7 +71,25 @@ const InspectionNotes = () => {
 
   const onSubmitNoteForm = async (formData: any) => {
     if (isEditing) {
-      console.log("editing the ofrm");
+      const response = await clientApi.put(
+        `/inspection-notes?id=${formData.id}`,
+        {
+          text: formData.text,
+        }
+      );
+      if (response.status !== 200) {
+        toast({
+          title: response.data.message || "Couldn't update note",
+          duration: 4000,
+          status: "error",
+        });
+        return;
+      }
+      toast({
+        title: response.data.message || "Note updated successfully",
+        duration: 4000,
+        status: "success",
+      });
     } else {
       const response = await clientApi.post("/inspection-notes", {
         text: formData.text,
@@ -163,7 +182,7 @@ const InspectionNotes = () => {
                 label="Note Text"
                 rows={10}
                 {...register("text", {
-                  required: !isEditing ? "Note text is required" : false,
+                  required: "Note text is required",
                 })}
                 inputError={errors.text?.message}
               />
