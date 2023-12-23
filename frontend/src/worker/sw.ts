@@ -10,11 +10,13 @@ import {
   addInspectionItemsController,
   addInspectionNotesController,
   addRecommendationController,
+  createInspectionNotesController,
   createJobController,
   createLibraryItemsController,
   deleteInspectionItemsController,
   deleteLibraryItemController,
   generateReportController,
+  getInspectionNotesController,
   getInspectionsController,
   getJobCategoriesController,
   getJobInspectionSummaryController,
@@ -47,22 +49,28 @@ registerRoute(
   initStatusController,
   "GET"
 );
+// Init user
 registerRoute(
   ({ url }) => url.pathname === "/client/init-user",
   initUserController,
   "POST"
 );
 
+// init library items
 registerRoute(
   ({ url }) => url.pathname === "/client/init-library-items",
   initLibraryItemsController,
   "POST"
 );
+
+// init library items categories
 registerRoute(
   ({ url }) => url.pathname === "/client/init-library-item-categories",
   initLibraryItemCategoriesController,
   "POST"
 );
+
+// init inspection notes
 registerRoute(
   ({ url }) => url.pathname === "/client/init-inspection-notes",
   initInspectionNotesController,
@@ -112,6 +120,20 @@ registerRoute(
   ({ url }) => url.pathname === "/client/library-items",
   deleteLibraryItemController,
   "DELETE"
+);
+
+// Get Inspection Notes
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection-notes",
+  getInspectionNotesController,
+  "GET"
+);
+
+// create inspection notes
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection-notes",
+  createInspectionNotesController,
+  "POST"
 );
 
 // Job categories

@@ -1,9 +1,10 @@
+export const ROOT = "/";
 export const USERS = "/users";
-export const LIBRARY_ITEM_CATEGORIES = "/library-item-categories"
+export const LIBRARY_ITEM_CATEGORIES = "/library-item-categories";
 export const LIBRARY_ITEMS = "/library-items";
 export const LIBRARY_ITEM_VIEW = LIBRARY_ITEMS + "/:id";
 export const NEW_LIBRARY_ITEM = LIBRARY_ITEMS + "/new";
-export const ROOT = "/";
+export const INSPECTION_NOTES = "/inspection-notes";
 export const JOBS = "/jobs";
 export const JOBS_DETAILS = "/jobs/:jobNumber";
 export const NEW_JOB = JOBS + "/new";

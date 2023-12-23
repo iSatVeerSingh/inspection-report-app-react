@@ -34,9 +34,12 @@ export const inspectionApi = axios.create({
 });
 
 inspectionApi.interceptors.request.use(async (config) => {
-  const access_token = await getAccessToken();
-  if (access_token) {
-    config.headers.Authorization = `Bearer ${access_token}`;
+  const userStr = localStorage.getItem("user");
+  if (userStr) {
+    const user = JSON.parse(userStr);
+    if (user.access_token) {
+      config.headers.Authorization = `Bearer ${user.access_token}`;
+    }
   }
   return config;
 });

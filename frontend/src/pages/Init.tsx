@@ -121,33 +121,34 @@ const Init = () => {
       return;
     }
 
+    setStatusText("Fetching inspection notes");
+    const libraryNotesResponse = await inspectionApi.get(
+      "/install-inspection-notes",
+      {
+        onDownloadProgress: (e) => {
+          const downloadprogress = Math.floor(e.progress! * 100);
+          setProgress(downloadprogress);
+        },
+      }
+    );
+
+    if (libraryNotesResponse.status !== 200) {
+      setError(libraryNotesResponse.data.message);
+      setInstalling(false);
+      return;
+    }
+    const initInspectionnotes = await clientApi.post(
+      "/init-inspection-notes",
+      libraryNotesResponse.data
+    );
+    if (initInspectionnotes.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+
     navigate("/");
     return;
-    // const libItemCategoryResponse = await inspectionApi.get(
-    //   "/install-item-categories",
-    //   {
-    //     onDownloadProgress: (e) => {
-    //       const progress = Math.floor(e.progress! * 100);
-    //       setProgressBar(progress);
-    //     },
-    //   }
-    // );
-    // if (libItemCategoryResponse.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // const initLibCategory = await clientApi.post(
-    //   "/init-library-item-categories",
-    //   libItemCategoryResponse.data
-    // );
-    // if (initLibCategory.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // statusRef.current!.textContent =
-    //   "Setting up database for inspection notes...";
 
     // const libInspectionNotesResponse = await inspectionApi.get(
     //   "/install-inspection-notes",

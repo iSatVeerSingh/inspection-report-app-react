@@ -21,6 +21,7 @@ import LibraryItem from "../pages/Library/LibraryItem";
 import NewLibraryItem from "../pages/Library/NewLibraryItem";
 import ErrorNotFound from "../pages/ErrorNotFound";
 import LibraryItemCategories from "../pages/Library/LibraryItemCategories";
+import InspectionNotes from "../pages/InspectionNotes";
 
 const router = createBrowserRouter([
   {
@@ -82,7 +83,7 @@ const router = createBrowserRouter([
       },
       {
         path: Routes.LIBRARY_ITEM_CATEGORIES,
-        element: <LibraryItemCategories />
+        element: <LibraryItemCategories />,
       },
       {
         path: Routes.LIBRARY_ITEMS,
@@ -95,6 +96,10 @@ const router = createBrowserRouter([
       {
         path: Routes.NEW_LIBRARY_ITEM,
         element: <NewLibraryItem />,
+      },
+      {
+        path: Routes.INSPECTION_NOTES,
+        element: <InspectionNotes />,
       },
     ],
   },

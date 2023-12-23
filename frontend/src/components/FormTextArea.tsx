@@ -14,7 +14,7 @@ import { UseFormRegisterReturn } from "react-hook-form";
 type FormTextAreaProps = UseFormRegisterReturn &
   FormControlProps &
   TextareaProps & {
-    inputError?: string;
+    inputError?: any;
   };
 
 const FormTextArea = (

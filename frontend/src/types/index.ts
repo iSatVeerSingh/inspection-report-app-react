@@ -74,7 +74,6 @@ export type JobCategory = Omit<LibraryItemCategory, "itemsCount">;
 
 export type InspectionNote = {
   id: number;
-  // category: number;
   text: string;
   created_at?: string;
   updated_at?: string;

@@ -103,6 +103,7 @@ export const initInspectionNotesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
   try {
+    await Db.inspectionNotes.clear();
     await Db.inspectionNotes.bulkAdd(allInspectionNotes);
     return getSuccessResponse({
       message: "Inspection notes added successfully",
@@ -287,6 +288,40 @@ export const deleteLibraryItemController: RouteHandler = async ({ url }) => {
     return getSuccessResponse({
       message: "Item Deleted successfully",
     });
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+// Get Inspection Notes
+export const getInspectionNotesController: RouteHandler = async ({ url }) => {
+  try {
+    const notes = await Db.inspectionNotes.toArray();
+    return getSuccessResponse(notes);
+  } catch (err) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Create inspection notes
+export const createInspectionNotesController: RouteHandler = async ({
+  request,
+}) => {
+  try {
+    const body = await request.json();
+    const response = await inspectionApi(
+      "/api/inspection-notes",
+      "POST",
+      JSON.stringify(body)
+    );
+    if (!response.success) {
+      return getBadRequestResponse(response.message);
+    }
+
+    const created = await Db.inspectionNotes.add(response.data);
+    if (!created) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Note created successfully" }, 201);
   } catch (err) {
     return getBadRequestResponse(err);
   }
