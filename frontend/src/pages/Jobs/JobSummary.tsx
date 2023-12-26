@@ -58,7 +58,7 @@ const JobSummary = () => {
             >
               Add Notes
             </ButtonPrimary>
-            <ButtonOutline width={"200px"}>View & Notes</ButtonOutline>
+            <ButtonOutline width={"200px"} onClick={()=>navigate('./all-notes')}>View & Edit Notes</ButtonOutline>
           </Flex>
         </Box>
         <Box mt={4} p={2}>

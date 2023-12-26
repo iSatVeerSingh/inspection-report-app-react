@@ -9,7 +9,6 @@ import NewJob from "../pages/Jobs/NewJob";
 import JobDetails from "../pages/Jobs/JobDetails";
 import JobSummary from "../pages/Jobs/JobSummary";
 import AddInspectionNotes from "../pages/Jobs/AddInspectionNotes";
-import AllAddedNotes from "../pages/Jobs/AllAddedNotes";
 import AddInspectionItems from "../pages/Jobs/AddInspectionItems";
 import AllAddedItems from "../pages/Jobs/AllAddedItems";
 import ItemPreview from "../pages/Jobs/ItemPreview";
@@ -22,6 +21,7 @@ import NewLibraryItem from "../pages/Library/NewLibraryItem";
 import ErrorNotFound from "../pages/ErrorNotFound";
 import LibraryItemCategories from "../pages/Library/LibraryItemCategories";
 import InspectionNotes from "../pages/InspectionNotes";
+import ViewAddedNotes from "../pages/Jobs/ViewAddedNotes";
 
 const router = createBrowserRouter([
   {
@@ -53,7 +53,7 @@ const router = createBrowserRouter([
       },
       {
         path: Routes.ALL_ADDED_NOTES,
-        element: <AllAddedNotes />,
+        element: <ViewAddedNotes />,
       },
       // {
       //   path: Routes.ADD_INSPECTION_ITEMS,

@@ -555,6 +555,39 @@ export const addInspectionNoteByJobController: RouteHandler = async ({
   }
 };
 
+// Delete Inspection note by job
+// Add inspection note to a job
+export const deleteInspectionNoteByJobController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+
+  try {
+    const deleted = await Db.jobs
+      .where("jobNumber")
+      .equals(jobNumber)
+      .modify((job) => {
+        if (job.inspectionNotes && job.inspectionNotes.length !== 0) {
+          job.inspectionNotes = job.inspectionNotes.filter(
+            (note) => note !== body.note
+          );
+        }
+      });
+    if (deleted === 0) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Note deleted successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
 export const getLibIndexController = async () => {
   const libs = await getLibIndex();
   if (!libs || libs.length === 0) {

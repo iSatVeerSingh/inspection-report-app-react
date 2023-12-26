@@ -15,6 +15,7 @@ import {
   createJobController,
   createLibraryItemsController,
   deleteInspectionItemsController,
+  deleteInspectionNoteByJobController,
   deleteInspectionNotesController,
   deleteLibraryItemController,
   editInspectionNotesController,
@@ -197,6 +198,13 @@ registerRoute(
   ({ url }) => url.pathname === "/client/inspection/note",
   addInspectionNoteByJobController,
   "POST"
+);
+
+// Delete inspection note by job
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection/note",
+  deleteInspectionNoteByJobController,
+  "PUT"
 );
 
 // registerRoute(
