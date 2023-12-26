@@ -27,13 +27,13 @@ const MiniDetail = ({
         minW={"200px"}
         fontSize={"xl"}
         fontWeight={"medium"}
-        color={"rich-black"}
+        color={"text-big"}
       >
         {property}
       </Text>
       <Text
-        color={"dark-gray"}
-        bg={"text-bg"}
+        color={"text-small"}
+        bg={"card-bg-secondary"}
         px={3}
         borderRadius={3}
         fontSize={"lg"}

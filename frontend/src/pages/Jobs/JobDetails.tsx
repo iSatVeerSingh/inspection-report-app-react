@@ -43,14 +43,14 @@ const JobDetails = () => {
 
   return (
     <PageLayout title="Job Details">
-      <Box bg={"main-bg"} p="3" borderRadius={5} border={"stroke"}>
+      <Box bg={"card-bg"} p="3" borderRadius={"xl"} shadow={"xs"}>
         {job ? (
           <Box>
             <Heading
               as="h2"
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight={"semibold"}
-              color={"rich-black"}
+              color={"text-big"}
             >
               &#35;{job?.jobNumber} - {job?.category}
             </Heading>

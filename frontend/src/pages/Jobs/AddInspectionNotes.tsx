@@ -1,218 +1,136 @@
-import { Box, Flex, Heading, Text, useToast } from "@chakra-ui/react";
+import { Box, Flex, Heading, Text, Textarea, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import MiniDetail from "../../components/MiniDetail";
-import ButtonPrimary from "../../components/ButtonPrimary";
-import FormTextArea from "../../components/FormTextAreaNormal";
-import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useRef, useState } from "react";
-import DatalistInput from "../../components/DatalistInput";
 import clientApi from "../../services/clientApi";
+import { useParams } from "react-router-dom";
 import { Inspection, InspectionNote } from "../../types";
-import Loading from "../../components/Loading";
+import MiniDetail from "../../components/MiniDetail";
+import DatalistInput from "../../components/DatalistInput";
+import ButtonPrimary from "../../components/ButtonPrimary";
 
 const AddInspectionNotes = () => {
+  const { jobNumber } = useParams();
   const toast = useToast();
-
-  const commonNoteRef = useRef<HTMLInputElement | null>(null);
-  const inspectionNotesRef = useRef<string[]>([]);
-  const [isAdded, setIsAdded] = useState(false);
-  const customNoteRef = useRef<HTMLTextAreaElement | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [libraryInspectionNotes, setLibraryInspectionNotes] = useState<
-    string[]
-  >([]);
-
-  const navigate = useNavigate();
-
-  const params = useParams();
-  const [loading, setLoading] = useState(true);
-  const [inspection, setInspection] = useState<Inspection | null>(null);
-  useEffect(() => {
-    const getInspection = async () => {
-      let response = await clientApi.get(
-        `/inspections?inspectionId=${params.inspectionId}`
-      );
-
-      if (response.status !== 200) {
-        setLoading(false);
-        return;
-      }
-
-      setInspection(response.data);
-      inspectionNotesRef.current =
-        (response.data as Inspection).inspectionNotes || [];
-
-      response = await clientApi.get("library-notes");
-      if (response.status !== 200) {
-        setLoading(false);
-        return;
-      }
-
-      const libraryNotes = (response.data as InspectionNote[]).map(
-        (libNote) => libNote.text
-      );
-
-      setLibraryInspectionNotes(libraryNotes);
-      setLoading(false);
-    };
-    getInspection();
-  }, []);
-
-  const addCommonNote = () => {
-    const note = commonNoteRef.current?.value.trim();
-    if (!note || note === "") {
+  const [job, setJob] = useState<Inspection | null>(null);
+  const [libraryNotes, setLibraryNotes] = useState<string[]>([]);
+  const commonNoteRef = useRef<HTMLInputElement>(null);
+  const customNoteRef = useRef<HTMLTextAreaElement>(null);
+  const getLibraryNotes = async () => {
+    const response = await clientApi.get("/inspection-notes");
+    if (response.status !== 200) {
       return;
     }
+    const notes = (response.data as InspectionNote[]).map((note) => note.text);
+    setLibraryNotes(notes);
+  };
 
-    if (inspectionNotesRef.current.includes(note)) {
+  useEffect(() => {
+    getLibraryNotes();
+    (async () => {
+      const response = await clientApi.get(
+        `/inspection?jobNumber=${jobNumber}`
+      );
+      if (response.status !== 200) {
+        return;
+      }
+      setJob(response.data);
+    })();
+  }, []);
+
+  const addInspectionNote = async (note: string) => {
+    const response = await clientApi.post(
+      `/inspection/note?jobNumber=${jobNumber}`,
+      {
+        note,
+      }
+    );
+    if (response.status !== 200) {
       toast({
-        duration: 3000,
-        title: "This note already added",
+        title: response.data.message,
+        duration: 4000,
         status: "error",
       });
       return;
     }
-
-    inspectionNotesRef.current.push(note);
-    setIsAdded(true);
     toast({
-      duration: 3000,
-      title: "Note added",
+      title: response.data.message,
+      duration: 4000,
       status: "success",
     });
     commonNoteRef.current!.value = "";
-  };
-
-  const handleAddCustomNote = () => {
-    const note = customNoteRef.current?.value?.trim();
-    if (!note || note === "") {
-      return;
-    }
-
-    if (inspectionNotesRef.current.includes(note)) {
-      toast({
-        duration: 3000,
-        title: "This note already added",
-        status: "error",
-      });
-      return;
-    }
-
-    inspectionNotesRef.current.push(note);
-    setIsAdded(true);
-    toast({
-      duration: 3000,
-      title: "Note added",
-      status: "success",
-    });
     customNoteRef.current!.value = "";
   };
 
-  const handleAddInspectionNotes = async () => {
-    if (!isAdded) {
-      navigate(-1);
-    }
-    setSaving(true);
-
-    const response = await clientApi.put(
-      `/inspections/notes?inspectionId=${params.inspectionId}`,
-      {
-        inspectionNotes: inspectionNotesRef.current,
-      }
-    );
-
-    if (response.status !== 200) {
-      toast({
-        title: "Could not add notes.",
-        status: "error",
-        duration: 4000,
-      });
-      setSaving(false);
+  const handleAddCommonNote = async () => {
+    const note = commonNoteRef.current?.value.trim();
+    if (note && note === "") {
       return;
     }
+    await addInspectionNote(note!);
+  };
 
-    setSaving(false);
-    navigate(-1);
+  const handleAddCustomNote = async () => {
+    const note = customNoteRef.current?.value.trim();
+    if (note && note === "") {
+      return;
+    }
+    await addInspectionNote(note!);
   };
 
   return (
     <PageLayout title="Add Inspection Notes">
-      {loading ? (
-        <Loading />
-      ) : (
-        <Box p="3" border={"stroke"} bg="main-bg" borderRadius={5}>
-          {inspection ? (
-            <>
-              <Heading
-                as="h2"
-                fontSize={{ base: "xl", sm: "2xl" }}
-                fontWeight={"medium"}
-              >
-                &#35;{inspection?.jobNumber} - {inspection?.category}
-              </Heading>
-              <Flex direction={"column"} gap={1} px={3} mt={4}>
-                <MiniDetail property="Category" value={inspection?.category!} />
-                <MiniDetail
-                  property="Customer"
-                  value={inspection?.customer!.nameOnReport!}
-                />
-                <MiniDetail
-                  property="Site Address"
-                  value={inspection?.siteAddress!}
-                />
-              </Flex>
-              <Box mt={4}>
-                <DatalistInput
-                  label="You can choose from common notes."
-                  name="inspectionNotes"
-                  dataList={libraryInspectionNotes}
-                  ref={commonNoteRef}
-                />
-                <ButtonPrimary
-                  mt={2}
-                  width={{ base: "full", sm: "200px" }}
-                  onClick={addCommonNote}
-                >
-                  Add Note
-                </ButtonPrimary>
-              </Box>
-              <Box fontSize={"2xl"} textAlign={"center"} mt={4}>
-                Or
-              </Box>
-              <Box>
-                <Text fontSize={"lg"} color={"dark-gray"}>
-                  If you have not found relevant note to job category, please
-                  see in all categories
-                </Text>
-                <FormTextArea
-                  label="Add Custom Note"
-                  placeholder="Start typing here"
-                  ref={customNoteRef}
-                />
-                <ButtonPrimary
-                  mt={2}
-                  width={{ base: "full", sm: "auto" }}
-                  onClick={handleAddCustomNote}
-                >
-                  Add Custom Note
-                </ButtonPrimary>
-              </Box>
-              <Box mt={5}>
-                <ButtonPrimary
-                  width={{ base: "full", sm: "250px" }}
-                  onClick={handleAddInspectionNotes}
-                  isLoading={saving}
-                  loadingText="Saving"
-                >
-                  Save and Close
-                </ButtonPrimary>
-              </Box>
-            </>
-          ) : (
-            <Text>Job Not Found</Text>
-          )}
+      <Box bg={"card-bg"} shadow={"xs"} borderRadius={"xl"} p={3}>
+        <Heading
+          as="h2"
+          fontSize={{ base: "xl", sm: "2xl" }}
+          fontWeight={"medium"}
+        >
+          &#35;{job?.jobNumber} - {job?.category}
+        </Heading>
+        <Flex direction={"column"} gap={1} px={3} mt={4}>
+          <MiniDetail property="Category" value={job?.category!} />
+          <MiniDetail
+            property="Customer"
+            value={job?.customer!.nameOnReport!}
+          />
+          <MiniDetail property="Site Address" value={job?.siteAddress!} />
+        </Flex>
+        <Box mt={4}>
+          <DatalistInput
+            label="Choose from a list of common notes"
+            dataList={libraryNotes}
+            ref={commonNoteRef}
+          />
+          <ButtonPrimary mt={2} w={"250px"} onClick={handleAddCommonNote}>
+            Add Note
+          </ButtonPrimary>
         </Box>
-      )}
+        <Box mt={4} fontSize={"2xl"} textAlign={"center"}>
+          OR
+        </Box>
+        <Box mt={4}>
+          <Text color={"text-small"}>
+            If you have not found any relevant note in common list you can
+            custom note.
+          </Text>
+          <Textarea
+            bg={"card-bg-secondary"}
+            height={"12"}
+            borderRadius={"lg"}
+            shadow={"xs"}
+            border={"1px"}
+            borderColor={"gray.400"}
+            _placeholder={{
+              color: "text-secondary",
+            }}
+            ref={customNoteRef}
+            placeholder="type here"
+          />
+          <ButtonPrimary mt={2} w={"250px"} onClick={handleAddCustomNote}>
+            Add Custom Note
+          </ButtonPrimary>
+        </Box>
+      </Box>
     </PageLayout>
   );
 };

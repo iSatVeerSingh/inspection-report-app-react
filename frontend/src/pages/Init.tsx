@@ -8,6 +8,7 @@ import {
   AlertTitle,
   Box,
   Center,
+  Flex,
   Heading,
   Progress,
   Text,
@@ -39,8 +40,6 @@ const Init = () => {
   const navigate = useNavigate();
   const [progress, setProgress] = useState(0);
   const [installing, setInstalling] = useState(false);
-
-  const statusRef = useRef<HTMLDivElement | null>(null);
 
   const [statusText, setStatusText] = useState("");
   const [installed, setInstalled] = useState(false);
@@ -147,71 +146,44 @@ const Init = () => {
       return;
     }
 
-    navigate("/");
-    return;
+    setStatusText("Fetching initial jobs");
+    const jobsResponse = await inspectionApi.get("/install-jobs");
+    if (jobsResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const initjobs = await clientApi.post("/init-jobs", jobsResponse.data);
+    if (initjobs.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const jobCategoriesResponse = await inspectionApi.get(
+      "/install-job-categories"
+    );
+    if (jobCategoriesResponse.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
+    const initJobCategories = await clientApi.post(
+      "/init-job-categories",
+      jobCategoriesResponse.data
+    );
+    if (initJobCategories.status !== 200) {
+      setError("Something went wrong");
+      setInstalling(false);
+      return;
+    }
 
-    // const libInspectionNotesResponse = await inspectionApi.get(
-    //   "/install-inspection-notes",
-    //   {
-    //     onDownloadProgress: (e) => {
-    //       const progress = Math.floor(e.progress! * 100);
-    //       setProgressBar(progress);
-    //     },
-    //   }
-    // );
-    // if (libInspectionNotesResponse.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-
-    // const initInspectionnotes = await clientApi.post(
-    //   "/init-inspection-notes",
-    //   libInspectionNotesResponse.data
-    // );
-    // if (initInspectionnotes.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // statusRef.current!.textContent = "Setting up database for jobs...";
-    // const jobsResponse = await inspectionApi.get("/install-jobs");
-    // if (jobsResponse.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // const initjobs = await clientApi.post("/init-jobs", jobsResponse.data);
-    // if (initjobs.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // const jobCategoriesResponse = await inspectionApi.get(
-    //   "/install-job-categories"
-    // );
-    // if (jobCategoriesResponse.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-    // const initJobCategories = await clientApi.post(
-    //   "/init-job-categories",
-    //   jobCategoriesResponse.data
-    // );
-    // if (initJobCategories.status !== 200) {
-    //   setError("Something went wrong");
-    //   setInstalling(false);
-    //   return;
-    // }
-
-    // setInstalled(true);
-    // setInstalling(false);
+    setInstalling(false);
+    setInstalled(true);
   };
 
-  // const handleGoto = () => {
-  //   navigate("/jobs");
-  // };
+  const handleGoto = () => {
+    navigate("/jobs");
+  };
 
   return (
     <Center bg="app-bg" h="100vh" px={4}>
@@ -246,52 +218,24 @@ const Init = () => {
           </AlertDescription>
         </Alert>
 
-        {!installing ? (
+        {!installing && !installed && (
           <ButtonPrimary w="full" onClick={handleSetupApplication}>
             Setup Application
           </ButtonPrimary>
-        ) : (
+        )}
+        {installing && !installed && (
           <Box textAlign={"center"}>
             <Text fontSize={"lg"} color={"text-small"}>
-              Fetching libary items
+              {statusText}
             </Text>
             <Progress value={progress} mt={2} borderRadius={"lg"} />
           </Box>
         )}
-        {/* {!installing && !installed && !error && (
-          <Box textAlign="center">
-            <Heading color="rich-black">Important!</Heading>
-            <Text color="main-text">
-              This application is under developement. Only a few features have
-              been implemented yet. If you find any bugs or performance issues,
-              please report to the developer immediately
-            </Text>
-            <Box mt={5}>
-              <ButtonPrimary onClick={handleInstall}>
-                Seup Application
-              </ButtonPrimary>
-            </Box>
-          </Box>
-        )}
-        {installing && !installed && (
-          <Box>
-            <Text fontSize={"xl"} ref={statusRef}>
-              Installing App...
-            </Text>
-            <Progress hasStripe value={progressBar} />
-          </Box>
-        )}
-        {installed && !installing && (
-          <Box>
-            <Text>Installed Successfully</Text>
+        {!installing && installed && (
+          <Flex alignItems={"center"} justifyContent={"center"} mt={3}>
             <ButtonPrimary onClick={handleGoto}>Go To App</ButtonPrimary>
-          </Box>
+          </Flex>
         )}
-        {error && (
-          <Box>
-            <Text color={"red"}>Something Went Wront</Text>
-          </Box>
-        )} */}
       </Box>
     </Center>
   );

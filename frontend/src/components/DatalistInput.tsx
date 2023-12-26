@@ -2,6 +2,7 @@
 
 import {
   FormControl,
+  FormControlProps,
   FormErrorMessage,
   FormLabel,
   Input,
@@ -11,21 +12,14 @@ import {
 } from "@chakra-ui/react";
 import React, { ChangeEventHandler, useState, useRef } from "react";
 
-type DatalistInputProps = InputProps & {
-  label?: string;
-  inputError?: string;
-  dataList: string[];
-};
+type DatalistInputProps = InputProps &
+  FormControlProps & {
+    inputError?: string;
+    dataList: string[];
+  };
 
 const DatalistInput = (
-  {
-    name,
-    isRequired,
-    label,
-    inputError,
-    dataList,
-    placeholder,
-  }: DatalistInputProps,
+  { id, label, name, dataList, inputError, placeholder }: DatalistInputProps,
   ref: any
 ) => {
   const inputRef = ref || useRef(null);
@@ -52,24 +46,27 @@ const DatalistInput = (
   };
 
   return (
-    <FormControl
-      isInvalid={inputError !== undefined}
-      isRequired={isRequired}
-      position={"relative"}
-    >
+    <FormControl isInvalid={inputError !== undefined} position={"relative"}>
       {label && (
         <FormLabel color="rich-black" fontSize="xl" mb="0">
           {label}
         </FormLabel>
       )}
       <Input
+        id={id}
         name={name}
-        isRequired={isRequired}
-        borderColor="blue-primary"
         ref={inputRef}
         onChange={filterList}
         placeholder={placeholder}
-        autoComplete="off"
+        bg={"card-bg-secondary"}
+        height={"12"}
+        borderRadius={"lg"}
+        shadow={"xs"}
+        border={"1px"}
+        borderColor={"gray.400"}
+        _placeholder={{
+          color: "text-secondary",
+        }}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
       {listItems.length !== 0 && (

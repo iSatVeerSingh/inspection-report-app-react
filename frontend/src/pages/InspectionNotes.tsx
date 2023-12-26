@@ -35,8 +35,11 @@ import { useForm } from "react-hook-form";
 import ButtonPrimary from "../components/ButtonPrimary";
 import ButtonOutline from "../components/ButtonOutline";
 import FormTextArea from "../components/FormTextArea";
+import { useGlobalContext } from "../context/globalContext";
 
 const InspectionNotes = () => {
+  const { user } = useGlobalContext();
+
   const [loading, setLoading] = useState(true);
   const [notes, setNotes] = useState<InspectionNote[]>([]);
   const [isEditing, setIsEditing] = useState(false);
@@ -157,7 +160,7 @@ const InspectionNotes = () => {
     <PageLayout
       title="Inspection Notes"
       isRoot
-      titleBtn="New Note"
+      titleBtn={user.role !== "Inspector" ? "New Note" : undefined}
       onBtnClick={handleNewNoteBtn}
     >
       {loading ? (
@@ -185,84 +188,90 @@ const InspectionNotes = () => {
                       Update at: {note.updated_at}
                     </Text>
                   </Box>
-                  <Menu>
-                    <MenuButton
-                      as={IconButton}
-                      variant={"simple"}
-                      icon={<MoreIcon />}
-                    />
-                    <MenuList boxShadow={"lg"}>
-                      <MenuItem onClick={() => handleEditBtn(note)}>
-                        Edit
-                      </MenuItem>
-                      <MenuItem onClick={() => handleDeleteNoteBtn(note.id)}>
-                        Delete
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
+                  {user.role !== "Inspector" && (
+                    <Menu>
+                      <MenuButton
+                        as={IconButton}
+                        variant={"simple"}
+                        icon={<MoreIcon />}
+                      />
+                      <MenuList boxShadow={"lg"}>
+                        <MenuItem onClick={() => handleEditBtn(note)}>
+                          Edit
+                        </MenuItem>
+                        <MenuItem onClick={() => handleDeleteNoteBtn(note.id)}>
+                          Delete
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  )}
                 </Flex>
               ))}
             </Grid>
           )}
         </Box>
       )}
-      <Modal
-        isOpen={isOpen}
-        onClose={onClose}
-        closeOnOverlayClick={false}
-        size={"lg"}
-      >
-        <ModalOverlay />
-        <ModalContent>
-          <ModalHeader>Create Inspection Note</ModalHeader>
-          <ModalCloseButton />
-          <ModalBody>
-            <form id="note_form" onSubmit={handleSubmit(onSubmitNoteForm)}>
-              <FormTextArea
-                id="text"
-                placeholder="note text"
-                label="Note Text"
-                rows={10}
-                {...register("text", {
-                  required: "Note text is required",
-                })}
-                inputError={errors.text?.message}
-              />
-            </form>
-          </ModalBody>
-          <ModalFooter gap={2}>
-            <ButtonPrimary form="note_form" type="submit">
-              Submit
-            </ButtonPrimary>
-            <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
-          </ModalFooter>
-        </ModalContent>
-      </Modal>
+      {user.role !== "Inspector" && (
+        <>
+          <Modal
+            isOpen={isOpen}
+            onClose={onClose}
+            closeOnOverlayClick={false}
+            size={"lg"}
+          >
+            <ModalOverlay />
+            <ModalContent>
+              <ModalHeader>Create Inspection Note</ModalHeader>
+              <ModalCloseButton />
+              <ModalBody>
+                <form id="note_form" onSubmit={handleSubmit(onSubmitNoteForm)}>
+                  <FormTextArea
+                    id="text"
+                    placeholder="note text"
+                    label="Note Text"
+                    rows={10}
+                    {...register("text", {
+                      required: "Note text is required",
+                    })}
+                    inputError={errors.text?.message}
+                  />
+                </form>
+              </ModalBody>
+              <ModalFooter gap={2}>
+                <ButtonPrimary form="note_form" type="submit">
+                  Submit
+                </ButtonPrimary>
+                <ButtonOutline onClick={onClose}>Cancel</ButtonOutline>
+              </ModalFooter>
+            </ModalContent>
+          </Modal>
 
-      <AlertDialog
-        isOpen={isOpenAlert}
-        leastDestructiveRef={cancelRef}
-        onClose={onClose}
-      >
-        <AlertDialogOverlay>
-          <AlertDialogContent>
-            <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
-              Delete Inspection Note
-            </AlertDialogHeader>
-            <AlertDialogBody>
-              Are you sure? You can't undo this action afterwards.
-            </AlertDialogBody>
-            <AlertDialogFooter gap={3}>
-              <Button ref={cancelRef} onClick={onCloseAlert}>
-                Cancel
-              </Button>
-              <Button colorScheme="red" onClick={deleteNote}>
-                Delete
-              </Button>
-            </AlertDialogFooter>
-          </AlertDialogContent>
-        </AlertDialogOverlay>
-      </AlertDialog>
+          <AlertDialog
+            isOpen={isOpenAlert}
+            leastDestructiveRef={cancelRef}
+            onClose={onClose}
+          >
+            <AlertDialogOverlay>
+              <AlertDialogContent>
+                <AlertDialogHeader fontSize={"lg"} fontWeight={"bold"}>
+                  Delete Inspection Note
+                </AlertDialogHeader>
+                <AlertDialogBody>
+                  Are you sure? You can't undo this action afterwards.
+                </AlertDialogBody>
+                <AlertDialogFooter gap={3}>
+                  <Button ref={cancelRef} onClick={onCloseAlert}>
+                    Cancel
+                  </Button>
+                  <Button colorScheme="red" onClick={deleteNote}>
+                    Delete
+                  </Button>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialogOverlay>
+          </AlertDialog>
+        </>
+      )}
     </PageLayout>
   );
 };

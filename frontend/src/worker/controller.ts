@@ -120,6 +120,7 @@ export const initJobsController: RouteHandler = async ({ request }) => {
     return getBadRequestResponse();
   }
   try {
+    await Db.jobs.clear();
     await Db.jobs.bulkAdd(jobs);
     return getSuccessResponse({
       message: "Jobs added successfully added successfully",
@@ -138,6 +139,7 @@ export const initJobCategoriesController: RouteHandler = async ({
     return getBadRequestResponse();
   }
   try {
+    await Db.jobCategories.clear();
     await Db.jobCategories.bulkAdd(jobCategories);
     return getSuccessResponse({ message: "Job Categories added successfully" });
   } catch (err) {
@@ -418,7 +420,7 @@ export const getJobsController: RouteHandler = async ({ url }) => {
       ...(startsAt ? { startsAt } : {}),
     };
 
-    const perPage = 6;
+    const perPage = 15;
     const pageNumber = Number(page);
     const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
     const jobsCollection = Db.jobs.where(dbQuery);
@@ -454,7 +456,7 @@ export const createJobController: RouteHandler = async ({ request }) => {
   return getSuccessResponse(jobNumber, 201);
 };
 
-// Start new inspection
+// Start new inspection - Update job status to "In Progress"
 export const startInspectionController: RouteHandler = async ({ url }) => {
   const jobNumber = url.searchParams.get("jobNumber");
   if (!jobNumber) {
@@ -510,24 +512,47 @@ export const getJobInspectionSummaryController: RouteHandler = async ({
   }
 };
 
-export const getInspectionsController: RouteHandler = async ({ url }) => {
-  if (url.searchParams.size === 0) {
-    const inspections = await getAllInspections();
-    if (!inspections) {
-      return getBadRequestResponse();
-    }
-    return getSuccessResponse(inspections);
-  }
-
-  const inspectionId = url.searchParams.get("inspectionId");
-  if (!inspectionId || inspectionId === "") {
+// Add inspection note to a job
+export const addInspectionNoteByJobController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
     return getBadRequestResponse();
   }
-  const inspection = await getInspectionById(parseInt(inspectionId));
-  if (!inspection) {
-    return getNotFoundResponse();
+
+  const body = await request.json();
+
+  try {
+    const currentJob = await Db.jobs.get(jobNumber);
+    if (!currentJob) {
+      return getBadRequestResponse();
+    }
+
+    const isExists = currentJob.inspectionNotes?.find(
+      (note) => note === body.note
+    );
+    if (isExists) {
+      return getBadRequestResponse("Note already exists.");
+    }
+    const added = await Db.jobs
+      .where("jobNumber")
+      .equals(jobNumber)
+      .modify((job) => {
+        if (!job.inspectionNotes) {
+          job.inspectionNotes = [body.note];
+        } else {
+          job.inspectionNotes.push(body.note);
+        }
+      });
+    if (added === 0) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Note added successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
   }
-  return getSuccessResponse(inspection);
 };
 
 export const getLibIndexController = async () => {

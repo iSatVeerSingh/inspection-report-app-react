@@ -104,7 +104,7 @@ const Jobs = () => {
           <Grid gap={2}>
             {jobs.map((job) => (
               <Link to={"./" + job.jobNumber} key={job.id}>
-                <Box bg={"main-bg"} p={3} borderRadius={5} border={"stroke"}>
+                <Box bg={"card-bg"} p={3} borderRadius={"xl"} shadow={"xs"}>
                   <Flex
                     alignItems={{ base: "start", sm: "center" }}
                     justifyContent={"space-between"}
@@ -141,15 +141,15 @@ const Jobs = () => {
                     mt={2}
                   >
                     <Text
-                      bg={"nav-bg"}
+                      bg={"card-bg-secondary"}
                       px={4}
                       borderRadius={4}
-                      color={"rich-black"}
+                      color={"text-small"}
                     >
                       {job.category}
                     </Text>
                     <Text
-                      bg={"nav-bg"}
+                      bg={"app-bg"}
                       px={3}
                       borderRadius={3}
                       color={

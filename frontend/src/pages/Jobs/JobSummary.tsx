@@ -1,8 +1,8 @@
 "use client";
 
-import { Box, Flex, Heading, useToast } from "@chakra-ui/react";
+import { Box, Flex, Heading } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import clientApi from "../../services/clientApi";
 import { Inspection } from "../../types";
@@ -11,9 +11,9 @@ import ButtonPrimary from "../../components/ButtonPrimary";
 import ButtonOutline from "../../components/ButtonOutline";
 
 const JobSummary = () => {
+  const navigate = useNavigate();
   const { jobNumber } = useParams();
   const [job, setJob] = useState<Inspection | null>(null);
-  const toast = useToast();
 
   useEffect(() => {
     (async () => {
@@ -29,7 +29,7 @@ const JobSummary = () => {
 
   return (
     <PageLayout title="Summary">
-      <Box p="3" bg="main-bg" border="stroke" borderRadius={5}>
+      <Box p="2" bg="card-bg" shadow={"xs"} borderRadius={"xl"}>
         <Heading as="h2" fontSize={"2xl"} fontWeight={"semibold"}>
           &#35;{job?.jobNumber} - {job?.category}
         </Heading>
@@ -42,7 +42,7 @@ const JobSummary = () => {
           <MiniDetail property="Date" value={job?.startsAt!} />
           <MiniDetail property="Site Address" value={job?.siteAddress!} />
         </Flex>
-        <Box>
+        <Box p={2}>
           <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
             Inspection Notes
           </Heading>
@@ -51,12 +51,17 @@ const JobSummary = () => {
             property="Total notes"
             value={job?.inspectionNotes?.length || 0}
           />
-          <Flex alignItems={"center"} gap={4}>
-            <ButtonPrimary width={"200px"}>Add Notes</ButtonPrimary>
+          <Flex alignItems={"center"} gap={4} mt={2}>
+            <ButtonPrimary
+              onClick={() => navigate("./add-notes")}
+              width={"200px"}
+            >
+              Add Notes
+            </ButtonPrimary>
             <ButtonOutline width={"200px"}>View & Notes</ButtonOutline>
           </Flex>
         </Box>
-        <Box>
+        <Box mt={4} p={2}>
           <Heading as="h3" fontSize={"xl"} fontWeight={"semibold"}>
             New Inspection Items
           </Heading>

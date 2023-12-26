@@ -8,6 +8,7 @@ import { NavigationRoute, registerRoute } from "workbox-routing";
 
 import {
   addInspectionItemsController,
+  addInspectionNoteByJobController,
   addInspectionNotesController,
   addRecommendationController,
   createInspectionNotesController,
@@ -19,7 +20,6 @@ import {
   editInspectionNotesController,
   generateReportController,
   getInspectionNotesController,
-  getInspectionsController,
   getJobCategoriesController,
   getJobInspectionSummaryController,
   getJobsController,
@@ -51,38 +51,42 @@ registerRoute(
   initStatusController,
   "GET"
 );
-// Init user
+// Init User
 registerRoute(
   ({ url }) => url.pathname === "/client/init-user",
   initUserController,
   "POST"
 );
 
-// init library items
+// Init library items
 registerRoute(
   ({ url }) => url.pathname === "/client/init-library-items",
   initLibraryItemsController,
   "POST"
 );
 
-// init library items categories
+// Init library item categories
 registerRoute(
   ({ url }) => url.pathname === "/client/init-library-item-categories",
   initLibraryItemCategoriesController,
   "POST"
 );
 
-// init inspection notes
+// Init inspection notes
 registerRoute(
   ({ url }) => url.pathname === "/client/init-inspection-notes",
   initInspectionNotesController,
   "POST"
 );
+
+// Init jobs
 registerRoute(
   ({ url }) => url.pathname === "/client/init-jobs",
   initJobsController,
   "POST"
 );
+
+// Init job categories
 registerRoute(
   ({ url }) => url.pathname === "/client/init-job-categories",
   initJobCategoriesController,
@@ -131,42 +135,42 @@ registerRoute(
   "GET"
 );
 
-// create inspection notes
+// Create inspection notes
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection-notes",
   createInspectionNotesController,
   "POST"
 );
 
-// edit inspection items
+// Update inspection notes
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection-notes",
   editInspectionNotesController,
   "PUT"
 );
 
-// delete inspection items
+// Delete inspection items
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection-notes",
   deleteInspectionNotesController,
   "DELETE"
 );
 
-// Job categories
+// Get Job categories
 registerRoute(
   ({ url }) => url.pathname === "/client/job-categories",
   getJobCategoriesController,
   "GET"
 );
 
-// Jobs routes
-
+// Get jobs
 registerRoute(
   ({ url }) => url.pathname === "/client/jobs",
   getJobsController,
   "GET"
 );
 
+// Create new job
 registerRoute(
   ({ url }) => url.pathname === "/client/jobs/new",
   createJobController,
@@ -181,11 +185,18 @@ registerRoute(
   "PUT"
 );
 
-// get inspection job summary
+// Get Inspection details and job summary
 registerRoute(
   ({ url }) => url.pathname === "/client/inspection",
   getJobInspectionSummaryController,
   "GET"
+);
+
+// Add Inspection note by job
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection/note",
+  addInspectionNoteByJobController,
+  "POST"
 );
 
 // registerRoute(
@@ -193,11 +204,6 @@ registerRoute(
 //   createInspectionController,
 //   "POST"
 // );
-registerRoute(
-  ({ url }) => url.pathname === "/client/inspections",
-  getInspectionsController,
-  "GET"
-);
 registerRoute(
   ({ url }) => url.pathname === "/client/library-index",
   getLibIndexController,
