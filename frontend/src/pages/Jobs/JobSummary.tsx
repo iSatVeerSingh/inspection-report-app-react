@@ -71,8 +71,8 @@ const JobSummary = () => {
             value={job?.inspectionNotes?.length || 0}
           />
           <Flex alignItems={"center"} gap={4}>
-            <ButtonPrimary width={"200px"}>Add Notes</ButtonPrimary>
-            <ButtonOutline width={"200px"}>View & Notes</ButtonOutline>
+            <ButtonPrimary width={"200px"} onClick={()=> navigate("./add-items")}>Add Items</ButtonPrimary>
+            <ButtonOutline width={"200px"}>View & Edit Items</ButtonOutline>
           </Flex>
         </Box>
       </Box>

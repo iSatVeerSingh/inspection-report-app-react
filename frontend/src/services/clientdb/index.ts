@@ -16,13 +16,13 @@ export class InspectionDatabase extends Dexie {
   jobCategories!: Table<JobCategory>;
   jobs!: Table<Job>;
   inspectionItems!: Table<InspectionItem>;
+  sync!: Table<any>;
   // template!: Table<any>;
 
   constructor() {
     super("inspection-db");
-    this.version(1).stores({
+    this.version(2).stores({
       libraryItemCategories: "++id, name",
-      // libraryItems: "++id, category_id, name, updated_at", // Primary key and indexed props
       libraryItems: "++id, [category_id+updated_at], category_id, updated_at",
       libraryIndex: "++id",
       inspectionNotes: "++id, category",
@@ -31,6 +31,7 @@ export class InspectionDatabase extends Dexie {
       inspectionItems:
         "++id, job_id, library_item_id, isCustom, [job_id+isPreviousItem]",
       // template: "++id",
+      sync: "type++",
     });
   }
 }
@@ -43,7 +44,7 @@ export class IRAUser extends Dexie {
   constructor() {
     super("user");
     this.version(1).stores({
-      user: "++user",
+      user: "++type",
     });
   }
 }

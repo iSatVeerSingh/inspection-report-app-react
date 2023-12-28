@@ -1,14 +1,13 @@
-"use client";
+import { Box, BoxProps } from "@chakra-ui/react";
 
-import { Box } from "@chakra-ui/react";
-import React from "react";
+type CardProps = BoxProps;
 
-const Card = ({children}: {children: React.ReactNode}) => {
+const Card = ({ children, ...props }: CardProps) => {
   return (
-    <Box p={2} border="stroke" borderRadius={"md"} bg="main-bg">
+    <Box bg={"main-bg"} p={3} borderRadius={"xl"} shadow={"xs"} {...props}>
       {children}
     </Box>
-  )
-}
+  );
+};
 
 export default Card;

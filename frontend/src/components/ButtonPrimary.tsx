@@ -6,7 +6,19 @@ type ButtonPrimaryProps = ButtonProps & {
 };
 
 const ButtonPrimary = ({ children, ...btnProps }: ButtonPrimaryProps) => {
-  return <Button colorScheme="messenger" borderRadius={"lg"} {...btnProps}>{children}</Button>;
+  return (
+    <Button
+      bg={"primary.500"}
+      borderRadius={"xl"}
+      color={"white"}
+      _hover={{
+        background: "primary.600",
+      }}
+      {...btnProps}
+    >
+      {children}
+    </Button>
+  );
 };
 
 export default ButtonPrimary;

@@ -1,34 +1,47 @@
-import { Box, Center, Heading, VStack, Text, useToast } from "@chakra-ui/react";
-import { useState } from "react";
+import { Box, Center, Heading, Text, VStack, useToast } from "@chakra-ui/react";
+import Card from "../components/Card";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
+import { FormEventHandler, useState } from "react";
+import { loginUser } from "../api";
+import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
-import { UserLogin } from "../types";
-import { loginUser } from "../services/api";
-import { useForm } from "react-hook-form";
+
+export type LoginData = {
+  email: string;
+  password: string;
+};
 
 const Login = () => {
   const navigate = useNavigate();
-  const [loading, setLoading] = useState(false);
+  const [formErrors, setFormErrors] = useState<Partial<LoginData> | null>(null);
+  const [logging, setLogging] = useState(false);
   const toast = useToast();
 
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm<UserLogin>();
-
-  const onFormSubmit = async (formData: any) => {
-    setLoading(true);
-
-    const response = await loginUser(formData);
+  const onSubmitLoginForm: FormEventHandler<HTMLFormElement> = async (e) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const formData = new FormData(target);
+    const email = formData.get("email")?.toString().trim() as string;
+    const password = formData.get("password")?.toString().trim() as string;
+    if (!email || email === "") {
+      setFormErrors({ email: "Email is required" });
+      return;
+    }
+    if (!password || password === "") {
+      setFormErrors({ password: "Password is required" });
+      return;
+    }
+    setFormErrors(null);
+    setLogging(true);
+    const response: AxiosResponse = await loginUser({ email, password });
     if (response.status !== 200) {
       toast({
-        title: "Invalid credentials",
+        title: response.data.message || "Invalid request",
         status: "error",
         duration: 4000,
       });
-      setLoading(false);
+      setLogging(false);
       return;
     }
 
@@ -36,85 +49,71 @@ const Login = () => {
     localStorage.setItem("user", JSON.stringify(user));
 
     if ("serviceWorker" in navigator) {
-      navigator.serviceWorker
-        .register(
-          import.meta.env.MODE === "production"
-            ? "/sw.js"
-            : "/dev-sw.js?dev-sw",
-          { type: import.meta.env.MODE === "production" ? "classic" : "module" }
-        )
-        .then((registration) => {
-          let serviceWorker;
-          if (registration.installing) {
-            serviceWorker = registration.installing;
-          } else if (registration.waiting) {
-            serviceWorker = registration.waiting;
-          } else if (registration.active) {
-            serviceWorker = registration.active;
-          }
-          if (serviceWorker) {
-            serviceWorker.addEventListener("statechange", (e) => {
-              if ((e.currentTarget as ServiceWorker).state === "activated") {
-                console.log("aciiiii");
-                setLoading(false);
-                navigate("/init");
-              }
-            });
+      let serviceWorker: ServiceWorker;
+      const registration = await navigator.serviceWorker.register(
+        import.meta.env.MODE === "production" ? "/sw.js" : "/dev-sw.js?dev-sw",
+        { type: import.meta.env.MODE === "production" ? "classic" : "module" }
+      );
+      if (registration.installing) {
+        serviceWorker = registration.installing;
+      } else if (registration.waiting) {
+        serviceWorker = registration.waiting;
+      } else if (registration.active) {
+        serviceWorker = registration.active;
+      }
+      if (serviceWorker!) {
+        serviceWorker.addEventListener("statechange", (e) => {
+          if ((e.currentTarget as ServiceWorker).state === "activated") {
+            console.log("Service worker activated");
+            setLogging(false);
+            navigate("/init");
           }
         });
+      }
     }
   };
 
   return (
-    <Center bg="app-bg" h="100vh">
-      <Box
-        bg="card-bg"
-        px={5}
-        py={5}
-        borderRadius="lg"
-        shadow="xs"
-        w="100%"
-        maxW="2xl"
-      >
-        <Box textAlign="center">
-          <Text fontSize={"xl"} color={"text-small"} mb={2}>
+    <Center h={"100vh"} bg={"app-bg"}>
+      <Card p={5} maxW={"2xl"} w={"100%"}>
+        <Box textAlign={"center"}>
+          <Text fontSize={"lg"} color={"text.700"}>
             Inspection Report App By Correct Inspections
           </Text>
-          <Heading color="text-big">Welcome &#128075;</Heading>
+          <Heading color={"text.800"}>Welcome &#128075;</Heading>
         </Box>
-        <form onSubmit={handleSubmit(onFormSubmit)}>
-          <VStack mt="10" maxW="lg" mx="auto" spacing="4">
+        <form onSubmit={onSubmitLoginForm}>
+          <VStack>
             <FormInput
-              label="Email"
-              id="email"
               type="email"
-              placeholder="Email"
-              inputError={errors.email?.message}
-              {...register("email", {
-                required: "Email is required",
-              })}
+              id="email"
+              label="Email"
+              name="email"
+              placeholder="exmaple: john@gmail.com"
+              inputError={formErrors?.email}
+              isRequired
             />
             <FormInput
-              label="Password"
               type="password"
               id="password"
-              placeholder="Password"
-              inputError={errors.password?.message}
-              {...register("password", {
-                required: "Password is required",
-              })}
+              label="Password"
+              name="password"
+              placeholder="exmaple: John@123"
+              inputError={formErrors?.password}
+              isRequired
             />
-            <ButtonPrimary
-              type="submit"
-              w="full"
-              loadingText="Logging in..."
-              isLoading={loading}
-            >
-              Login Now
-            </ButtonPrimary>
           </VStack>
+          <ButtonPrimary
+            type="submit"
+            mt={3}
+            w={"full"}
+            loadingText="Logging in"
+            isLoading={logging}
+          >
+            Login
+          </ButtonPrimary>
         </form>
-      </Box>
+      </Card>
     </Center>
   );
 };

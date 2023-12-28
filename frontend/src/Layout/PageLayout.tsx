@@ -14,6 +14,10 @@ type PageLayoutProps = {
   isRoot?: boolean;
 };
 
+// ipad mini 1024 x 768
+// ipad air  1180 x 820
+// ipad pro 1366 x 1024
+
 const PageLayout = ({
   title,
   titleBtn,
