@@ -1,5 +1,4 @@
 import {
-  Box,
   Flex,
   Grid,
   Heading,
@@ -10,18 +9,19 @@ import {
 import PageLayout from "../../Layout/PageLayout";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { Inspection } from "../../types";
+import { Job } from "../../types";
 import clientApi from "../../services/clientApi";
 import MiniDetail from "../../components/MiniDetail";
 import { DeleteIcon } from "../../icons";
+import Card from "../../components/Card";
 
 const ViewAddedNotes = () => {
   const { jobNumber } = useParams();
   const toast = useToast();
-  const [job, setJob] = useState<Inspection | null>(null);
+  const [job, setJob] = useState<Job | null>(null);
 
   const getJob = async () => {
-    const response = await clientApi.get(`/inspection?jobNumber=${jobNumber}`);
+    const response = await clientApi.get(`/jobs?jobNumber=${jobNumber}`);
     if (response.status !== 200) {
       return;
     }
@@ -33,12 +33,9 @@ const ViewAddedNotes = () => {
   }, []);
 
   const deleteNote = async (note: string) => {
-    const response = await clientApi.put(
-      `/inspection/note?jobNumber=${jobNumber}`,
-      {
-        note,
-      }
-    );
+    const response = await clientApi.put(`/jobs/note?jobNumber=${jobNumber}`, {
+      note,
+    });
     if (response.status !== 200) {
       toast({
         title: response.data.message,
@@ -57,33 +54,37 @@ const ViewAddedNotes = () => {
 
   return (
     <PageLayout title="All Notes">
-      <Box p={3} borderRadius={"xl"} shadow={"xs"} bg={"card-bg"}>
-        <Heading as="h2" fontSize={"2xl"} fontWeight={"semibold"}>
+      <Card>
+        <Heading
+          as="h2"
+          fontSize={"2xl"}
+          fontWeight={"semibold"}
+          color={"text.700"}
+        >
           &#35;{job?.jobNumber} - {job?.category}
         </Heading>
-        <Flex direction={"column"} gap={1} px={3} mt={4}>
+        <Grid gap={2} mt={2}>
           <MiniDetail property="Category" value={job?.category!} />
           <MiniDetail
             property="Customer"
             value={job?.customer!.nameOnReport!}
           />
-          <MiniDetail property="Date" value={job?.startsAt!} />
           <MiniDetail property="Site Address" value={job?.siteAddress!} />
-        </Flex>
-      </Box>
+        </Grid>
+      </Card>
       {job?.inspectionNotes && job.inspectionNotes.length !== 0 ? (
         <Grid gap={2} mt={3}>
           {job.inspectionNotes.map((note, index) => (
             <Flex
               key={index}
-              p={3}
+              p={2}
               borderRadius={"xl"}
               shadow={"xs"}
-              bg={"card-bg"}
+              bg={"main-bg"}
               alignItems={"center"}
               justifyContent={"space-between"}
             >
-              <Text>{note}</Text>
+              <Text color={"text.700"}>{note}</Text>
               <IconButton
                 icon={<DeleteIcon />}
                 aria-label="Delete Note"
@@ -93,9 +94,9 @@ const ViewAddedNotes = () => {
           ))}
         </Grid>
       ) : (
-        <Text p={3} bg={"card-bg"} mt={3} borderRadius={"xl"} shadow={"xs"}>
-          "Couln't find any notes"
-        </Text>
+        <Card color={"text.700"} mt={2}>
+          Couldn't find any notes
+        </Card>
       )}
     </PageLayout>
   );

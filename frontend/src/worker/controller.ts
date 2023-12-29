@@ -289,6 +289,38 @@ export const addInspectionNoteByJobController: RouteHandler = async ({
   }
 };
 
+// Delete Inspection note by job
+export const deleteInspectionNoteByJobController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+
+  try {
+    const deleted = await DB.jobs
+      .where("jobNumber")
+      .equals(jobNumber)
+      .modify((job) => {
+        if (job.inspectionNotes && job.inspectionNotes.length !== 0) {
+          job.inspectionNotes = job.inspectionNotes.filter(
+            (note) => note !== body.note
+          );
+        }
+      });
+    if (deleted === 0) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Note deleted successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
+
 // // Get Library Items Categories
 // export const getLibraryItemCategoriesController: RouteHandler = async () => {
 //   try {
@@ -568,39 +600,6 @@ export const addInspectionNoteByJobController: RouteHandler = async ({
 //     return getSuccessResponse(trs);
 //   } catch (err) {
 //     return getBadRequestResponse(err);
-//   }
-// };
-
-// // Delete Inspection note by job
-// // Add inspection note to a job
-// export const deleteInspectionNoteByJobController: RouteHandler = async ({
-//   url,
-//   request,
-// }) => {
-//   const jobNumber = url.searchParams.get("jobNumber");
-//   if (!jobNumber) {
-//     return getBadRequestResponse();
-//   }
-
-//   const body = await request.json();
-
-//   try {
-//     const deleted = await Db.jobs
-//       .where("jobNumber")
-//       .equals(jobNumber)
-//       .modify((job) => {
-//         if (job.inspectionNotes && job.inspectionNotes.length !== 0) {
-//           job.inspectionNotes = job.inspectionNotes.filter(
-//             (note) => note !== body.note
-//           );
-//         }
-//       });
-//     if (deleted === 0) {
-//       return getBadRequestResponse();
-//     }
-//     return getSuccessResponse({ message: "Note deleted successfully" });
-//   } catch (err) {
-//     return getBadRequestResponse();
 //   }
 // };
 

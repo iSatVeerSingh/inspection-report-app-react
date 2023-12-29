@@ -1,12 +1,4 @@
-import {
-  Box,
-  Flex,
-  Grid,
-  Heading,
-  Text,
-  Textarea,
-  useToast,
-} from "@chakra-ui/react";
+import { Box, Grid, Heading, Text, Textarea, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import { useEffect, useRef, useState } from "react";
 import clientApi from "../../services/clientApi";
@@ -82,7 +74,7 @@ const AddInspectionNotes = () => {
         <Heading
           as="h2"
           fontSize={{ base: "xl", sm: "2xl" }}
-          fontWeight={"medium"}
+          fontWeight={"semibold"}
           color={"text.700"}
         >
           &#35;{job?.jobNumber} - {job?.category}

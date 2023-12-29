@@ -7,6 +7,7 @@ import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import {
   addInspectionNoteByJobController,
+  deleteInspectionNoteByJobController,
   getInspectionNotesController,
   getJobCategoriesController,
   getJobsController,
@@ -110,6 +111,13 @@ registerRoute(
   "POST"
 );
 
+// Delete inspection note by job
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs/note",
+  deleteInspectionNoteByJobController,
+  "PUT"
+);
+
 // // Get Library Item Category
 // registerRoute(
 //   ({ url }) => url.pathname === "/client/library-item-categories",
@@ -180,13 +188,6 @@ registerRoute(
 //   ({ url }) => url.pathname === "/client/inspection",
 //   getJobInspectionSummaryController,
 //   "GET"
-// );
-
-// // Delete inspection note by job
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/inspection/note",
-//   deleteInspectionNoteByJobController,
-//   "PUT"
 // );
 
 // // Get LibIndex
