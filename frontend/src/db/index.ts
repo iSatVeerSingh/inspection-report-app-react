@@ -1,5 +1,6 @@
 import Dexie, { Table } from "dexie";
 import {
+  InspectionItem,
   InspectionNote,
   Job,
   JobCategory,
@@ -14,6 +15,7 @@ export class InspectionDatabase extends Dexie {
   inspectionNotes!: Table<InspectionNote>;
   jobs!: Table<Job>;
   jobCategories!: Table<JobCategory>;
+  inspectionItems!: Table<InspectionItem>;
 
   constructor() {
     super("inspection-db");
@@ -24,6 +26,8 @@ export class InspectionDatabase extends Dexie {
       inspectionNotes: "++id",
       jobs: "++jobNumber, id, [status+category+startsAt], [status+category], [status+startsAt], [category+startsAt]",
       jobCategories: "++id",
+      inspectionItems:
+        "++uuid, job_id, library_item_id, isCustom, [job_id+isPreviousItem]",
     });
   }
 }

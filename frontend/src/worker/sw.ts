@@ -6,6 +6,8 @@ import {
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import {
+  addInspectionNoteByJobController,
+  getInspectionNotesController,
   getJobCategoriesController,
   getJobsController,
   initInspectionNotesController,
@@ -14,6 +16,7 @@ import {
   initLibraryItemCategoriesController,
   initLibraryItemsController,
   initUserController,
+  startInspectionController,
 } from "./controller";
 
 declare let self: ServiceWorkerGlobalScope;
@@ -86,6 +89,27 @@ registerRoute(
   "GET"
 );
 
+// Start new inspection
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs",
+  startInspectionController,
+  "PUT"
+);
+
+// Get Inspection Notes
+registerRoute(
+  ({ url }) => url.pathname === "/client/inspection-notes",
+  getInspectionNotesController,
+  "GET"
+);
+
+// Add Inspection note by job
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs/note",
+  addInspectionNoteByJobController,
+  "POST"
+);
+
 // // Get Library Item Category
 // registerRoute(
 //   ({ url }) => url.pathname === "/client/library-item-categories",
@@ -121,13 +145,6 @@ registerRoute(
 //   "DELETE"
 // );
 
-// // Get Inspection Notes
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/inspection-notes",
-//   getInspectionNotesController,
-//   "GET"
-// );
-
 // // Create inspection notes
 // registerRoute(
 //   ({ url }) => url.pathname === "/client/inspection-notes",
@@ -157,25 +174,12 @@ registerRoute(
 // );
 
 // // Inspection route
-// // Start new inspection
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/jobs",
-//   startInspectionController,
-//   "PUT"
-// );
 
 // // Get Inspection details and job summary
 // registerRoute(
 //   ({ url }) => url.pathname === "/client/inspection",
 //   getJobInspectionSummaryController,
 //   "GET"
-// );
-
-// // Add Inspection note by job
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/inspection/note",
-//   addInspectionNoteByJobController,
-//   "POST"
 // );
 
 // // Delete inspection note by job

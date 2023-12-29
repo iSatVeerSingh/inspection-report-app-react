@@ -32,6 +32,7 @@ export type Job = {
   inspector: string;
   inspector_id: number;
   inspectionNotes?: string[];
+  inspectionItems?: InspectionItem[] | number;
   recommendation?: string;
 };
 
@@ -88,10 +89,6 @@ export type InspectionItem = Partial<LibraryItem> & {
   images?: string[] | null;
   note?: string | null;
   isCustom?: boolean;
-};
-
-export type Inspection = Job & {
-  inspectionItems?: InspectionItem[];
 };
 
 export type Paragraph = {

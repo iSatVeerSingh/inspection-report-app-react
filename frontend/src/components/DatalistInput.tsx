@@ -19,10 +19,11 @@ type DatalistInputProps = InputProps &
   };
 
 const DatalistInput = (
-  { id, label, name, dataList, inputError, placeholder }: DatalistInputProps,
+  { id, label, dataList, inputError, isRequired, ...props }: DatalistInputProps,
   ref: any
 ) => {
   const inputRef = ref || useRef(null);
+
   const [listItems, setListItems] = useState<any[]>([]);
 
   const filterList: ChangeEventHandler = (e) => {
@@ -46,32 +47,33 @@ const DatalistInput = (
   };
 
   return (
-    <FormControl isInvalid={inputError !== undefined} position={"relative"}>
+    <FormControl
+      isInvalid={inputError !== undefined && inputError !== ""}
+      position={"relative"}
+    >
       {label && (
-        <FormLabel color="rich-black" fontSize="xl" mb="0">
+        <FormLabel mb={0} fontSize={"lg"} color={"text.700"} htmlFor={id}>
           {label}
         </FormLabel>
       )}
       <Input
         id={id}
-        name={name}
-        ref={inputRef}
         onChange={filterList}
-        placeholder={placeholder}
-        bg={"card-bg-secondary"}
-        height={"12"}
-        borderRadius={"lg"}
-        shadow={"xs"}
-        border={"1px"}
+        bg={"neutral.50"}
+        border={"stroke"}
+        borderRadius={"xl"}
         borderColor={"gray.400"}
-        _placeholder={{
-          color: "text-secondary",
-        }}
+        isRequired={isRequired}
+        height={10}
+        autoComplete="off"
+        {...props}
+        ref={inputRef}
       />
       {inputError && <FormErrorMessage mt="0">{inputError}</FormErrorMessage>}
       {listItems.length !== 0 && (
         <List
           position={"absolute"}
+          shadow={"xl"}
           zIndex={10}
           bg={"white"}
           width={"full"}

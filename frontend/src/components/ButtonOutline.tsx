@@ -12,6 +12,7 @@ const ButtonOutline = ({ children, ...btnProps }: ButtonOutlineProps) => {
       borderColor={"primary.500"}
       backgroundColor={"primary.50"}
       color={"primary.500"}
+      borderRadius={"lg"}
       size={{ base: "sm", md: "md" }}
       {...btnProps}
     >

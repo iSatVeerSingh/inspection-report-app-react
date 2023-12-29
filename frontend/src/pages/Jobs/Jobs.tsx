@@ -1,5 +1,3 @@
-"use client";
-
 import { Link, useSearchParams } from "react-router-dom";
 import PageLayout from "../../Layout/PageLayout";
 import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";

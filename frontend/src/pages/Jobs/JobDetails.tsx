@@ -1,17 +1,19 @@
-"use client";
-
-import { Box, Grid, Heading, useToast } from "@chakra-ui/react";
-import PageLayout from "../../Layout/PageLayout";
 import { useNavigate, useParams } from "react-router-dom";
+import PageLayout from "../../Layout/PageLayout";
+import Card from "../../components/Card";
 import { useEffect, useState } from "react";
-import clientApi from "../../services/clientApi";
+import clientApi from "../../api/clientApi";
 import { Job, JobStatus } from "../../types";
+import Loading from "../../components/Loading";
+import { Box, Flex, Grid, Heading, useToast } from "@chakra-ui/react";
 import MiniDetail from "../../components/MiniDetail";
 import ButtonPrimary from "../../components/ButtonPrimary";
+import ButtonOutline from "../../components/ButtonOutline";
 
 const JobDetails = () => {
-  const navigate = useNavigate();
   const { jobNumber } = useParams();
+  const navigate = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [job, setJob] = useState<Job | null>(null);
   const toast = useToast();
 
@@ -22,6 +24,7 @@ const JobDetails = () => {
         return;
       }
       setJob(response.data);
+      setLoading(false);
     })();
   }, []);
 
@@ -38,66 +41,132 @@ const JobDetails = () => {
       });
       return;
     }
-    navigate("./summary");
+    setJob({ ...job, status: JobStatus.IN_PROGRESS });
   };
 
   return (
     <PageLayout title="Job Details">
-      <Box bg={"card-bg"} p="3" borderRadius={"xl"} shadow={"xs"}>
-        {job ? (
-          <Box>
+      {loading ? (
+        <Loading />
+      ) : (
+        <>
+          <Card>
             <Heading
               as="h2"
               fontSize={{ base: "xl", md: "2xl" }}
               fontWeight={"semibold"}
-              color={"text-big"}
+              color={"text.700"}
             >
               &#35;{job?.jobNumber} - {job?.category}
             </Heading>
-            <Grid gap={1} mt={3} mb={10}>
+            <Grid gap={2} mt={2}>
               <MiniDetail property="Category" value={job?.category!} />
-              <MiniDetail property="Customer" value={job?.customer!.name!} />
               <MiniDetail
-                property="Name On Report"
-                value={job?.customer!.nameOnReport!}
-              />
-
-              <MiniDetail
-                property="Customer Email"
-                value={job?.customer!.email!}
+                property="Name on report"
+                value={job!.customer!.nameOnReport}
               />
               <MiniDetail
-                property="Customer Phone"
-                value={job?.customer!.phone!}
+                property="Customer name"
+                value={job?.customer.name!}
               />
-              <MiniDetail property="Date" value={job?.startsAt} />
+              <MiniDetail
+                property="Customer email"
+                value={job?.customer.email!}
+              />
+              <MiniDetail
+                property="Customer phone"
+                value={job?.customer.phone!}
+              />
+              <MiniDetail property="Date" value={job?.startsAt!} />
               <MiniDetail property="Time" value={job?.startTime!} />
               <MiniDetail property="Site Address" value={job?.siteAddress!} />
               <MiniDetail property="Status" value={job?.status!} />
               <MiniDetail
-                vertical
                 property="Description"
                 value={
-                  !job?.description || job?.description === ""
-                    ? "N/A"
-                    : job?.description!
+                  job?.description && job.description !== ""
+                    ? job.description
+                    : "N/A"
+                }
+                vertical={
+                  job?.description !== undefined && job.description.length > 35
                 }
               />
             </Grid>
-            {job.status === JobStatus.WORK_ORDER ? (
-              <ButtonPrimary onClick={startInspection}>
-                Start Inspection
-              </ButtonPrimary>
+          </Card>
+          <Card mt={2}>
+            {job?.status === JobStatus.WORK_ORDER ? (
+              <Box>
+                <ButtonPrimary onClick={startInspection}>
+                  Start Inspection
+                </ButtonPrimary>
+              </Box>
             ) : (
-              <ButtonPrimary onClick={() => navigate("./summary")}>
-                Continue Inspection
-              </ButtonPrimary>
+              <>
+                <Box>
+                  <Heading
+                    as="h3"
+                    fontSize={"xl"}
+                    fontWeight={"semibold"}
+                    color={"text.700"}
+                  >
+                    Inspection Notes
+                  </Heading>
+                  <MiniDetail
+                    noChange
+                    property="Total notes"
+                    value={job?.inspectionNotes?.length || 0}
+                  />
+                  <Flex alignItems={"center"} gap={4} mt={2}>
+                    <ButtonPrimary
+                      onClick={() =>
+                        navigate("./add-notes", {
+                          state: job,
+                        })
+                      }
+                      width={"200px"}
+                    >
+                      Add Notes
+                    </ButtonPrimary>
+                    <ButtonOutline
+                      width={"200px"}
+                      onClick={() => navigate("./all-notes")}
+                    >
+                      View & Edit Notes
+                    </ButtonOutline>
+                  </Flex>
+                </Box>
+                <Box mt={4}>
+                  <Heading
+                    as="h3"
+                    fontSize={"xl"}
+                    fontWeight={"semibold"}
+                    color={"text.700"}
+                  >
+                    New Inspection Items
+                  </Heading>
+                  <MiniDetail
+                    noChange
+                    property="Total new items form this report"
+                    value={(job?.inspectionItems as number) || 0}
+                  />
+                  <Flex alignItems={"center"} gap={4} mt={2}>
+                    <ButtonPrimary
+                      width={"200px"}
+                      onClick={() => navigate("./add-items")}
+                    >
+                      Add Items
+                    </ButtonPrimary>
+                    <ButtonOutline width={"200px"}>
+                      View & Edit Items
+                    </ButtonOutline>
+                  </Flex>
+                </Box>
+              </>
             )}
-          </Box>
-        ) : (
-          "No Job Found"
-        )}
-      </Box>
+          </Card>
+        </>
+      )}
     </PageLayout>
   );
 };

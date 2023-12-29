@@ -18,7 +18,7 @@
 import { RouteHandler } from "workbox-core";
 import { getBadRequestResponse, getSuccessResponse } from "./response";
 import { DB } from "../db";
-import { LibraryItem } from "../types";
+import { Job, JobStatus, LibraryItem } from "../types";
 
 // Setup user in indexeddb
 export const initUserController: RouteHandler = async ({ request }) => {
@@ -150,11 +150,35 @@ export const getJobsController: RouteHandler = async ({ url }) => {
   try {
     const jobNumber = url.searchParams.get("jobNumber");
     if (jobNumber) {
-      const job = await DB.jobs.get(jobNumber);
-      if (!job) {
-        return getSuccessResponse(null);
+      const transaction = await DB.transaction(
+        "rw",
+        DB.jobs,
+        DB.inspectionItems,
+        async () => {
+          const job = await DB.jobs.get(jobNumber);
+          if (!job) {
+            return null;
+          }
+          const inspectionItems = await DB.inspectionItems
+            .where("job_id")
+            .equals(job.id)
+            .count();
+          return {
+            ...job,
+            inspectionItems,
+          } as Job;
+        }
+      );
+
+      if (!transaction) {
+        return getBadRequestResponse("No job found");
       }
-      return getSuccessResponse(job);
+      return getSuccessResponse(transaction);
+      // const job = await DB.jobs.get(jobNumber);
+      // if (!job) {
+      //   return getSuccessResponse(null);
+      // }
+      // return getSuccessResponse(job);
     }
 
     const query = url.searchParams;
@@ -189,6 +213,79 @@ export const getJobsController: RouteHandler = async ({ url }) => {
   } catch (err: any) {
     console.log(err);
     return getBadRequestResponse(err);
+  }
+};
+
+// Start new inspection - Update job status to "In Progress"
+export const startInspectionController: RouteHandler = async ({ url }) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const isUpdated = await DB.jobs.update(jobNumber, {
+      status: JobStatus.IN_PROGRESS,
+    } as Partial<Job>);
+    if (isUpdated === 0) {
+      return getBadRequestResponse("Job Not Found");
+    }
+    return getSuccessResponse({ message: "Job updated successfully" });
+  } catch (err: any) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Get Inspection Notes
+export const getInspectionNotesController: RouteHandler = async () => {
+  try {
+    const notes = await DB.inspectionNotes.toArray();
+    return getSuccessResponse(notes);
+  } catch (err: any) {
+    return getBadRequestResponse(err);
+  }
+};
+
+// Add inspection note to a job
+export const addInspectionNoteByJobController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  const body = await request.json();
+
+  try {
+    const currentJob = await DB.jobs.get(jobNumber);
+    if (!currentJob) {
+      return getBadRequestResponse();
+    }
+
+    const isExists = currentJob.inspectionNotes?.find(
+      (note) => note === body.note
+    );
+    if (isExists) {
+      return getBadRequestResponse("Note already exists.");
+    }
+    const added = await DB.jobs
+      .where("jobNumber")
+      .equals(jobNumber)
+      .modify((job) => {
+        if (!job.inspectionNotes) {
+          job.inspectionNotes = [body.note];
+        } else {
+          job.inspectionNotes.push(body.note);
+        }
+      });
+    if (added === 0) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Note added successfully" });
+  } catch (err) {
+    return getBadRequestResponse();
   }
 };
 
@@ -339,15 +436,6 @@ export const getJobsController: RouteHandler = async ({ url }) => {
 //     return getBadRequestResponse(err);
 //   }
 // };
-// // Get Inspection Notes
-// export const getInspectionNotesController: RouteHandler = async () => {
-//   try {
-//     const notes = await Db.inspectionNotes.toArray();
-//     return getSuccessResponse(notes);
-//   } catch (err) {
-//     return getBadRequestResponse(err);
-//   }
-// };
 
 // // Create inspection notes
 // export const createInspectionNotesController: RouteHandler = async ({
@@ -447,26 +535,6 @@ export const getJobsController: RouteHandler = async ({ url }) => {
 //   return getSuccessResponse(jobNumber, 201);
 // };
 
-// // Start new inspection - Update job status to "In Progress"
-// export const startInspectionController: RouteHandler = async ({ url }) => {
-//   const jobNumber = url.searchParams.get("jobNumber");
-//   if (!jobNumber) {
-//     return getBadRequestResponse();
-//   }
-
-//   try {
-//     const isUpdated = await Db.jobs.update(jobNumber, {
-//       status: JobStatus.IN_PROGRESS,
-//     } as Partial<Job>);
-//     if (isUpdated === 0) {
-//       return getBadRequestResponse("Job Not Found");
-//     }
-//     return getSuccessResponse({ message: "Job updated successfully" });
-//   } catch (err) {
-//     return getBadRequestResponse(err);
-//   }
-// };
-
 // // Get Job / Inspection Summary
 // export const getJobInspectionSummaryController: RouteHandler = async ({
 //   url,
@@ -500,49 +568,6 @@ export const getJobsController: RouteHandler = async ({ url }) => {
 //     return getSuccessResponse(trs);
 //   } catch (err) {
 //     return getBadRequestResponse(err);
-//   }
-// };
-
-// // Add inspection note to a job
-// export const addInspectionNoteByJobController: RouteHandler = async ({
-//   url,
-//   request,
-// }) => {
-//   const jobNumber = url.searchParams.get("jobNumber");
-//   if (!jobNumber) {
-//     return getBadRequestResponse();
-//   }
-
-//   const body = await request.json();
-
-//   try {
-//     const currentJob = await Db.jobs.get(jobNumber);
-//     if (!currentJob) {
-//       return getBadRequestResponse();
-//     }
-
-//     const isExists = currentJob.inspectionNotes?.find(
-//       (note) => note === body.note
-//     );
-//     if (isExists) {
-//       return getBadRequestResponse("Note already exists.");
-//     }
-//     const added = await Db.jobs
-//       .where("jobNumber")
-//       .equals(jobNumber)
-//       .modify((job) => {
-//         if (!job.inspectionNotes) {
-//           job.inspectionNotes = [body.note];
-//         } else {
-//           job.inspectionNotes.push(body.note);
-//         }
-//       });
-//     if (added === 0) {
-//       return getBadRequestResponse();
-//     }
-//     return getSuccessResponse({ message: "Note added successfully" });
-//   } catch (err) {
-//     return getBadRequestResponse();
 //   }
 // };
 

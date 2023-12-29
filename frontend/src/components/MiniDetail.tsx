@@ -7,7 +7,7 @@ const MiniDetail = ({
   noChange,
 }: {
   property: string;
-  value: string | number;
+  value?: string | number;
   vertical?: boolean;
   noChange?: boolean;
 }) => {
@@ -27,13 +27,13 @@ const MiniDetail = ({
         minW={"200px"}
         fontSize={"xl"}
         fontWeight={"medium"}
-        color={"text-big"}
+        color={"text.700"}
       >
         {property}
       </Text>
       <Text
-        color={"text-small"}
-        bg={"card-bg-secondary"}
+        color={"text.600"}
+        bg={"primary.50"}
         px={3}
         borderRadius={3}
         fontSize={"lg"}

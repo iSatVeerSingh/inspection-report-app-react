@@ -9,7 +9,7 @@ const ButtonPrimary = ({ children, ...btnProps }: ButtonPrimaryProps) => {
   return (
     <Button
       bg={"primary.500"}
-      borderRadius={"xl"}
+      borderRadius={"lg"}
       color={"white"}
       _hover={{
         background: "primary.600",
