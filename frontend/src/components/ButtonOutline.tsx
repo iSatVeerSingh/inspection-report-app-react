@@ -8,11 +8,12 @@ type ButtonOutlineProps = ButtonProps & {
 const ButtonOutline = ({ children, ...btnProps }: ButtonOutlineProps) => {
   return (
     <Button
-    border="2px"
-    colorScheme="messenger"
-    variant="outline"
-    size={{ base: "sm", md: "md" }}
-    {...btnProps}
+      border={"2px"}
+      borderColor={"primary.500"}
+      backgroundColor={"primary.50"}
+      color={"primary.500"}
+      size={{ base: "sm", md: "md" }}
+      {...btnProps}
     >
       {children}
     </Button>

@@ -31,12 +31,10 @@ const Sidebar = () => {
       : menuItems.filter((menu) => menu.access === "Any");
 
   return (
-    <Box bg="card-bg" px={3} py={3} shadow="xs">
+    <Box bg="main-bg" px={3} py={3} shadow="xs">
       <Flex alignItems={"center"} gap={2}>
         <Avatar size={"sm"} src="/logo.png" />
-        <Text color="text-big" fontSize="xl">
-          {user.name}
-        </Text>
+        <Text fontSize="xl">{user.name}</Text>
       </Flex>
       <VStack justify={"stretch"} mt={4}>
         {menuLinks.map((item, index) => (
@@ -47,11 +45,11 @@ const Sidebar = () => {
             borderRadius={"lg"}
             bg={
               item.path === "/" + currentSectionPath
-                ? "nav-bg"
-                : "card-bg-secondary"
+                ? "primary.500"
+                : "primary.50"
             }
             color={
-              item.path === "/" + currentSectionPath ? "white" : "text-big"
+              item.path === "/" + currentSectionPath ? "white" : "text.700"
             }
             w="full"
           >
@@ -91,7 +89,7 @@ const Sidebar = () => {
                 />
                 <MenuList color={"text-big"} boxShadow={"2xl"}>
                   {item.subItems.items.map((subItem, index) => (
-                    <MenuItem key={index} >
+                    <MenuItem key={index}>
                       <Link to={subItem.path}>{subItem.name}</Link>
                     </MenuItem>
                   ))}

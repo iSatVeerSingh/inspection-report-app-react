@@ -6,6 +6,8 @@ import {
 import { clientsClaim } from "workbox-core";
 import { NavigationRoute, registerRoute } from "workbox-routing";
 import {
+  getJobCategoriesController,
+  getJobsController,
   initInspectionNotesController,
   initJobCategoriesController,
   initJobsController,
@@ -70,6 +72,20 @@ registerRoute(
   "POST"
 );
 
+// Get Job categories
+registerRoute(
+  ({ url }) => url.pathname === "/client/job-categories",
+  getJobCategoriesController,
+  "GET"
+);
+
+// Get jobs
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs",
+  getJobsController,
+  "GET"
+);
+
 // // Get Library Item Category
 // registerRoute(
 //   ({ url }) => url.pathname === "/client/library-item-categories",
@@ -131,20 +147,6 @@ registerRoute(
 //   ({ url }) => url.pathname === "/client/inspection-notes",
 //   deleteInspectionNotesController,
 //   "DELETE"
-// );
-
-// // Get Job categories
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/job-categories",
-//   getJobCategoriesController,
-//   "GET"
-// );
-
-// // Get jobs
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/jobs",
-//   getJobsController,
-//   "GET"
 // );
 
 // // Create new job

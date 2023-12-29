@@ -34,16 +34,17 @@ const PageLayout = ({
       <Flex
         alignItems={"center"}
         px={3}
-        bg="card-bg"
+        bg="main-bg"
         shadow={"xs"}
         justifyContent={"space-between"}
+        zIndex={100}
         // // pl={isMobile ? "60px" : "auto"}
       >
         <Heading
           fontWeight={"semibold"}
           fontSize={"2xl"}
           // fontSize={{ base: "xl", sm: "2xl" }}
-          color="text-big"
+          color="text.700"
           flexGrow={1}
         >
           {!isRoot && (

@@ -135,6 +135,63 @@ export const initJobCategoriesController: RouteHandler = async ({
   }
 };
 
+// Get Job categories
+export const getJobCategoriesController: RouteHandler = async () => {
+  try {
+    const jobCategories = await DB.jobCategories.toArray();
+    return getSuccessResponse(jobCategories);
+  } catch (err: any) {
+    return getBadRequestResponse(err);
+  }
+};
+
+//get jobs
+export const getJobsController: RouteHandler = async ({ url }) => {
+  try {
+    const jobNumber = url.searchParams.get("jobNumber");
+    if (jobNumber) {
+      const job = await DB.jobs.get(jobNumber);
+      if (!job) {
+        return getSuccessResponse(null);
+      }
+      return getSuccessResponse(job);
+    }
+
+    const query = url.searchParams;
+    const page = query.get("page");
+    const status = query.get("status");
+    const category = query.get("category");
+    const startsAt = query.get("startsAt");
+
+    const dbQuery = {
+      status: status || "Work Order",
+      ...(category ? { category } : {}),
+      ...(startsAt ? { startsAt } : {}),
+    };
+
+    const perPage = 15;
+    const pageNumber = Number(page);
+    const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
+    const jobsCollection = DB.jobs.where(dbQuery);
+    const total = await jobsCollection.count();
+    const totalPages =
+      total % perPage === 0 ? total / perPage : Math.floor(total / perPage) + 1;
+
+    const jobs = await jobsCollection
+      .offset(skip)
+      .limit(perPage)
+      .sortBy("jobNumber");
+    return getSuccessResponse({
+      data: jobs,
+      pages: totalPages,
+      currentPage: pageNumber === 0 ? 1 : pageNumber,
+    });
+  } catch (err: any) {
+    console.log(err);
+    return getBadRequestResponse(err);
+  }
+};
+
 // // Get Library Items Categories
 // export const getLibraryItemCategoriesController: RouteHandler = async () => {
 //   try {
@@ -370,60 +427,6 @@ export const initJobCategoriesController: RouteHandler = async ({
 //     await Db.inspectionNotes.delete(Number(id));
 //     return getSuccessResponse({ message: "Item deleted successfully" });
 //   } catch (err) {
-//     return getBadRequestResponse(err);
-//   }
-// };
-
-// // Get Job categories
-// export const getJobCategoriesController: RouteHandler = async () => {
-//   try {
-//     const jobCategories = await Db.jobCategories.toArray();
-//     return getSuccessResponse(jobCategories);
-//   } catch (err) {
-//     return getBadRequestResponse(err);
-//   }
-// };
-
-// //get jobs
-// export const getJobsController: RouteHandler = async ({ url }) => {
-//   try {
-//     const jobNumber = url.searchParams.get("jobNumber");
-//     if (jobNumber) {
-//       const job = await Db.jobs.get(jobNumber);
-//       if (!job) {
-//         return getSuccessResponse(null);
-//       }
-//       return getSuccessResponse(job);
-//     }
-
-//     const query = url.searchParams;
-//     const page = query.get("page");
-//     const status = query.get("status");
-//     const category = query.get("category");
-//     const startsAt = query.get("startsAt");
-
-//     const dbQuery = {
-//       status: status || "Work Order",
-//       ...(category ? { category } : {}),
-//       ...(startsAt ? { startsAt } : {}),
-//     };
-
-//     const perPage = 15;
-//     const pageNumber = Number(page);
-//     const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
-//     const jobsCollection = Db.jobs.where(dbQuery);
-//     const total = await jobsCollection.count();
-//     const totalPages =
-//       total % perPage === 0 ? total / perPage : Math.floor(total / perPage) + 1;
-
-//     const jobs = await jobsCollection.offset(skip).limit(perPage).toArray();
-//     return getSuccessResponse({
-//       data: jobs,
-//       pages: totalPages,
-//       currentPage: pageNumber === 0 ? 1 : pageNumber,
-//     });
-//   } catch (err) {
-//     console.log(err);
 //     return getBadRequestResponse(err);
 //   }
 // };

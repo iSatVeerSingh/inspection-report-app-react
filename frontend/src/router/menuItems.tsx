@@ -2,24 +2,16 @@ import {
   ItemsIcon,
   JobIcon,
   NotesIcon,
-  ReportIcon,
   SettingsIcon,
   UsersIcon,
 } from "../icons";
 import * as Routes from "./paths";
-
 
 export default [
   {
     path: Routes.JOBS,
     name: "Jobs",
     icon: JobIcon,
-    access: "Any",
-  },
-  {
-    path: "/reports",
-    name: "Reports",
-    icon: ReportIcon,
     access: "Any",
   },
   {

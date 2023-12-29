@@ -8,9 +8,9 @@ const Loading = () => {
       <Spinner
         size={"xl"}
         thickness="5px"
-        speed="0.65s"
+        speed="1s"
         emptyColor="gray.400"
-        color="blue-primary"
+        color="primary.500"
       />
     </Box>
   );
