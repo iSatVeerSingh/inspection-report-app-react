@@ -18,7 +18,7 @@
 import { RouteHandler } from "workbox-core";
 import { getBadRequestResponse, getSuccessResponse } from "./response";
 import { DB } from "../db";
-import { Job, JobStatus, LibraryItem } from "../types";
+import { InspectionItem, Job, JobStatus, LibraryItem } from "../types";
 
 // Setup user in indexeddb
 export const initUserController: RouteHandler = async ({ request }) => {
@@ -318,6 +318,90 @@ export const deleteInspectionNoteByJobController: RouteHandler = async ({
     return getSuccessResponse({ message: "Note deleted successfully" });
   } catch (err) {
     return getBadRequestResponse();
+  }
+};
+
+// Get Library Items Index
+export const getLibraryItemIndexController: RouteHandler = async () => {
+  try {
+    const transaction = await DB.transaction(
+      "rw",
+      DB.libraryItemCategories,
+      DB.libraryItems,
+      async () => {
+        const categories = await DB.libraryItemCategories
+          .orderBy("name")
+          .keys();
+        const items = await DB.libraryItems.orderBy("[name+category]").keys();
+        const libraryItems = items.map((item: any) => ({
+          name: item[0],
+          category: item[1],
+        }));
+
+        return {
+          categories,
+          libraryItems,
+        };
+      }
+    );
+
+    return getSuccessResponse(transaction);
+  } catch (err: any) {
+    return getBadRequestResponse(err);
+  }
+};
+
+export const addInspectionItemsController: RouteHandler = async ({
+  url,
+  request,
+}) => {
+  const jobNumber = url.searchParams.get("jobNumber");
+  if (!jobNumber) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    const body = await request.json();
+
+    const transaction = await DB.transaction(
+      "rw",
+      DB.jobs,
+      DB.libraryItems,
+      DB.inspectionItems,
+      async () => {
+        const job = await DB.jobs.get(jobNumber);
+        if (!job) {
+          return null;
+        }
+
+        const libIndexitems = await DB.libraryItems
+          .where("name")
+          .equals(body.name)
+          .toArray();
+        const item = libIndexitems[0];
+
+        const inspectionItem: InspectionItem = {
+          uuid: crypto.randomUUID(),
+          job_id: job.id,
+          library_item_id: item.id,
+          images: body.images,
+          note: body.note,
+          isCustom: false,
+        };
+
+        const added = await DB.inspectionItems.add(inspectionItem);
+        if (!added) {
+          return null;
+        }
+        return added;
+      }
+    );
+    if (!transaction) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse({ message: "Item added successfully" });
+  } catch (err: any) {
+    return getBadRequestResponse(err);
   }
 };
 

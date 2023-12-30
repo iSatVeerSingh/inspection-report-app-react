@@ -50,6 +50,7 @@ const DatalistInput = (
     <FormControl
       isInvalid={inputError !== undefined && inputError !== ""}
       position={"relative"}
+      isRequired={isRequired}
     >
       {label && (
         <FormLabel mb={0} fontSize={"lg"} color={"text.700"} htmlFor={id}>

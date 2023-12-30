@@ -153,7 +153,11 @@ const JobDetails = () => {
                   <Flex alignItems={"center"} gap={4} mt={2}>
                     <ButtonPrimary
                       width={"200px"}
-                      onClick={() => navigate("./add-items")}
+                      onClick={() =>
+                        navigate("./add-items", {
+                          state: job,
+                        })
+                      }
                     >
                       Add Items
                     </ButtonPrimary>

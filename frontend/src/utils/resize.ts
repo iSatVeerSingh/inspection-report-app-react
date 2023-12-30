@@ -1,4 +1,6 @@
-export const getResizedImagesBase64Main = async (imageFiles: File[]) => {
+export const getResizedImagesBase64Main = async (
+  imageFiles: File[]
+): Promise<string[]> => {
   const resizedImages = [];
   const base64Promises = [];
 
@@ -25,15 +27,15 @@ export const getResizedImagesBase64Main = async (imageFiles: File[]) => {
     }
   }
 
-  return [...resizedImages, await Promise.all(base64Promises)];
+  return [...resizedImages, ...(await Promise.all(base64Promises))];
 };
 
-const getBase64String = async (imgBlob: Blob | File) => {
+const getBase64String = async (imgBlob: Blob | File): Promise<string> => {
   return new Promise((resolve) => {
     const reader = new FileReader();
     reader.readAsDataURL(imgBlob);
     reader.addEventListener("load", (e) => {
-      resolve(e.target?.result);
+      resolve(e.target?.result as string);
     });
   });
 };

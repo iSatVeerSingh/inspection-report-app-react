@@ -80,8 +80,16 @@ export type InspectionNote = {
   updated_at?: string;
 };
 
+export type InspectionItemForm = {
+  category: string;
+  name: string;
+  images: File[] | string[] | string;
+  note?: string;
+};
+
 export type InspectionItem = Partial<LibraryItem> & {
-  id: number;
+  id?: number;
+  uuid: string;
   job_id: number;
   library_item_id: number | null;
   isPreviousItem?: boolean;
