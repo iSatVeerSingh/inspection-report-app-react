@@ -374,20 +374,27 @@ export const addInspectionItemsController: RouteHandler = async ({
           return null;
         }
 
-        const libIndexitems = await DB.libraryItems
-          .where("name")
-          .equals(body.name)
-          .toArray();
-        const item = libIndexitems[0];
-
         const inspectionItem: InspectionItem = {
           uuid: crypto.randomUUID(),
           job_id: job.id,
-          library_item_id: item.id,
+          name: body.name,
           images: body.images,
+          isCustom: body.isCustom,
           note: body.note,
-          isCustom: false,
         };
+
+        if (body.isCustom) {
+          inspectionItem.openingParagraph = body.openingParagraph;
+          inspectionItem.closingParagraph = body.closingParagraph;
+          inspectionItem.embeddedImage = body.embeddedImage;
+        } else {
+          const libIndexitems = await DB.libraryItems
+            .where("name")
+            .equals(body.name)
+            .toArray();
+          const item = libIndexitems[0];
+          inspectionItem.library_item_id = item.id;
+        }
 
         const added = await DB.inspectionItems.add(inspectionItem);
         if (!added) {

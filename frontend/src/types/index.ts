@@ -57,7 +57,7 @@ export type LibraryItem = {
   name: string;
   openingParagraph: string;
   closingParagraph: string;
-  embeddedImage?: string | null;
+  embeddedImage?: string | null | File;
   summary?: string;
   created_at?: string;
   updated_at?: string;
@@ -91,11 +91,11 @@ export type InspectionItem = Partial<LibraryItem> & {
   id?: number;
   uuid: string;
   job_id: number;
-  library_item_id: number | null;
+  library_item_id?: number | null;
   isPreviousItem?: boolean;
   previous_job_id?: number;
-  images?: string[] | null;
-  note?: string | null;
+  images?: string[] | File[] | string;
+  note?: string;
   isCustom?: boolean;
 };
 
