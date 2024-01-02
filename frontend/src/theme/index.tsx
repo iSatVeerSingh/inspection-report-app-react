@@ -4,7 +4,7 @@ export default extendTheme({
   colors: {
     "app-bg": "#F0F0F6",
     "main-bg": "#FFFFFF",
-    main: {
+    text: {
       500: "#667085",
       600: "#4D5464",
       700: "#333843",

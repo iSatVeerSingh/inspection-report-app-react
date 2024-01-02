@@ -74,7 +74,7 @@ const Login = () => {
   };
 
   return (
-    <Center h={"100vh"} bg={"app-bg"}>
+    <Center as="main" h={"100vh"} bg={"app-bg"}>
       <Card p={5} maxW={"2xl"} w={"100%"}>
         <Box textAlign={"center"}>
           <Text fontSize={"lg"} color={"text.700"}>

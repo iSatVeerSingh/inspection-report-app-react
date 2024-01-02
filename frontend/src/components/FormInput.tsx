@@ -34,9 +34,9 @@ const FormInput = (
         borderRadius={"xl"}
         isRequired={isRequired}
         height={10}
-        {...props}
         autoComplete="off"
         ref={ref}
+        {...props}
       />
       {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}
     </FormControl>
