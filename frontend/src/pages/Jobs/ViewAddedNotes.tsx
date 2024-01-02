@@ -10,7 +10,7 @@ import PageLayout from "../../Layout/PageLayout";
 import { useParams } from "react-router-dom";
 import { useEffect, useState } from "react";
 import { Job } from "../../types";
-import clientApi from "../../services/clientApi";
+import clientApi from "../../api/clientApi";
 import MiniDetail from "../../components/MiniDetail";
 import { DeleteIcon } from "../../icons";
 import Card from "../../components/Card";

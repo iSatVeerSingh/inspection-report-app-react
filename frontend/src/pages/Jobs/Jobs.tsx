@@ -3,7 +3,7 @@ import PageLayout from "../../Layout/PageLayout";
 import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import FilterSelect from "../../components/FilterSelect";
-import clientApi from "../../services/clientApi";
+import clientApi from "../../api/clientApi";
 import FilterInput from "../../components/FilterInput";
 import ButtonOutline from "../../components/ButtonOutline";
 import { Job, JobStatus } from "../../types";
@@ -156,7 +156,7 @@ const Jobs = () => {
                           bg={"primary.50"}
                           px={4}
                           borderRadius={4}
-                          color={"text-small"}
+                          color={"text.500"}
                         >
                           {job.category}
                         </Text>

@@ -92,7 +92,7 @@ export type InspectionItem = Partial<LibraryItem> & {
   uuid: string;
   job_id: number;
   library_item_id?: number | null;
-  isPreviousItem?: boolean;
+  isPreviousItem?: 0 | 1 | boolean;
   previous_job_id?: number;
   images?: string[] | File[] | string;
   note?: string;

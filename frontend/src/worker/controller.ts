@@ -381,13 +381,16 @@ export const addInspectionItemsController: RouteHandler = async ({
           images: body.images,
           isCustom: body.isCustom,
           note: body.note,
+          isPreviousItem: 0,
         };
 
         if (body.isCustom) {
+          inspectionItem.category = "Custom";
           inspectionItem.openingParagraph = body.openingParagraph;
           inspectionItem.closingParagraph = body.closingParagraph;
           inspectionItem.embeddedImage = body.embeddedImage;
         } else {
+          inspectionItem.category = body.category;
           const libIndexitems = await DB.libraryItems
             .where("name")
             .equals(body.name)
@@ -412,15 +415,123 @@ export const addInspectionItemsController: RouteHandler = async ({
   }
 };
 
-// // Get Library Items Categories
-// export const getLibraryItemCategoriesController: RouteHandler = async () => {
-//   try {
-//     const categories = await Db.libraryItemCategories.toArray();
-//     return getSuccessResponse(categories);
-//   } catch (err) {
-//     return getBadRequestResponse();
-//   }
-// };
+// Get All items by job number
+export const getAllInspectionItemsByJobController: RouteHandler = async ({
+  url,
+}) => {
+  try {
+    const uuid = url.searchParams.get("uuid");
+    if (uuid) {
+      const transaction = await DB.transaction(
+        "rw",
+        DB.inspectionItems,
+        DB.libraryItems,
+        async () => {
+          const inspectionItem = await DB.inspectionItems.get(uuid);
+          if (!inspectionItem) {
+            return null;
+          }
+          if (!inspectionItem.isCustom && inspectionItem.library_item_id) {
+            const libraryItem = await DB.libraryItems.get(
+              inspectionItem.library_item_id
+            );
+            if (libraryItem) {
+              inspectionItem.openingParagraph = libraryItem.openingParagraph;
+              inspectionItem.closingParagraph = libraryItem.closingParagraph;
+              inspectionItem.embeddedImage = libraryItem.embeddedImage;
+            }
+          }
+          return inspectionItem;
+        }
+      );
+
+      if (!transaction) {
+        return getBadRequestResponse();
+      }
+      return getSuccessResponse(transaction);
+    }
+    const query = url.searchParams;
+    const jobNumber = query.get("jobNumber");
+    if (!jobNumber) {
+      return getBadRequestResponse();
+    }
+
+    const page = query.get("page");
+    const category = query.get("category");
+
+    const perPage = 15;
+    const pageNumber = Number(page);
+    const skip = pageNumber === 0 ? 0 : (pageNumber - 1) * perPage;
+
+    const transaction = await DB.transaction(
+      "rw",
+      DB.jobs,
+      DB.inspectionItems,
+      async () => {
+        const job = await DB.jobs.get(jobNumber);
+        if (!job) {
+          return null;
+        }
+        const dbQuery = {
+          job_id: job.id,
+          isPreviousItem: 0,
+          ...(category ? { category } : {}),
+        };
+
+        const itemsCollection = DB.inspectionItems.where(dbQuery);
+        const total = await itemsCollection.count();
+        const totalPages =
+          total % perPage === 0
+            ? total / perPage
+            : Math.floor(total / perPage) + 1;
+
+        const items = await itemsCollection
+          .offset(skip)
+          .limit(perPage)
+          .toArray();
+        return {
+          items,
+          pages: totalPages,
+          currentPage: pageNumber === 0 ? 1 : pageNumber,
+        };
+      }
+    );
+
+    if (!transaction) {
+      return getBadRequestResponse();
+    }
+    return getSuccessResponse(transaction);
+  } catch (err: any) {
+    return getBadRequestResponse();
+  }
+};
+
+// Delete Inspection item by job
+export const deleteInspectionItemController: RouteHandler = async ({ url }) => {
+  const uuid = url.searchParams.get("uuid");
+  if (!uuid) {
+    return getBadRequestResponse();
+  }
+
+  try {
+    await DB.inspectionItems.delete(uuid);
+    return getSuccessResponse({
+      message: "Inspection item deleted successfully",
+    });
+  } catch (err: any) {
+    return getBadRequestResponse();
+  }
+};
+
+// Get Library Items Categories
+export const getLibraryItemCategoriesController: RouteHandler = async () => {
+  try {
+    const categories = await DB.libraryItemCategories.toArray();
+    return getSuccessResponse(categories);
+  } catch (err) {
+    return getBadRequestResponse();
+  }
+};
 
 // // Get Library items
 // export const getLibraryItemsController: RouteHandler = async ({ url }) => {

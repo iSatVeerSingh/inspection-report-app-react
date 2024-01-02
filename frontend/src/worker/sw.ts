@@ -8,10 +8,13 @@ import { NavigationRoute, registerRoute } from "workbox-routing";
 import {
   addInspectionItemsController,
   addInspectionNoteByJobController,
+  deleteInspectionItemController,
   deleteInspectionNoteByJobController,
+  getAllInspectionItemsByJobController,
   getInspectionNotesController,
   getJobCategoriesController,
   getJobsController,
+  getLibraryItemCategoriesController,
   getLibraryItemIndexController,
   initInspectionNotesController,
   initJobCategoriesController,
@@ -134,12 +137,25 @@ registerRoute(
   "POST"
 );
 
-// // Get Library Item Category
-// registerRoute(
-//   ({ url }) => url.pathname === "/client/library-item-categories",
-//   getLibraryItemCategoriesController,
-//   "GET"
-// );
+// Get all inspection items by job
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs/inspection-items",
+  getAllInspectionItemsByJobController,
+  "GET"
+);
+// Delete Inspection item
+registerRoute(
+  ({ url }) => url.pathname === "/client/jobs/inspection-items",
+  deleteInspectionItemController,
+  "DELETE"
+);
+
+// Get Library Item Category
+registerRoute(
+  ({ url }) => url.pathname === "/client/library-item-categories",
+  getLibraryItemCategoriesController,
+  "GET"
+);
 
 // // Get Library items
 // registerRoute(

@@ -161,7 +161,10 @@ const JobDetails = () => {
                     >
                       Add Items
                     </ButtonPrimary>
-                    <ButtonOutline width={"200px"}>
+                    <ButtonOutline
+                      width={"200px"}
+                      onClick={() => navigate("./all-items", { state: job })}
+                    >
                       View & Edit Items
                     </ButtonOutline>
                   </Flex>

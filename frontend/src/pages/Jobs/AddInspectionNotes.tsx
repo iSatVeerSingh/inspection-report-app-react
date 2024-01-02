@@ -1,7 +1,7 @@
 import { Box, Grid, Heading, Text, Textarea, useToast } from "@chakra-ui/react";
 import PageLayout from "../../Layout/PageLayout";
 import { useEffect, useRef, useState } from "react";
-import clientApi from "../../services/clientApi";
+import clientApi from "../../api/clientApi";
 import { useLocation, useParams } from "react-router-dom";
 import { Job, InspectionNote } from "../../types";
 import MiniDetail from "../../components/MiniDetail";

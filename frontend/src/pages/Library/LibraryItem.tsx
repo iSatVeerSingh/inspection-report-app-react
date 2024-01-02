@@ -16,7 +16,7 @@ import {
 import PageLayout from "../../Layout/PageLayout";
 import { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import clientApi from "../../services/clientApi";
+import clientApi from "../../api/clientApi";
 import { LibraryItem as LibraryItemType } from "../../types";
 import { getItemPargarph } from "../../utils/itemParagraph";
 import LibraryItemForm from "../../components/LibraryItemForm";

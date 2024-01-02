@@ -19,7 +19,7 @@ export class InspectionDatabase extends Dexie {
 
   constructor() {
     super("inspection-db");
-    this.version(4).stores({
+    this.version(5).stores({
       user: "++type",
       libraryItemCategories: "++id, name",
       libraryItems:
@@ -28,7 +28,7 @@ export class InspectionDatabase extends Dexie {
       jobs: "++jobNumber, id, [status+category+startsAt], [status+category], [status+startsAt], [category+startsAt]",
       jobCategories: "++id",
       inspectionItems:
-        "++uuid, job_id, library_item_id, isCustom, [job_id+isPreviousItem]",
+        "++uuid, job_id, library_item_id, isCustom, [job_id+isPreviousItem+category]",
     });
   }
 }

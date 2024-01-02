@@ -12,6 +12,7 @@ type PageLayoutProps = {
   btnLoading?: boolean;
   children: React.ReactNode;
   isRoot?: boolean;
+  backPage?: string;
 };
 
 // ipad mini 1024 x 768
@@ -25,6 +26,7 @@ const PageLayout = ({
   children,
   btnLoading,
   isRoot,
+  backPage,
 }: PageLayoutProps) => {
   // const isMobile = useMobile();
   const navigate = useNavigate();
@@ -51,7 +53,7 @@ const PageLayout = ({
             <IconButton
               aria-label="Back"
               icon={<ChevronLeft />}
-              onClick={() => navigate(-1)}
+              onClick={() => navigate(backPage || -1)}
               mr={2}
             />
           )}
