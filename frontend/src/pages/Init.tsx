@@ -173,7 +173,7 @@ const Init = () => {
   };
 
   return (
-    <Center bg={"app-bg"} h={"100vh"}>
+    <Center as="main" bg={"app-bg"} h={"100vh"}>
       <Card w={"100%"} maxW={"2xl"}>
         <Alert
           status="info"
