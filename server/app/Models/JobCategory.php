@@ -12,6 +12,7 @@ class JobCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'uuid',
         'name'
     ];
@@ -19,6 +20,15 @@ class JobCategory extends Model
     protected $hidden = [
         'uuid'
     ];
+
+    protected $casts = [
+        'active' => 'boolean',
+    ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d');
+    }
 
     /**
      * Get all of the jobs for the JobCategory

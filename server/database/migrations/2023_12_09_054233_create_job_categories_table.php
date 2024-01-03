@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('job_categories', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->nullable()->unique();
+            $table->boolean('active')->default(true)->index();
             $table->string('name')->unique();
             $table->timestamps();
         });

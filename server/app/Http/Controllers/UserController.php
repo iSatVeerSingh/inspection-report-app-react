@@ -12,7 +12,7 @@ class UserController extends Controller
 {
     public function index(Request $request)
     {
-        return new UserCollection(User::paginate());
+        return new UserCollection(User::where('active', true)->paginate());
     }
 
     public function store(Request $request)
@@ -33,6 +33,10 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
+        if ($user['active'] === false) {
+            return response()->json(['message' => 'User does not exist'], Response::HTTP_NOT_FOUND);
+        }
+
         $validated = $request->validate([
             'name' => 'sometimes|required|max:255',
             'email' => 'sometimes|required|email|max:255|unique:users,email',
@@ -47,11 +51,15 @@ class UserController extends Controller
 
     public function destroy(Request $request, User $user)
     {
+        if ($user['active'] === false) {
+            return response()->json(['message' => 'User does not exist'], Response::HTTP_NOT_FOUND);
+        }
+
         if (Auth::id() === $user['id']) {
             return response()->json(['message' => 'Can not delete yourself'], Response::HTTP_BAD_REQUEST);
         }
 
-        $user->delete();
+        $user->update(['active' => false]);
         return response()->json(['message' => 'User deleted successfully']);
     }
 }

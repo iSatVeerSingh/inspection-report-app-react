@@ -9,7 +9,7 @@ class JobCategoryController extends Controller
 {
     public function install(Request $request)
     {
-        $allCategories = JobCategory::all()->toJson();
+        $allCategories = JobCategory::where('active', true)->get()->toJson();
         $contentLength = strlen($allCategories);
         return response($allCategories)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }

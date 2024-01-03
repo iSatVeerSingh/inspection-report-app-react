@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('library_items', function (Blueprint $table) {
             $table->id();
             $table->foreignId('category_id')->constrained('library_item_categories');
+            $table->boolean('active')->default(true)->index();
             $table->string('name');
             $table->string('summary')->nullable();
             $table->text('openingParagraph');

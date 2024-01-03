@@ -28,6 +28,10 @@ class LibraryItemController extends Controller
 
     public function update(Request $request, LibraryItem $libraryItem)
     {
+        if ($libraryItem['active'] === false) {
+            return response()->json(['message' => "Library item does not exists"], Response::HTTP_NOT_FOUND);
+        }
+
         $validated = $request->validate([
             'category_id' => 'sometimes|exists:library_item_categories,id',
             'name' => "sometimes|max:255",
@@ -44,14 +48,18 @@ class LibraryItemController extends Controller
 
     public function destroy(Request $request, LibraryItem $libraryItem)
     {
-        $libraryItem->delete();
+        if ($libraryItem['active'] === false) {
+            return response()->json(['message' => "Library item does not exists"], Response::HTTP_NOT_FOUND);
+        }
+
+        $libraryItem->update(['active' => false]);
         return response()->json(['message' => "Item deleted successfully"]);
     }
 
     public function install(Request $request)
     {
 
-        $allItems = (new LibraryItemCollection(LibraryItem::all()))->toJson();
+        $allItems = (new LibraryItemCollection(LibraryItem::where('active', true)->get()))->toJson();
         $contentLength = strlen($allItems);
         return response($allItems)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }

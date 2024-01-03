@@ -27,6 +27,10 @@ class LibraryItemCategoryController extends Controller
 
     public function update(Request $request, LibraryItemCategory $libraryItemCategory)
     {
+        if ($libraryItemCategory['active'] === false) {
+            return response()->json(['message' => 'Category does not exists'], Response::HTTP_NOT_FOUND);
+        }
+
         $validated = $request->validate([
             'name' => 'required|max:255|unique:library_item_categories,name'
         ]);
@@ -37,18 +41,22 @@ class LibraryItemCategoryController extends Controller
 
     public function destroy(Request $request, LibraryItemCategory $libraryItemCategory)
     {
+        if ($libraryItemCategory['active'] === false) {
+            return response()->json(['message' => 'Category does not exists'], Response::HTTP_NOT_FOUND);
+        }
+
         $itemcount = $libraryItemCategory->libraryItems()->count();
         if ($itemcount !== 0) {
             return response()->json(['message' => "Category is not empty"], Response::HTTP_BAD_REQUEST);
         }
 
-        $libraryItemCategory->delete();
+        $libraryItemCategory->update(['active' => false]);
         return response()->json(['message' => 'Category deleted successfully']);
     }
 
     public function install(Request $request)
     {
-        $allCategories = LibraryItemCategory::all()->toJson();
+        $allCategories = LibraryItemCategory::where('active', true)->get()->toJson();
         $contentLength = strlen($allCategories);
         return response($allCategories)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }

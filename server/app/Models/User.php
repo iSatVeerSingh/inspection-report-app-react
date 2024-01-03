@@ -21,6 +21,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'active',
         'name',
         'email',
         'phone',
@@ -45,6 +46,7 @@ class User extends Authenticatable
      * @var array<string, string>
      */
     protected $casts = [
+        'active' => "boolean",
         'password' => 'hashed',
     ];
     /**

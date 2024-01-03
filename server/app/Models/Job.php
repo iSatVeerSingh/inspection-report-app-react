@@ -14,6 +14,7 @@ class Job extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'uuid',
         'jobNumber',
         'category_id',
@@ -29,6 +30,7 @@ class Job extends Model
     ];
 
     protected $casts = [
+        'active' => 'boolean',
         'startsAt' => 'datetime',
         'completedAt' => 'datetime',
     ];

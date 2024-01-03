@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('jobs', function (Blueprint $table) {
             $table->id();
             $table->uuid('uuid')->unique()->nullable();
+            $table->boolean('active')->default(true)->index();
             $table->string('jobNumber')->unique();
             $table->foreignId('category_id')->nullable()->constrained('job_categories');
             $table->foreignId('customer_id')->constrained('customers');
@@ -23,8 +24,8 @@ return new class extends Migration
             $table->string('status');
             $table->dateTime('completedAt')->nullable();
             $table->string('description')->nullable();
-            $table->json('inspectionNotes')->nullable();
-            $table->string('recommendation')->nullable();
+            $table->json('inspectionNotes')->nullable(); // move to report
+            $table->string('recommendation')->nullable(); // move to report
             $table->timestamps();
         });
     }

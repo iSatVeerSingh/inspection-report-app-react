@@ -12,12 +12,17 @@ class LibraryItem extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'category_id',
         'name',
         'summary',
         'openingParagraph',
         'closingParagraph',
         'embeddedImage'
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     protected function serializeDate(DateTimeInterface $date)

@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('library_item_categories', function (Blueprint $table) {
             $table->id();
             $table->string('name')->unique();
+            $table->boolean('active')->default(true)->index();
             $table->timestamps();
         });
     }

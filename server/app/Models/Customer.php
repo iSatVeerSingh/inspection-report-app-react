@@ -11,6 +11,7 @@ class Customer extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'uuid',
         'nameOnReport',
         'name',
@@ -23,6 +24,10 @@ class Customer extends Model
         'supervisor',
         'supervisorEmail',
         'supervisorPhone'
+    ];
+
+    protected $casts = [
+        'active' => "boolean",
     ];
 
     /**

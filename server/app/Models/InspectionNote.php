@@ -11,7 +11,12 @@ class InspectionNote extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'text'
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     protected function serializeDate(DateTimeInterface $date)

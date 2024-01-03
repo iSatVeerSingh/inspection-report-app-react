@@ -12,7 +12,12 @@ class LibraryItemCategory extends Model
     use HasFactory;
 
     protected $fillable = [
+        'active',
         'name',
+    ];
+
+    protected $casts = [
+        'active' => 'boolean',
     ];
 
     /**
