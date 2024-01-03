@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->uuid()->unique();
             $table->boolean('active')->default(true)->index();
-            $table->foreignId('job_id')->constrained('jobs');
+            $table->foreignId('report_id')->constrained('reports');
             $table->foreignId('library_item_id')->nullable()->constrained('library_items');
             $table->json('images')->nullable();
             $table->string('note')->nullable();
