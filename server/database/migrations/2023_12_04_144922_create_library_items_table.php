@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('category_id')->constrained('library_item_categories');
             $table->boolean('active')->default(true)->index();
-            $table->string('name');
+            $table->string('name')->index();
             $table->string('summary')->nullable();
             $table->text('openingParagraph');
             $table->text('closingParagraph');
