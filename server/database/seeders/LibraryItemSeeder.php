@@ -33,7 +33,6 @@ class LibraryItemSeeder extends Seeder
         }
 
         foreach ($allitems as $key => $item) {
-            sleep(1);
 
             $category = LibraryItemCategory::where('name', $item['category'])->first();
 

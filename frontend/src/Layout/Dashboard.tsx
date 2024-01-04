@@ -32,7 +32,7 @@ const Dashboard = () => {
 
   return (
     <GlobalContext.Provider value={{ user }}>
-      <Grid h="100vh" gridTemplateColumns={"250px auto"} bg={"app-bg"}>
+      <Grid as="main" h="100vh" gridTemplateColumns={"250px auto"} bg={"app-bg"}>
         <Sidebar />
         <Outlet />
       </Grid>

@@ -31,7 +31,7 @@ const Sidebar = () => {
       : menuItems.filter((menu) => menu.access === "Any");
 
   return (
-    <Box bg="main-bg" px={3} py={3} shadow="xs">
+    <Box as="aside" bg="main-bg" px={3} py={3} shadow="xs">
       <Flex alignItems={"center"} gap={2}>
         <Avatar size={"sm"} src="/logo.png" />
         <Text fontSize="xl">{user.name}</Text>

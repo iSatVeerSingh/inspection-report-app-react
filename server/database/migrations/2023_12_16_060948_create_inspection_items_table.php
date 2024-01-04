@@ -27,7 +27,7 @@ return new class extends Migration
 
             // is this belongs to previous item
             $table->boolean('isPreviousItem')->default(false);
-            $table->foreignId('previous_item_id')->constrained('inspection_items');
+            $table->foreignId('previous_item_id')->nullable()->constrained('inspection_items');
             // $table->foreignId('previous_job_id')->nullable()->constrained('jobs');
             // $table->boolean('isCustom')->default(false);
             // $table->string('summary')->nullable();

@@ -16,6 +16,10 @@ return new class extends Migration
             $table->uuid()->unique();
             $table->boolean('active')->default(true)->index();
             $table->foreignId('job_id')->constrained('jobs');
+            $table->string('type')->nullable();
+            $table->json('inspectionNotes')->nullable(); // move to report
+            $table->string('recommendation')->nullable(); // move to report
+            $table->dateTime('completedAt')->nullable();
             $table->text('pdf')->nullable();
             $table->timestamps();
         });
