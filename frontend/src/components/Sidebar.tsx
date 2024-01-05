@@ -12,7 +12,7 @@ import {
   MenuItem,
 } from "@chakra-ui/react";
 import { Link, Link as ReactRouterLink, useLocation } from "react-router-dom";
-import menuItems from "../router/menuItems";
+import menuItems from "../router/menuitems";
 import { useGlobalContext } from "../context/globalContext";
 import { ChevronDown } from "../icons";
 

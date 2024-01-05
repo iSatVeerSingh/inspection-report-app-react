@@ -1,7 +1,6 @@
 import {
   FormControl,
   FormControlProps,
-  FormErrorMessage,
   FormLabel,
   Input,
   InputProps,
@@ -14,31 +13,28 @@ type FormInputProps = FormControlProps &
   };
 
 const FormInput = (
-  { inputError, label, id, isRequired, ...props }: FormInputProps,
+  { inputError, isRequired, label, id, ...props }: FormInputProps,
   ref: Ref<HTMLInputElement>
 ) => {
   return (
     <FormControl
-      isRequired={isRequired}
       isInvalid={inputError !== undefined && inputError !== ""}
+      isRequired={isRequired}
     >
       {label && (
-        <FormLabel mb={0} fontSize={"lg"} color={"text.700"} htmlFor={id}>
+        <FormLabel htmlFor={id} mb={0} fontSize={"xl"} color={"text.700"}>
           {label}
         </FormLabel>
       )}
       <Input
         id={id}
-        bg={"neutral.50"}
+        {...props}
         border={"stroke"}
-        borderRadius={"xl"}
-        isRequired={isRequired}
-        height={10}
+        borderRadius={"full"}
+        h="10"
         autoComplete="off"
         ref={ref}
-        {...props}
       />
-      {inputError && <FormErrorMessage>{inputError}</FormErrorMessage>}
     </FormControl>
   );
 };

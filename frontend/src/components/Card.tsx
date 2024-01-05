@@ -1,10 +1,8 @@
 import { Box, BoxProps } from "@chakra-ui/react";
 
-type CardProps = BoxProps;
-
-const Card = ({ children, ...props }: CardProps) => {
+const Card = ({ children, ...props }: BoxProps) => {
   return (
-    <Box bg={"main-bg"} p={3} borderRadius={"xl"} shadow={"xs"} {...props}>
+    <Box p={3} borderRadius={"xl"} bg={"main-bg"} shadow={"xs"} {...props}>
       {children}
     </Box>
   );

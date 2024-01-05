@@ -19,13 +19,6 @@ export default extendTheme({
     neutral: {
       50: "#F4F7FE",
     },
-
-    // "main-bg-light": "#F4F7FE",
-
-    // "text-main": "#120f43",
-    // "text-secondary": "#4A5568",
-    // "text-alt": "#8F9BBA",
-    // "alt-bg": "#4B49AC",
   },
   borders: {
     stroke: "1px solid #C2C6CE",

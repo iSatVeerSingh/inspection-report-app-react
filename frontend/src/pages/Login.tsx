@@ -3,29 +3,28 @@ import Card from "../components/Card";
 import FormInput from "../components/FormInput";
 import ButtonPrimary from "../components/ButtonPrimary";
 import { FormEventHandler, useState } from "react";
-import { loginUser } from "../api";
-import { AxiosResponse } from "axios";
 import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
-export type LoginData = {
+type LoginForm = {
   email: string;
   password: string;
 };
 
 const Login = () => {
   const navigate = useNavigate();
-  const [formErrors, setFormErrors] = useState<Partial<LoginData> | null>(null);
+  const [formErrors, setFormErrors] = useState<Partial<LoginForm> | null>(null);
   const [logging, setLogging] = useState(false);
   const toast = useToast();
 
-  const onSubmitLoginForm: FormEventHandler<HTMLFormElement> = async (e) => {
+  const handleSubmit: FormEventHandler<HTMLFormElement> = async (e) => {
     e.preventDefault();
-    const target = e.target as HTMLFormElement;
-    const formData = new FormData(target);
-    const email = formData.get("email")?.toString().trim() as string;
-    const password = formData.get("password")?.toString().trim() as string;
+    const formdata = new FormData(e.target as HTMLFormElement);
+    const email = formdata.get("email")?.toString().trim();
+    const password = formdata.get("password")?.toString().trim();
+
     if (!email || email === "") {
-      setFormErrors({ email: "Email is required" });
+      setFormErrors({ email: "Please provide a valid email" });
       return;
     }
     if (!password || password === "") {
@@ -34,12 +33,23 @@ const Login = () => {
     }
     setFormErrors(null);
     setLogging(true);
-    const response: AxiosResponse = await loginUser({ email, password });
+
+    const response = await axios.post(
+      "/api/login",
+      { email, password },
+      {
+        headers: {
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
     if (response.status !== 200) {
       toast({
-        title: response.data.message || "Invalid request",
-        status: "error",
+        title: response.data.message,
         duration: 4000,
+        status: "error",
       });
       setLogging(false);
       return;
@@ -74,44 +84,42 @@ const Login = () => {
   };
 
   return (
-    <Center as="main" h={"100vh"} bg={"app-bg"}>
-      <Card p={5} maxW={"2xl"} w={"100%"}>
-        <Box textAlign={"center"}>
-          <Text fontSize={"lg"} color={"text.700"}>
-            Inspection Report App By Correct Inspections
+    <Center as="main" h={"100vh"} bg={"app-bg"} p={3}>
+      <Card w={"100%"} maxW={"600px"} px={5} py={5}>
+        <Box textAlign={"center"} mb={3}>
+          <Text fontSize={"lg"} color={"text.500"}>
+            Inspection Report App by Correct Inspections
           </Text>
-          <Heading color={"text.800"}>Welcome &#128075;</Heading>
+          <Heading as="h2">Welcome</Heading>
         </Box>
-        <form onSubmit={onSubmitLoginForm}>
+        <form onSubmit={handleSubmit}>
           <VStack>
             <FormInput
-              type="email"
               id="email"
-              label="Email"
+              type="email"
               name="email"
-              placeholder="exmaple: john@gmail.com"
+              placeholder="example@gmail.com"
+              label="Email"
               inputError={formErrors?.email}
-              isRequired
             />
             <FormInput
-              type="password"
               id="password"
-              label="Password"
+              type="password"
               name="password"
-              placeholder="exmaple: John@123"
+              placeholder="John@!23"
+              label="Password"
               inputError={formErrors?.password}
-              isRequired
             />
+            <ButtonPrimary
+              type="submit"
+              w={"full"}
+              mt={3}
+              loadingText="Logging in"
+              isLoading={logging}
+            >
+              Login
+            </ButtonPrimary>
           </VStack>
-          <ButtonPrimary
-            type="submit"
-            mt={3}
-            w={"full"}
-            loadingText="Logging in"
-            isLoading={logging}
-          >
-            Login
-          </ButtonPrimary>
         </form>
       </Card>
     </Center>
