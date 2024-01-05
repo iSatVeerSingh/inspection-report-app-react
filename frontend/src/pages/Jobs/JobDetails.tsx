@@ -1,5 +1,5 @@
 import { useNavigate, useParams } from "react-router-dom";
-import PageLayout from "../../Layout/PageLayout";
+import PageLayout from "../../layouts/PageLayout";
 import Card from "../../components/Card";
 import { useEffect, useState } from "react";
 import clientApi from "../../api/clientApi";

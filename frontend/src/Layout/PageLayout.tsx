@@ -32,7 +32,7 @@ const PageLayout = ({
   const navigate = useNavigate();
 
   return (
-    <Grid templateRows={"60px auto"} h={"100%"} overflow={"hidden"}>
+    <Grid templateRows={"60px auto"} h={"100%"}>
       <Flex
         alignItems={"center"}
         px={3}

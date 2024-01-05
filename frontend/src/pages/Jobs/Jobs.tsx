@@ -1,5 +1,5 @@
 import { Link, useSearchParams } from "react-router-dom";
-import PageLayout from "../../Layout/PageLayout";
+import PageLayout from "../../layouts/PageLayout";
 import { Box, Button, Flex, Grid, Text } from "@chakra-ui/react";
 import { useEffect, useState } from "react";
 import FilterSelect from "../../components/FilterSelect";
@@ -66,8 +66,15 @@ const Jobs = () => {
     setSearchParams({});
   };
 
+  const createNewCustomJob = () => {};
+
   return (
-    <PageLayout title="All Jobs" isRoot>
+    <PageLayout
+      title="All Jobs"
+      isRoot
+      btn="New Custom Job"
+      onClick={createNewCustomJob}
+    >
       {loading ? (
         <Loading />
       ) : (

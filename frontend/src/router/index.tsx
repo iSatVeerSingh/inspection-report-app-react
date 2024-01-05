@@ -1,11 +1,25 @@
 import { createBrowserRouter } from "react-router-dom";
 import Login from "../pages/Login";
 import Init from "../pages/Init";
+import Dashboard from "../layouts/Dashboard";
+import * as paths from "./paths";
+import Jobs from "../pages/Jobs/Jobs";
+import JobDetails from "../pages/Jobs/JobDetails";
 
 export default createBrowserRouter([
   {
     path: "/",
-    element: "dls"
+    element: <Dashboard />,
+    children: [
+      {
+        path: paths.JOBS,
+        element: <Jobs />,
+      },
+      {
+        path: paths.JOB_DETAILS,
+        element: <JobDetails />
+      }
+    ],
   },
   {
     path: "/login",
@@ -13,6 +27,6 @@ export default createBrowserRouter([
   },
   {
     path: "/init",
-    element: <Init />
-  }
+    element: <Init />,
+  },
 ]);

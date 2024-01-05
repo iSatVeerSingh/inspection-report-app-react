@@ -1,11 +1,11 @@
 export const JOBS = "/jobs";
-export const JOB_DETAILS = JOBS + "/:job";
+export const JOB_DETAILS = JOBS + "/:jobNumber";
 export const ADD_NOTES = JOB_DETAILS + "/add-notes";
 export const ADD_ITEMS = JOB_DETAILS + "/add-items";
 
 // Library items
 export const LIBRARY_ITEMS = "/library-items";
-export const LIBRARY_ITEM = LIBRARY_ITEMS + "/:item";
+export const LIBRARY_ITEM = LIBRARY_ITEMS + "/:id";
 export const NEW_ITEM = LIBRARY_ITEMS + "/new";
 
 // Inspection Notes
