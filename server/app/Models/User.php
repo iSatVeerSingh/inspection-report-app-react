@@ -22,6 +22,7 @@ class User extends Authenticatable
      */
     protected $fillable = [
         'active',
+        'uuid',
         'name',
         'email',
         'phone',
@@ -49,6 +50,11 @@ class User extends Authenticatable
         'active' => "boolean",
         'password' => 'hashed',
     ];
+
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d h:i A');
+    }
     /**
      * Get all of the jobs for the User
      *

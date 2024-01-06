@@ -20,7 +20,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'required|max:255',
             'email' => 'required|email|max:255|unique:users,email',
-            'phone' => 'sometimes|required|max:15',
+            'phone' => 'sometimes|required|max:15|unique:users,phone',
             'role' => 'required|in:Inspector,Admin,Owner',
             'password' => 'required'
         ]);
@@ -40,7 +40,7 @@ class UserController extends Controller
         $validated = $request->validate([
             'name' => 'sometimes|required|max:255',
             'email' => 'sometimes|required|email|max:255|unique:users,email',
-            'phone' => 'sometimes',
+            'phone' => 'sometimes|max:15|unique:users,phone',
             'role' => 'sometimes|in:Inspector,Admin,Owner',
             'password' => 'sometimes|required'
         ]);
@@ -55,8 +55,8 @@ class UserController extends Controller
             return response()->json(['message' => 'User does not exist'], Response::HTTP_NOT_FOUND);
         }
 
-        if (Auth::id() === $user['id']) {
-            return response()->json(['message' => 'Can not delete yourself'], Response::HTTP_BAD_REQUEST);
+        if (Auth::id() === $user['id'] || $user['role'] === "Owner") {
+            return response()->json(['message' => 'Owner can not be deleted'], Response::HTTP_BAD_REQUEST);
         }
 
         $user->update(['active' => false]);
