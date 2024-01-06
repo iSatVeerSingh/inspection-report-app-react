@@ -14,7 +14,9 @@ class JobCategory extends Model
     protected $fillable = [
         'active',
         'uuid',
-        'name'
+        'name',
+        'type',
+        'stageOfWorks'
     ];
 
     protected $hidden = [

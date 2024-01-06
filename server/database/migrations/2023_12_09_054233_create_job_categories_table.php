@@ -16,6 +16,8 @@ return new class extends Migration
             $table->boolean('active')->default(true)->index();
             $table->uuid()->nullable()->unique();
             $table->string('name')->unique();
+            $table->string('type')->unique()->nullable();
+            $table->string('stageOfWorks')->nullable();
             $table->timestamps();
         });
     }

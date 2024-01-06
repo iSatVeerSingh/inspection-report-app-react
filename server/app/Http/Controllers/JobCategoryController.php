@@ -16,7 +16,9 @@ class JobCategoryController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'name' => 'required|max:255|unique:job_categories,name'
+            'name' => 'required|max:255|unique:job_categories,name',
+            'type' => 'required|max:255|unique:job_categories,type',
+            'stageOfWorks' => 'required|max:255'
         ]);
 
         $jobCategory = new JobCategory($validated);
@@ -32,7 +34,9 @@ class JobCategoryController extends Controller
         }
 
         $validated = $request->validate([
-            'name' => 'required|max:255|unique:job_categories,name'
+            'name' => 'sometimes|required|max:255|unique:job_categories,name',
+            'type' => 'sometimes|required|max:255|unique:job_categories,type',
+            'stageOfWorks' => 'sometimes|max:255'
         ]);
 
         $jobCategory->update($validated);
