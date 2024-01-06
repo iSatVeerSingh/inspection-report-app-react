@@ -20,6 +20,11 @@ class LibraryItemCategory extends Model
         'active' => 'boolean',
     ];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d h:i A');
+    }
+
     /**
      * Get all of the libraryItems for the LibraryItemCategory
      *
