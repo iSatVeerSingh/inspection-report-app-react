@@ -51,6 +51,7 @@ Route::middleware('auth:sanctum')->group(function () {
         ->middleware(EnsureUserIsOwnerOrAdmin::class);
 
     Route::apiResource('/library-items', LibraryItemController::class)
+        ->except(['show'])
         ->middleware(EnsureUserIsOwnerOrAdmin::class);
 
     Route::get('/install-items', [LibraryItemController::class, 'install']);

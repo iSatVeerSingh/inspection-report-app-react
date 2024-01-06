@@ -17,7 +17,7 @@ class InspectionNoteController extends Controller
     {
         $validated = $request->validate([
             'text' => 'required',
-            'category_id' => 'sometimes'
+            'category_id' => 'sometimes|exists:job_categories,id'
         ]);
 
         $insepctionNote = new InspectionNote($validated);

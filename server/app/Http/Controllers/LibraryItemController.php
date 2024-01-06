@@ -10,6 +10,12 @@ use Illuminate\Http\Response;
 
 class LibraryItemController extends Controller
 {
+    public function index(Request $request)
+    {
+        $libraryItems = LibraryItem::where('active', true)->paginate();
+        return new LibraryItemCollection($libraryItems);
+    }
+
     public function store(Request $request)
     {
         $validated = $request->validate([
@@ -37,8 +43,8 @@ class LibraryItemController extends Controller
             'name' => "sometimes|max:255",
             'summary' => 'sometimes',
             'embeddedImage' => 'sometimes',
-            'openingParagraph' => 'sometimes',
-            'closingParagraph' => 'sometimes'
+            'openingParagraph' => 'sometimes|required',
+            'closingParagraph' => 'sometimes|required'
         ]);
 
         $libraryItem->update($validated);
