@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('customers', function (Blueprint $table) {
             $table->id();
-            $table->uuid('uuid')->unique()->nullable();
             $table->boolean('active')->default(true)->index();
+            $table->uuid('uuid')->unique()->nullable();
             $table->string('nameOnReport')->nullable();
             $table->string('name')->default('');
             $table->string('email')->default('');

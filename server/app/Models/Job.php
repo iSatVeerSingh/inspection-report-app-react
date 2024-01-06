@@ -33,20 +33,25 @@ class Job extends Model
         'completedAt' => 'datetime',
     ];
 
+    protected function serializeDate(DateTimeInterface $date)
+    {
+        return $date->format('Y-m-d h:i A');
+    }
+
     /**
      * Perform any actions required after the model boots.
      *
      * @return void
      */
-    // protected static function booted(): void
-    // {
-    //     static::addGlobalScope('inspector', function (Builder $builder) {
-    //         if (Auth::user()['role'] === "Inspector") {
-    //             $builder->where('inspector_id', Auth::id());
-    //             return;
-    //         }
-    //     });
-    // }
+    protected static function booted(): void
+    {
+        static::addGlobalScope('inspector', function (Builder $builder) {
+            if (Auth::user()['role'] === "Inspector") {
+                $builder->where('inspector_id', Auth::id());
+                return;
+            }
+        });
+    }
 
 
     /**
