@@ -16,7 +16,8 @@ class InspectionNoteController extends Controller
     public function store(Request $request)
     {
         $validated = $request->validate([
-            'text' => 'required'
+            'text' => 'required',
+            'category_id' => 'sometimes'
         ]);
 
         $insepctionNote = new InspectionNote($validated);
@@ -31,7 +32,8 @@ class InspectionNoteController extends Controller
         }
 
         $validated = $request->validate([
-            'text' => 'required'
+            'text' => 'required',
+            'category_id' => 'sometimes'
         ]);
 
         $inspectionNote->update($validated);

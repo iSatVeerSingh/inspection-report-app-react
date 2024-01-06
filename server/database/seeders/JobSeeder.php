@@ -32,7 +32,7 @@ class JobSeeder extends Seeder
         foreach ($categories as $key => $category) {
             $jobCategory = new JobCategory([
                 'uuid' => $category['uuid'],
-                'name' => $category['name']
+                'name' => $category['name'],
             ]);
 
             $jobCategory->save();

@@ -33,6 +33,16 @@ class JobCategory extends Model
     }
 
     /**
+     * Get all of the inspectionNotes for the JobCategory
+     *
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function inspectionNotes(): HasMany
+    {
+        return $this->hasMany(InspectionNote::class, 'category_id');
+    }
+
+    /**
      * Get all of the jobs for the JobCategory
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany

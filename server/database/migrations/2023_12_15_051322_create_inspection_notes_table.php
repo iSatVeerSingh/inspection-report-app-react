@@ -13,8 +13,8 @@ return new class extends Migration
     {
         Schema::create('inspection_notes', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('category_id')->nullable()->constrained('job_categories');
             $table->boolean('active')->default(true)->index();
+            $table->foreignId('category_id')->nullable()->constrained('job_categories');
             $table->text('text');
             $table->timestamps();
         });

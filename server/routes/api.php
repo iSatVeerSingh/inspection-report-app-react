@@ -35,15 +35,32 @@ use Ramsey\Uuid\Uuid;
 Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
-    Route::apiResource('/users', UserController::class)->except(['show'])->middleware(EnsureUserIsOwner::class);
-    Route::apiResource('/job-categories', JobCategoryController::class)->except(['show'])->middleware(EnsureUserIsOwnerOrAdmin::class);
-    Route::apiResource('/library-item-categories', LibraryItemCategoryController::class)->except(['show'])->middleware(EnsureUserIsOwnerOrAdmin::class);
-    Route::apiResource('/library-items', LibraryItemController::class)->middleware(EnsureUserIsOwnerOrAdmin::class);
-    Route::apiResource('/inspection-notes', InspectionNoteController::class)->except(['show'])->middleware(EnsureUserIsOwnerOrAdmin::class);
+    Route::apiResource('/users', UserController::class)->except(['show'])
+        ->middleware(EnsureUserIsOwner::class);
+
+    Route::apiResource('/job-categories', JobCategoryController::class)
+        ->except(['show'])
+        ->middleware(EnsureUserIsOwnerOrAdmin::class);
+
+    Route::apiResource('/inspection-notes', InspectionNoteController::class)
+        ->except(['show'])
+        ->middleware(EnsureUserIsOwnerOrAdmin::class);
+
+    Route::apiResource('/library-item-categories', LibraryItemCategoryController::class)
+        ->except(['show'])
+        ->middleware(EnsureUserIsOwnerOrAdmin::class);
+
+    Route::apiResource('/library-items', LibraryItemController::class)
+        ->middleware(EnsureUserIsOwnerOrAdmin::class);
+
     Route::get('/install-items', [LibraryItemController::class, 'install']);
+
     Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
+
     Route::get('/install-inspection-notes', [InspectionNoteController::class, 'install']);
+
     Route::get('/install-job-categories', [JobCategoryController::class, 'install']);
+
     Route::get('/install-jobs', [JobController::class, 'install']);
 });
 
