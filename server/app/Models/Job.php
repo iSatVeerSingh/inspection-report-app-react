@@ -43,15 +43,15 @@ class Job extends Model
      *
      * @return void
      */
-    protected static function booted(): void
-    {
-        static::addGlobalScope('inspector', function (Builder $builder) {
-            if (Auth::user()['role'] === "Inspector") {
-                $builder->where('inspector_id', Auth::id());
-                return;
-            }
-        });
-    }
+    // protected static function booted(): void
+    // {
+    //     static::addGlobalScope('inspector', function (Builder $builder) {
+    //         if (Auth::user()['role'] === "Inspector") {
+    //             $builder->where('inspector_id', Auth::id());
+    //             return;
+    //         }
+    //     });
+    // }
 
 
     /**
