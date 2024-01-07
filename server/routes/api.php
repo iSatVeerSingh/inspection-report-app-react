@@ -57,13 +57,16 @@ Route::middleware('auth:sanctum')->group(function () {
         ->except(['show'])
         ->middleware(EnsureUserIsOwnerOrAdmin::class);
 
-    Route::get('/install-items', [LibraryItemController::class, 'install']);
-
-    Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
-
     Route::get('/install-inspection-notes', [InspectionNoteController::class, 'install']);
 
     Route::get('/install-job-categories', [JobCategoryController::class, 'install']);
+
+    Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
+
+    Route::get('/install-items', [LibraryItemController::class, 'install']);
+
+
+
 
     Route::get('/install-jobs', [JobController::class, 'install']);
 });

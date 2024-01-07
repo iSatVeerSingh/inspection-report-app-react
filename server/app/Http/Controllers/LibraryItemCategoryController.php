@@ -56,7 +56,9 @@ class LibraryItemCategoryController extends Controller
 
     public function install(Request $request)
     {
-        $allCategories = LibraryItemCategory::where('active', true)->get()->toJson();
+        $allCategories = LibraryItemCategory::where('active', true)
+            ->withCount(['libraryItems as itemsCount'])
+            ->get()->toJson();
         $contentLength = strlen($allCategories);
         return response($allCategories)->header('Content-Length', $contentLength)->header('Content-Type', 'application/json');
     }
