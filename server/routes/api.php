@@ -6,6 +6,7 @@ use App\Http\Controllers\JobCategoryController;
 use App\Http\Controllers\JobController;
 use App\Http\Controllers\LibraryItemCategoryController;
 use App\Http\Controllers\LibraryItemController;
+use App\Http\Controllers\RecommendationController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\EnsureUserIsOwner;
 use App\Http\Middleware\EnsureUserIsOwnerOrAdmin;
@@ -57,6 +58,10 @@ Route::middleware('auth:sanctum')->group(function () {
         ->except(['show'])
         ->middleware(EnsureUserIsOwnerOrAdmin::class);
 
+    Route::apiResource('/recommendations', RecommendationController::class)
+        ->except(['show'])
+        ->middleware(EnsureUserIsOwnerOrAdmin::class);
+
     Route::get('/install-inspection-notes', [InspectionNoteController::class, 'install']);
 
     Route::get('/install-job-categories', [JobCategoryController::class, 'install']);
@@ -64,6 +69,8 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/install-item-categories', [LibraryItemCategoryController::class, 'install']);
 
     Route::get('/install-items', [LibraryItemController::class, 'install']);
+
+    Route::get('/install-recommendations', [RecommendationController::class, 'install']);
 
 
 
